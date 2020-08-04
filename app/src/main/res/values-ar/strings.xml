@@ -58,5 +58,14 @@
     <string name="no_conversation">لا توجد محادثات</string>
     <string name="choose_language">إختر لغتك</string>
     <string name="next">التالي</string>
+    <string name="welcome_in_emdad"><![CDATA[مرحبا بك فى <font color="#1db198">إمداد</font>]]></string>
+    <string name="we_deliver_order">نقوم بتوصيل طلبك الى موقعك او اي موقع تختارة</string>
+    <string name="get_discounts"><![CDATA[ احصل على <font color="#1db198">خصومات</font>]]></string>
+    <string name="easy_comm"><![CDATA[سهولة <font color="#1db198">التواصل</font>]]></string>
+    <string name="many_discount">يمكنك الحصول على خصومات كثيرة من عدد كبير من المتاجر المميزة لدينا</string>
+    <string name="delegate_contact">يمكنك التواصل دائما مع المندوب اثناء الحصول على طلبك</string>
+    <string name="start">البدء</string>
+    <string name="phone_number">رقم الجوال</string>
+    <string name="country_code">كود الدولة</string>
 
 </resources>

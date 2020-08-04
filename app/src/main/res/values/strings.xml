@@ -58,4 +58,15 @@
     <string name="no_conversation">No conversation</string>
     <string name="choose_language">Choose Language</string>
     <string name="next">next</string>
+    <string name="welcome_in_emdad"><![CDATA[Welcome in <font color="#1db198">Emdad</font>]]></string>
+    <string name="we_deliver_order">We deliver your order to your site or wherever you choose</string>
+    <string name="get_discounts"><![CDATA[Get <font color="#1db198">discounts</font>]]></string>
+    <string name="easy_comm"><![CDATA[Easy <font color="#1db198">Communication</font>]]></string>
+    <string name="many_discount">You can get many discounts from a large number of our exclusive stores</string>
+    <string name="delegate_contact">You can always contact the delegate while getting your order</string>
+    <string name="start">Start</string>
+    <string name="phone_number">Phone number</string>
+    <string name="country_code">Country code</string>
+
+
 </resources>
