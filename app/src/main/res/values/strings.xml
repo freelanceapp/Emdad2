@@ -67,6 +67,15 @@
     <string name="start">Start</string>
     <string name="phone_number">Phone number</string>
     <string name="country_code">Country code</string>
+    <string name="code_verification">Code verification</string>
+    <string name="enter_code_sent_to">Enter code sent to</string>
+    <string name="resend_in">Resend in</string>
+    <string name="resend">Resend</string>
+    <string name="stores">Stores</string>
+    <string name="order">Order</string>
+    <string name="no_notifications_to_show">No notifications to show</string>
+    <string name="no_orders_to_show">No orders to show</string>
+    <string name="delivering">Delivering</string>
 
 
 </resources>

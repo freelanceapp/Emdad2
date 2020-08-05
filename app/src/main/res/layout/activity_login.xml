@@ -117,8 +117,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         android:src="@drawable/flag_sa"
-                        android:onClick="@{()->listener.showCountryDialog()}"
-
+                        android:visibility="gone"
                         />
                     <TextView
                         android:id="@+id/tvCode"
@@ -127,13 +126,15 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/imageFlag"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:hint="@string/code"
                         android:textColorHint="@color/gray6"
                         android:textSize="14sp"
                         android:textColor="@color/black"
                         android:text="+966"
+                        android:onClick="@{()->listener.showCountryDialog()}"
+
                         />
 
                     <EditText
@@ -156,6 +157,8 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
                         app:layout_constraintEnd_toStartOf="@id/arrow"
+                        android:text="@={loginModel.phone}"
+                        error="@{loginModel.error_phone}"
 
                         />
 

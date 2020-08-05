@@ -67,5 +67,14 @@
     <string name="start">البدء</string>
     <string name="phone_number">رقم الجوال</string>
     <string name="country_code">كود الدولة</string>
+    <string name="code_verification">رمز التحقق</string>
+    <string name="enter_code_sent_to">ادخل كود التحقق المرسل الى</string>
+    <string name="resend_in">إعادة ارسال فى </string>
+    <string name="resend">أعد إرسال</string>
+    <string name="stores">متاجر</string>
+    <string name="order">طلباتي</string>
+    <string name="no_notifications_to_show">لا توجد إشعارات لعرضها</string>
+    <string name="no_orders_to_show">لا توجد طلبات لعرضها</string>
+    <string name="delivering">توصيل</string>
 
 </resources>

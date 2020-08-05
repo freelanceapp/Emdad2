@@ -8,66 +8,31 @@ import java.util.Locale;
 public class CountryModel implements Serializable {
 
     private String code;
-    private String name;
-    private String dialCode;
-    private int flag;
-    private String currency;
+    private String id;
+
 
     CountryModel() {
     }
 
-    public CountryModel(String code, String name, String dialCode, int flag, String currency) {
+    public CountryModel(String code, String id) {
         this.code = code;
-        this.name = name;
-        this.dialCode = dialCode;
-        this.flag = flag;
-        this.currency = currency;
-    }
+        this.id = id;
 
-    public String getCurrency() {
-        return this.currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     public String getCode() {
-        return this.code;
+        return code;
     }
 
     public void setCode(String code) {
         this.code = code;
-        if (TextUtils.isEmpty(this.name)) {
-            this.name = (new Locale("", code)).getDisplayName();
-        }
-
     }
 
-    public String getName() {
-        return this.name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
-
-    public String getDialCode() {
-        return this.dialCode;
-    }
-
-    public void setDialCode(String dialCode) {
-        this.dialCode = dialCode;
-    }
-
-    public int getFlag() {
-        return this.flag;
-    }
-
-    public void setFlag(int flag) {
-        this.flag = flag;
-    }
-
-
-
 }
