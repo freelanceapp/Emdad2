@@ -11,6 +11,7 @@ import android.os.CountDownTimer;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
 import com.apps.emdad.databinding.ActivityVerificationCodeBinding;
 
 import java.util.Locale;
@@ -75,7 +76,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
                 binding.btnResendCode.setTextColor(ContextCompat.getColor(VerificationCodeActivity.this, R.color.colorPrimary));
                 binding.btnResendCode.setBackgroundResource(R.color.white);
 
-                Intent intent = new Intent(VerificationCodeActivity.this, HomeActivity.class);
+                Intent intent = new Intent(VerificationCodeActivity.this, SignUpActivity.class);
                 startActivity(intent);
                 finish();
                 stopTimer();

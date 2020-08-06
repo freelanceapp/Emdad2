@@ -11,7 +11,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.AutoTransition;
+import android.transition.ChangeTransform;
 import android.transition.Explode;
+import android.transition.TransitionSet;
 import android.view.LayoutInflater;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -53,8 +56,9 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setEnterTransition(new Explode());
-            getWindow().setExitTransition(new Explode());
+            getWindow().setEnterTransition(new TransitionSet());
+            getWindow().setExitTransition(new TransitionSet());
+
 
         }
 

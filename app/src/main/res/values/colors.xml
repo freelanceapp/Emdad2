@@ -22,6 +22,9 @@
     <color name="gray8">#b0afbb</color>
     <color name="transparent">#00000000</color>
     <color name="color_red">#ef0607</color>
+    <color name="color_blue">#0000ff</color>
+    <color name="trans_black">#88000000</color>
+
 
 
 </resources>

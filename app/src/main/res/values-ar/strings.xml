@@ -76,5 +76,18 @@
     <string name="no_notifications_to_show">لا توجد إشعارات لعرضها</string>
     <string name="no_orders_to_show">لا توجد طلبات لعرضها</string>
     <string name="delivering">توصيل</string>
+    <string name="ch_year">اختر سنة الميلاد</string>
+    <string name="ch_gender">إختر النوع</string>
+    <string name="name">الإسم</string>
+    <string name="year_of_birth">سنة الميلاد</string>
+    <string name="male">ذكر</string>
+    <string name="female">انثى</string>
+    <string name="choose_year">إختر السنة</string>
+    <string name="ok2">حسنا!</string>
+    <string name="how_can_i_help_you">كيف يمكنني مساعدتك ؟</string>
+    <string name="good_morning">صباح الخير</string>
+    <string name="good_afternoon">مساء الخير</string>
+    <string name="show_previous_order">عرض الطلبات السابقة</string>
+    <string name="new_order">طلب جديد</string>
 
 </resources>

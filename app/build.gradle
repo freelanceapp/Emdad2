@@ -64,8 +64,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.3.2'
 
     implementation 'com.google.firebase:firebase-core:17.4.4'
-    implementation 'com.google.firebase:firebase-messaging:20.2.3'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
     implementation 'com.chaos.view:pinview:1.4.3'
+    implementation 'com.github.tajchert:WaitingDots:0.4.0'
+
 
 
 }

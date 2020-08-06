@@ -76,6 +76,19 @@
     <string name="no_notifications_to_show">No notifications to show</string>
     <string name="no_orders_to_show">No orders to show</string>
     <string name="delivering">Delivering</string>
+    <string name="ch_year">Choose year of birth</string>
+    <string name="ch_gender">Choose gender</string>
+    <string name="name">Name</string>
+    <string name="year_of_birth">Year of birth</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="choose_year">Choose year</string>
+    <string name="ok2">OK</string>
+    <string name="how_can_i_help_you">How can i help you ?</string>
+    <string name="good_morning">Good morning</string>
+    <string name="good_afternoon">Good afternoon</string>
+    <string name="show_previous_order">Show previous orders</string>
+    <string name="new_order">New order</string>
 
 
 </resources>

@@ -3,6 +3,7 @@ package com.apps.emdad.activities_fragments.activity_home;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -17,12 +18,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.AutoTransition;
+import android.transition.ChangeBounds;
+import android.transition.ChangeClipBounds;
 import android.transition.Explode;
+import android.transition.Slide;
+import android.transition.TransitionSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Notifications;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Profile;
@@ -67,8 +75,8 @@ public class HomeActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setEnterTransition(new Explode());
-            getWindow().setExitTransition(new Explode());
+            getWindow().setEnterTransition(new TransitionSet());
+            getWindow().setExitTransition(new TransitionSet());
 
         }
 
@@ -99,6 +107,19 @@ public class HomeActivity extends AppCompatActivity {
 
         binding.llProfile.setOnClickListener(v -> {
             displayFragmentProfile();
+        });
+
+        binding.fab.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddOrderActivity.class);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,binding.fab,binding.fab.getTransitionName());
+                startActivity(intent,options.toBundle());
+
+            }else {
+                startActivity(intent);
+
+            }
+
         });
 
 
