@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Emdad</string>
+    <string name="map_api_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
     <string name="field_req">Field required</string>
     <string name="login">Login</string>
     <string name="code">Code</string>
@@ -89,6 +90,41 @@
     <string name="good_afternoon">Good afternoon</string>
     <string name="show_previous_order">Show previous orders</string>
     <string name="new_order">New order</string>
+    <string name="shop_list">Shop list</string>
+    <string name="location_on_map">Location on map</string>
+    <string name="order_where">Okay so where do you want to make you order from...?</string>
+    <string name="welcome_experience">Welcome to our new ordering Experience</string>
+    <string name="we_deliver_anything_city">We deliver anything, from anywhere within your city</string>
+    <string name="good_place">Good, you picked this place to get your order from</string>
+    <string name="order_details">Order details</string>
+    <string name="change">Change</string>
+    <string name="what_need">What do you need from there ?</string>
+    <string name="write_what_you_want">Write what you want</string>
+    <string name="choose_drop_loc">Now i need the drop off location that you want us to deliver to it</string>
+    <string name="open_map">Open map</string>
+    <string name="drop_off_location">Drop off Location</string>
+    <string name="how_pay">Okay, how do you want to pay for this order</string>
+    <string name="cash">Cash</string>
+    <string name="add_coupon">Add coupon</string>
+    <string name="don_t_have_coupon">Don\'t have coupon</string>
+    <string name="all_finished">All finished and your order is ready, is there anything you want to change</string>
+    <string name="change_order">Change order</string>
+    <string name="submit_order">Submit order</string>
+    <string name="package_delivery">Package delivery</string>
+    <string name="loc_pic_drop">Sure, Share with us the location of the Pick up and Drop off</string>
+    <string name="share_location">Share location</string>
+    <string name="how_tp_pay_coupon">Okay, how do you want to pay for this order</string>
+    <string name="restart">Restart</string>
+    <string name="fetching_location">Fetching location...</string>
+    <string name="i_want_restaurant">I want restaurant,location,coffee...</string>
+    <string name="your_location_near_you">Your location (near you)</string>
+    <string name="results_for">Results for</string>
+    <string name="filter">Filter</string>
+    <string name="recent_search">Recent Search</string>
+    <string name="clear_all">Clear All</string>
+    <string name="can_t_find_any_shop_or_service_try_different_criteria">Can\'t find any shop or service, try different criteria</string>
+    <string name="km">km</string>
+
 
 
 </resources>

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">إمداد</string>
+    <string name="map_api_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
+
     <string name="field_req">الحقل مطلوب</string>
     <string name="login">تسجيل دخول</string>
     <string name="code">الكود</string>
@@ -89,5 +91,39 @@
     <string name="good_afternoon">مساء الخير</string>
     <string name="show_previous_order">عرض الطلبات السابقة</string>
     <string name="new_order">طلب جديد</string>
+    <string name="shop_list">قائمة المتاجر</string>
+    <string name="location_on_map">الموقع على الخريطة</string>
+    <string name="order_where">تمام، من وين تريد تطلب الحين...؟</string>
+    <string name="welcome_experience">مرحبا بك في تجربة الطلب الجديدة فى إمداد</string>
+    <string name="we_deliver_anything_city">تقدر تطلب أي شئ من أي مكان في مدينتك</string>
+    <string name="good_place">جميل، انت اخترت هذا المكان الآن بنجيبلك طلبك منه</string>
+    <string name="order_details">تفاصيل الطلب</string>
+    <string name="change">تغيير</string>
+    <string name="what_need">ممكن تقول لنا عن تفاصيل طلبك ؟</string>
+    <string name="write_what_you_want">ادخل تفاصيل الطلب</string>
+    <string name="choose_drop_loc">جميل! أحتاج منك الآن تحدد الموقع الذي تريد ان تستلم الطلب فية من المندوب</string>
+    <string name="open_map">عرض الخريطة</string>
+    <string name="drop_off_location">موقع تسليم الشحنة</string>
+    <string name="how_pay">ممتاز! ما هي طريقة الدفع المفضلة لديك؟</string>
+    <string name="cash">نقدي</string>
+    <string name="add_coupon">أضف كوبون</string>
+    <string name="don_t_have_coupon">لا يوجد لدي كوبون خصم</string>
+    <string name="all_finished">تفاصيل الطلب كاملة عندنا،حابب تغير أي تفاصيل في الطلب ؟</string>
+    <string name="change_order">تعديل الطلب</string>
+    <string name="submit_order">ارسل الطلب</string>
+    <string name="package_delivery">توصيل طرد</string>
+    <string name="loc_pic_drop">حاضرين وفي الخدمة! ممكن تحدد لنا مواقع الاستلام وتسليم الغرض ؟</string>
+    <string name="share_location">مشاركة الموقع</string>
+    <string name="how_tp_pay_coupon">ممتاز!ماهي طريقة الدفع المفضلة لديك؟</string>
+    <string name="restart">البدء من جديد</string>
+    <string name="fetching_location">جار تحديد موقعك...</string>
+    <string name="i_want_restaurant">ابحث عن مطعم كوفي أو اي مكان...</string>
+    <string name="your_location_near_you">موقعك الحالي</string>
+    <string name="results_for">نتيجة</string>
+    <string name="filter">إعدادات البحث</string>
+    <string name="recent_search">بحث سابق</string>
+    <string name="clear_all">مسح الكل</string>
+    <string name="can_t_find_any_shop_or_service_try_different_criteria">Can\'t find any shop or service, try different criteria</string>
+    <string name="km">كم</string>
 
 </resources>

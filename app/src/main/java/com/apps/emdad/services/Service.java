@@ -1,5 +1,6 @@
 package com.apps.emdad.services;
 
+import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
 
@@ -15,6 +16,25 @@ public interface Service {
                                           @Query(value = "fields") String fields,
                                           @Query(value = "language") String language,
                                           @Query(value = "key") String key
+    );
+
+
+    @GET("place/nearbysearch/json")
+    Call<NearbyModel> nearbyPlaceRankBy(@Query(value = "location") String location,
+                                        @Query(value = "keyword") String keyword,
+                                        @Query(value = "rankby") String rankby,
+                                        @Query(value = "language") String language,
+                                        @Query(value = "pagetoken") String pagetoken,
+                                        @Query(value = "key") String key
+    );
+
+    @GET("place/nearbysearch/json")
+    Call<NearbyModel> nearbyPlaceInDistance(@Query(value = "location") String location,
+                                            @Query(value = "keyword") String keyword,
+                                            @Query(value = "radius") int radius,
+                                            @Query(value = "language") String language,
+                                            @Query(value = "pagetoken") String pagetoken,
+                                            @Query(value = "key") String key
     );
 
     @GET("geocode/json")
