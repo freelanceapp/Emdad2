@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="icon"
+            type="String" />
+
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +64,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         app:civ_border_width="0dp"
+                        placeStoreIcon="@{icon}"
                         />
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -65,6 +72,7 @@
                         android:orientation="vertical"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
+                        android:gravity="center_vertical"
                         >
                         <TextView
                             android:id="@+id/tvName"
@@ -75,14 +83,48 @@
                             android:maxLines="2"
 
                             />
-                        <TextView
-                            android:id="@+id/tvDistance"
+
+
+
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:textColor="@color/white"
-                            android:textSize="10sp"
-                            tools:ignore="SmallSp" />
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical"
+
+
+                            >
+
+                            <TextView
+                                android:id="@+id/tvDistance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="10sp"
+                                tools:ignore="SmallSp"
+                                android:layout_gravity="center_vertical"
+
+                                />
+                            <ImageView
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:src="@drawable/ic_star"
+                                android:tint="@color/rate_color"
+                                android:layout_gravity="center_vertical"
+                                />
+                            <TextView
+                                android:id="@+id/tvRate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:textColor="@color/white"
+                                android:layout_gravity="center_vertical"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 

@@ -68,11 +68,7 @@
                 android:layout_marginEnd="10dp"
                 android:textColor="@color/color4"
                 android:textSize="13sp"
-                lat1="@{latLng.latitude}"
-                lng1="@{latLng.longitude}"
-                lat2="@{model.geometry.location.lat}"
-                lng2="@{model.geometry.location.lng}"
-
+                distance="@{model.distance}"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

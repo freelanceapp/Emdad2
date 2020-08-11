@@ -29,6 +29,7 @@ public class NearbyModel implements Serializable {
         private String vicinity;
         private List<Photo> photos;
         private Geometry geometry;
+        private double distance;
 
 
         public String getId() {
@@ -61,6 +62,14 @@ public class NearbyModel implements Serializable {
 
         public Geometry getGeometry() {
             return geometry;
+        }
+
+        public double getDistance() {
+            return distance;
+        }
+
+        public void setDistance(double distance) {
+            this.distance = distance;
         }
     }
 

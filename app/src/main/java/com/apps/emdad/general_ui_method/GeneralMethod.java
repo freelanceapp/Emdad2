@@ -104,11 +104,36 @@ public class GeneralMethod {
 
     }
 
-    @BindingAdapter({"lat1","lng1","lat2","lng2"})
-    public static void calculateDistance(TextView view,double lat1,double lng1,double lat2,double lng2){
-        Log.e("ddd",lat1+" "+lng1+" _"+lat2+" "+lng2);
-        double v = SphericalUtil.computeDistanceBetween(new LatLng(lat1, lng1), new LatLng(lat2, lng2))/1000;
-        view.setText(String.format(Locale.ENGLISH,"%.2f %s",v,view.getContext().getString(R.string.km)));
+
+    @BindingAdapter("placeStoreIcon")
+    public static void placeStoreIcon(View view, String reference) {
+        if (view instanceof CircleImageView) {
+            CircleImageView imageView = (CircleImageView) view;
+
+            String url = Tags.IMAGE_Places_URL+reference+"&key="+view.getContext().getString(R.string.map_api_key);
+            Picasso.get().load(Uri.parse(url)).fit().into(imageView);
+
+
+
+        } else if (view instanceof RoundedImageView) {
+            RoundedImageView imageView = (RoundedImageView) view;
+
+            String url = Tags.IMAGE_Places_URL+reference+"&key="+view.getContext().getString(R.string.map_api_key);
+            Picasso.get().load(Uri.parse(url)).fit().into(imageView);
+
+        } else if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+
+            String url = Tags.IMAGE_Places_URL+reference+"&key="+view.getContext().getString(R.string.map_api_key);
+            Picasso.get().load(Uri.parse(url)).fit().into(imageView);
+
+        }
+
+    }
+
+    @BindingAdapter("distance")
+    public static void distance(TextView view,double distance){
+        view.setText(String.format(Locale.ENGLISH,"%.2f %s",distance,view.getContext().getString(R.string.km)));
     }
 
 

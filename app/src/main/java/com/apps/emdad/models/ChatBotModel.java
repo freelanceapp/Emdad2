@@ -12,6 +12,7 @@ public class ChatBotModel implements Serializable {
     private double to_lat;
     private double to_lng;
     private double distance;
+    private double rate;
     private int type;
     private boolean enabled = true;
 
@@ -103,5 +104,13 @@ public class ChatBotModel implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 }

@@ -124,7 +124,19 @@
     <string name="clear_all">Clear All</string>
     <string name="can_t_find_any_shop_or_service_try_different_criteria">Can\'t find any shop or service, try different criteria</string>
     <string name="km">km</string>
-
+    <string name="category">Category</string>
+    <string name="distance">Distance</string>
+    <string name="rating">Rating</string>
+    <string name="apply">Apply</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="supermarket">Supermarket</string>
+    <string name="bakery">Bakery</string>
+    <string name="cafe">Cafe</string>
+    <string name="florist">Florist</string>
+    <string name="library">Library</string>
+    <string name="order2">Order</string>
+    <string name="write_here_details__order">Write here the details of your order,for example: i want 1 Cheeseburger,1 Large Fries,Please write also how much is the approximate cost of your order.</string>
+    <string name="done">Done</string>
 
 
 </resources>

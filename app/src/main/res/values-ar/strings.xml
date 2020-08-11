@@ -123,7 +123,20 @@
     <string name="filter">إعدادات البحث</string>
     <string name="recent_search">بحث سابق</string>
     <string name="clear_all">مسح الكل</string>
-    <string name="can_t_find_any_shop_or_service_try_different_criteria">Can\'t find any shop or service, try different criteria</string>
+    <string name="can_t_find_any_shop_or_service_try_different_criteria">لا يمكن العثور على أي متجر ابحث عنة فى الخريطة</string>
     <string name="km">كم</string>
+    <string name="category">خدمات</string>
+    <string name="distance">المسافة</string>
+    <string name="rating">تصنيفات</string>
+    <string name="apply">إستمرار</string>
+    <string name="restaurants">مطاعم</string>
+    <string name="supermarket">سوبرماركت</string>
+    <string name="bakery">مخبز</string>
+    <string name="cafe">كافيهات</string>
+    <string name="florist">هدايا</string>
+    <string name="library">مكتبات</string>
+    <string name="order2">طلب</string>
+    <string name="write_here_details__order">Write here the details of your order,for example: i want 1 Cheeseburger,1 Large Fries,Please write also how much is the approximate cost of your order.</string>
+    <string name="done">تم</string>
 
 </resources>

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.databinding.LoadMoreRowBinding;
 import com.apps.emdad.databinding.ShopSearchRowBinding;
 import com.apps.emdad.models.NearbyModel;
@@ -29,6 +30,7 @@ public class NearbyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context context;
     private double user_lat = 0.0, user_lng = 0.0;
     private LayoutInflater inflater;
+    private ShopsActivity activity;
 
     public NearbyAdapter(List<NearbyModel.Result> placeModelList, Context context, double user_lat, double user_lng) {
         this.placeModelList = placeModelList;
@@ -36,6 +38,7 @@ public class NearbyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.user_lat = user_lat;
         this.user_lng = user_lng;
         inflater = LayoutInflater.from(context);
+        activity = (ShopsActivity) context;
 
     }
 
@@ -65,7 +68,7 @@ public class NearbyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             holder.itemView.setOnClickListener(v -> {
                 NearbyModel.Result placeModel1 = placeModelList.get(myHolder.getAdapterPosition());
-
+                activity.setShopData(placeModel1);
 
             });
         }else if (holder instanceof LoadMoreHolder){

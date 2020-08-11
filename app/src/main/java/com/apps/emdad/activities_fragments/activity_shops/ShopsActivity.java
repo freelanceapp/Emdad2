@@ -28,9 +28,13 @@ import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.remote.Api;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.paperdb.Paper;
@@ -182,6 +186,8 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                                     resultList.addAll(response.body().getResults());
                                     adapter.notifyDataSetChanged();
                                     binding.setCount(resultList.size());
+                                    calculateDistance();
+
 
                                     binding.tvNoData.setVisibility(View.GONE);
 
@@ -260,7 +266,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                                     int newPos = resultList.size();
                                     binding.setCount(newPos);
                                     adapter.notifyItemRangeChanged(oldPos,newPos);
-
+                                    calculateDistance();
                                 }
                             }
 
@@ -328,7 +334,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                                     resultList.addAll(response.body().getResults());
                                     adapter.notifyDataSetChanged();
                                     binding.setCount(resultList.size());
-
+                                    calculateDistance();
                                     binding.tvNoData.setVisibility(View.GONE);
 
                                 }else
@@ -372,8 +378,47 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     }
 
 
+    private void calculateDistance(){
+        for (int i =0 ;i<resultList.size();i++){
+            NearbyModel.Result result = resultList.get(i);
+            result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng())));
+            resultList.set(i,result);
+        }
+
+        sortData();
+
+    }
+
+    private void sortData(){
+        Collections.sort(resultList, (o1, o2) -> {
+            if (o1.getDistance()<o2.getDistance()){
+                return -1;
+            }else if (o1.getDistance()>o2.getDistance()){
+                return 1;
+            }else{
+                return 0;
+
+            }
+        });
+
+        adapter.notifyDataSetChanged();
+
+
+    }
+
+    private double getDistance(LatLng latLng1,LatLng latLng2){
+        return SphericalUtil.computeDistanceBetween(latLng1,latLng2)/1000;
+    }
+
     @Override
     public void back() {
         super.onBackPressed();
+    }
+
+    public void setShopData(NearbyModel.Result placeModel) {
+        Intent intent = getIntent();
+        intent.putExtra("data",placeModel);
+        setResult(RESULT_OK,intent);
+        finish();
     }
 }

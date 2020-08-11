@@ -33,6 +33,7 @@ import com.apps.emdad.databinding.BotWelcomRowBinding;
 import com.apps.emdad.models.ChatBotModel;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int greeting = 1;
@@ -204,17 +205,55 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }else if (holder instanceof StoreHolder){
             StoreHolder storeHolder = (StoreHolder) holder;
 
+
+            if (chatBotModel.isEnabled()){
+                storeHolder.binding.tvShopList.setAlpha(1f);
+            }else {
+                storeHolder.binding.tvShopList.setAlpha(.5f);
+
+            }
+
+            if (chatBotModel.isEnabled()){
+                storeHolder.binding.tvLocation.setAlpha(1f);
+            }else {
+                storeHolder.binding.tvLocation.setAlpha(.5f);
+
+            }
+
+
+
+            storeHolder.binding.tvShopList.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+                    activity.openShops_Maps(storeHolder.getAdapterPosition(),context.getString(R.string.shop_list));
+
+                }
+            });
+
+            storeHolder.binding.tvLocation.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+
+                    activity.openShops_Maps(storeHolder.getAdapterPosition(),context.getString(R.string.location_on_map));
+
+                }
+            });
+
         }else if (holder instanceof StoreDetailsHolder){
             StoreDetailsHolder storeDetailsHolder = (StoreDetailsHolder) holder;
             storeDetailsHolder.binding.tvStoreDetails.setText(chatBotModel.getText());
 
+
         }else if (holder instanceof PlaceDetailsHolder){
             PlaceDetailsHolder placeDetailsHolder = (PlaceDetailsHolder) holder;
             placeDetailsHolder.binding.tvName.setText(chatBotModel.getText());
-            placeDetailsHolder.binding.tvDistance.setText(String.valueOf(chatBotModel.getDistance()));
+            placeDetailsHolder.binding.tvDistance.setText(String.format(Locale.ENGLISH,"%s %s",String.format(Locale.ENGLISH,"%.2f",chatBotModel.getDistance()),context.getString(R.string.km)));
+            placeDetailsHolder.binding.setIcon(chatBotModel.getImage_url());
+            placeDetailsHolder.binding.tvRate.setText(String.valueOf(chatBotModel.getRate()));
 
         }else if (holder instanceof NeedsHolder){
             NeedsHolder needsHolder = (NeedsHolder) holder;
+            needsHolder.binding.tvNeed.setOnClickListener(v -> {
+                activity.writeOrderDetails(needsHolder.getAdapterPosition());
+            });
         }else if (holder instanceof OrderDetailsHolder){
             OrderDetailsHolder orderDetailsHolder = (OrderDetailsHolder) holder;
             orderDetailsHolder.binding.tvDetails.setText(chatBotModel.getText());
