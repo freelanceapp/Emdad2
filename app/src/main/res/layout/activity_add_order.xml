@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+        
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -195,7 +196,7 @@
                         android:textSize="14sp"
                         android:inputType="textMultiLine"
                         android:textColorHint="@color/gray9"
-                        android:hint="@string/write_here_details__order"
+                        android:hint="@string/write_here_details_order"
                         android:layout_gravity="top"
                         android:background="@color/transparent"
                         android:gravity="top"
@@ -205,6 +206,7 @@
                 </androidx.core.widget.NestedScrollView>
 
                 <Button
+                    android:id="@+id/btnDone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"

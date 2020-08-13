@@ -44,7 +44,7 @@
                 android:layout_gravity="center"
                 android:textSize="14sp"
                 android:textColor="@color/color4"
-                android:text="@string/how_tp_pay_coupon"
+                android:text="@string/you_can_use_coupon"
                 />
         </androidx.cardview.widget.CardView>
     </LinearLayout>

@@ -1,11 +1,13 @@
 package com.apps.emdad.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultSettings implements Serializable {
     private boolean isLanguageSelected = false;
     private boolean showIntroSlider = true;
-
+    private List<FavoriteLocationModel> favoriteLocationModelList = new ArrayList<>();
     public DefaultSettings() {
     }
 
@@ -23,5 +25,13 @@ public class DefaultSettings implements Serializable {
 
     public void setShowIntroSlider(boolean showIntroSlider) {
         this.showIntroSlider = showIntroSlider;
+    }
+
+    public List<FavoriteLocationModel> getFavoriteLocationModelList() {
+        return favoriteLocationModelList;
+    }
+
+    public void setFavoriteLocationModelList(List<FavoriteLocationModel> favoriteLocationModelList) {
+        this.favoriteLocationModelList = favoriteLocationModelList;
     }
 }

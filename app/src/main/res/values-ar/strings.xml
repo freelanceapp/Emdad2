@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">إمداد</string>
     <string name="map_api_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
+    <string name="search_key">AIzaSyAeyMUJgKAhnNXbILHONb1um72CNzELFRY</string>
 
     <string name="field_req">الحقل مطلوب</string>
     <string name="login">تسجيل دخول</string>
@@ -136,7 +137,17 @@
     <string name="florist">هدايا</string>
     <string name="library">مكتبات</string>
     <string name="order2">طلب</string>
-    <string name="write_here_details__order">Write here the details of your order,for example: i want 1 Cheeseburger,1 Large Fries,Please write also how much is the approximate cost of your order.</string>
+    <string name="write_here_details_order">إكتب هنا تفاصيل طلبك من المحل مثلا:1هامبرجر بالجبنة،1 بطاطس كبير . ونرجو منك كتابة القيمة التقديرية للطلب حتى يتسنى للمرسول خدمتك.</string>
     <string name="done">تم</string>
+    <string name="you_can_use_coupon">إذا عندك كوبون خصم على التوصيل ممكن تستخدمة الآن اذا احببت</string>
+    <string name="map">خريطة</string>
+    <string name="hybrid">هجين</string>
+    <string name="paste_google_coordination">ضع رابط جوجل أو الاحداثيات</string>
+    <string name="confirm_drop_off">تأكيد مكان التوصيل</string>
+    <string name="saved_location">الاماكن المخزنة</string>
+    <string name="location_name">الاسم</string>
+    <string name="home2">المنزل</string>
+    <string name="work">العمل</string>
+    <string name="save">حفظ</string>
 
 </resources>

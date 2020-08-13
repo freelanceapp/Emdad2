@@ -25,7 +25,7 @@ public class NearbyModel implements Serializable {
         private String icon;
         private String name;
         private String place_id;
-        private double rating;
+        private double rating=0.0;
         private String vicinity;
         private List<Photo> photos;
         private Geometry geometry;

@@ -3,19 +3,19 @@ package com.apps.emdad.models;
 import java.io.Serializable;
 
 public class FilterModel implements Serializable {
-    private double distance;
+    private int distance;
     private double rate;
     private String keyword;
     public FilterModel() {
     }
 
-    public FilterModel(double distance, double rate, String keyword) {
+    public FilterModel(int distance, double rate, String keyword) {
         this.distance = distance;
         this.rate = rate;
         this.keyword = keyword;
     }
 
-    public double getDistance() {
+    public int getDistance() {
         return distance;
     }
 
@@ -23,7 +23,7 @@ public class FilterModel implements Serializable {
         return rate;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(int distance) {
         this.distance = distance;
     }
 

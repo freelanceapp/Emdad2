@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.apps.emdad.R;
 import com.apps.emdad.adapters.KeywordsAdapter;
@@ -55,7 +56,7 @@ public class FilterActivity extends AppCompatActivity implements Listeners.BackL
         String dist = String.format(Locale.ENGLISH,"%s %s",binding.seekBarDistance.getProgressFloat(),getString(R.string.km));
         binding.tvDistance.setText(dist);
         binding.tvRate.setText(String.valueOf(binding.seekBarRate.getProgressFloat()));
-        filterModel = new FilterModel(binding.seekBarDistance.getProgressFloat(),binding.seekBarRate.getProgressFloat(),"");
+        filterModel = new FilterModel((int) binding.seekBarDistance.getProgressFloat(),binding.seekBarRate.getProgressFloat(),"");
         binding.recView.setLayoutManager(new GridLayoutManager(this,2));
         addKeywords();
         adapter = new KeywordsAdapter(keywordList,this);
@@ -67,7 +68,7 @@ public class FilterActivity extends AppCompatActivity implements Listeners.BackL
                 binding.tvDistance.setText(dist);
                 binding.btnApply.setBackgroundResource(R.color.colorPrimary);
                 isChange = true;
-                filterModel.setDistance(seekParams.progressFloat);
+                filterModel.setDistance((int) seekParams.progressFloat);
 
             }
 
@@ -88,7 +89,7 @@ public class FilterActivity extends AppCompatActivity implements Listeners.BackL
                 binding.tvRate.setText(String.valueOf(seekParams.progressFloat));
                 binding.btnApply.setBackgroundResource(R.color.colorPrimary);
                 isChange = true;
-                filterModel.setDistance(seekParams.progressFloat);
+                filterModel.setRate((int) seekParams.progressFloat);
 
             }
 
@@ -105,6 +106,7 @@ public class FilterActivity extends AppCompatActivity implements Listeners.BackL
 
         binding.btnApply.setOnClickListener(v -> {
             if (isChange){
+
                 Intent intent = getIntent();
                 intent.putExtra("data",filterModel);
                 setResult(RESULT_OK,intent);

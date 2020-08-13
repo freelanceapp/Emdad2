@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
-        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("Lang", "ar")));
+        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
 
     @Override
@@ -143,8 +143,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             Intent intent = new Intent(this, AddOrderActivity.class);
             intent.putExtra("lat",location.getLatitude());
             intent.putExtra("lng",location.getLongitude());
-
-
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,binding.fab,binding.fab.getTransitionName());
                 startActivity(intent,options.toBundle());

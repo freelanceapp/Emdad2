@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -13,9 +14,12 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
 import com.apps.emdad.databinding.ActivityVerificationCodeBinding;
+import com.apps.emdad.language.Language;
 
 import java.util.Locale;
 import java.util.Timer;
+
+import io.paperdb.Paper;
 
 public class VerificationCodeActivity extends AppCompatActivity {
     private ActivityVerificationCodeBinding binding;
@@ -23,6 +27,15 @@ public class VerificationCodeActivity extends AppCompatActivity {
     private String phone;
     private boolean canSend = false;
     private  CountDownTimer countDownTimer;
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Paper.init(newBase);
+        super.attachBaseContext(Language.updateResources(newBase,Paper.book().read("lang","ar")));
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

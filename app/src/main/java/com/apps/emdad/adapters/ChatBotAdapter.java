@@ -35,6 +35,8 @@ import com.apps.emdad.models.ChatBotModel;
 import java.util.List;
 import java.util.Locale;
 
+import io.paperdb.Paper;
+
 public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int greeting = 1;
     public static final int welcome = 2;
@@ -63,6 +65,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public String user_image;
     public String time_type;
     private AddOrderActivity activity;
+    private String lang;
 
     public ChatBotAdapter(Context context, List<ChatBotModel> list, String user_name, String user_image,String time_type) {
         this.context = context;
@@ -72,6 +75,8 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.time_type = time_type;
         inflater = LayoutInflater.from(context);
         activity = (AddOrderActivity) context;
+        Paper.init(context);
+        lang = Paper.book().read("lang","ar");
 
     }
 
@@ -251,28 +256,101 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         }else if (holder instanceof NeedsHolder){
             NeedsHolder needsHolder = (NeedsHolder) holder;
+
+
+            if (chatBotModel.isEnabled()){
+                needsHolder.binding.tvNeed.setAlpha(1f);
+            }else {
+                needsHolder.binding.tvNeed.setAlpha(.5f);
+
+            }
+
             needsHolder.binding.tvNeed.setOnClickListener(v -> {
-                activity.writeOrderDetails(needsHolder.getAdapterPosition());
+                if (chatBotModel.isEnabled()){
+                    activity.writeOrderDetails(needsHolder.getAdapterPosition());
+
+                }
             });
         }else if (holder instanceof OrderDetailsHolder){
             OrderDetailsHolder orderDetailsHolder = (OrderDetailsHolder) holder;
             orderDetailsHolder.binding.tvDetails.setText(chatBotModel.getText());
+            orderDetailsHolder.binding.setLang(lang);
+            orderDetailsHolder.binding.llChange.setOnClickListener(v -> {
+                activity.changeOrderDetails(orderDetailsHolder.getAdapterPosition());
+            });
+
         }else if (holder instanceof DropOffLocationHolder){
             DropOffLocationHolder dropOffLocationHolder = (DropOffLocationHolder) holder;
+            if (chatBotModel.isEnabled()){
+                dropOffLocationHolder.binding.tvOpenMap.setAlpha(1f);
+            }else {
+                dropOffLocationHolder.binding.tvOpenMap.setAlpha(.5f);
+
+            }
+            dropOffLocationHolder.binding.tvOpenMap.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+                    activity.openDropOffLocationMap(dropOffLocationHolder.getAdapterPosition());
+                }
+            });
         }else if (holder instanceof DropLocationDetailsHolder){
             DropLocationDetailsHolder dropLocationDetailsHolder = (DropLocationDetailsHolder) holder;
-            dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getTo_address());
+            dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
         }else if (holder instanceof UseCouponHolder){
             UseCouponHolder useCouponHolder = (UseCouponHolder) holder;
 
+
         }else if (holder instanceof AddCouponHolder){
             AddCouponHolder addCouponHolder = (AddCouponHolder) holder;
+
+
+            if (chatBotModel.isEnabled()){
+                addCouponHolder.binding.tvAddCoupon.setAlpha(1f);
+            }else {
+                addCouponHolder.binding.tvAddCoupon.setAlpha(.5f);
+
+            }
+
+            if (chatBotModel.isEnabled()){
+                addCouponHolder.binding.tvNoCoupon.setAlpha(1f);
+            }else {
+                addCouponHolder.binding.tvNoCoupon.setAlpha(.5f);
+
+            }
+
+
+            addCouponHolder.binding.cardViewAddCoupon.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+                    activity.addCoupon(context.getString(R.string.add_coupon),addCouponHolder.getAdapterPosition());
+                }
+
+            });
+
+            addCouponHolder.binding.cardViewNoCoupon.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+                    activity.addCoupon(context.getString(R.string.don_t_have_coupon),addCouponHolder.getAdapterPosition());
+
+                }
+
+            });
 
         }else if (holder instanceof CouponDetailsHolder){
             CouponDetailsHolder couponDetailsHolder = (CouponDetailsHolder) holder;
             couponDetailsHolder.binding.tvCoupon.setText(chatBotModel.getText());
         }else if (holder instanceof PaymentHolder){
             PaymentHolder paymentHolder = (PaymentHolder) holder;
+
+            if (chatBotModel.isEnabled()){
+                paymentHolder.binding.tvPayment.setAlpha(1f);
+            }else {
+                paymentHolder.binding.tvPayment.setAlpha(.5f);
+
+            }
+
+            paymentHolder.binding.tvPayment.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+                    activity.payment(paymentHolder.getAdapterPosition());
+                }
+            });
         }else if (holder instanceof PaymentDetailsHolder){
             PaymentDetailsHolder paymentDetailsHolder = (PaymentDetailsHolder) holder;
             paymentDetailsHolder.binding.tvCoupon.setText(chatBotModel.getText());

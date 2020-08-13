@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Emdad</string>
     <string name="map_api_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
+    <string name="search_key">AIzaSyAeyMUJgKAhnNXbILHONb1um72CNzELFRY</string>
     <string name="field_req">Field required</string>
     <string name="login">Login</string>
     <string name="code">Code</string>
@@ -135,8 +136,18 @@
     <string name="florist">Florist</string>
     <string name="library">Library</string>
     <string name="order2">Order</string>
-    <string name="write_here_details__order">Write here the details of your order,for example: i want 1 Cheeseburger,1 Large Fries,Please write also how much is the approximate cost of your order.</string>
+    <string name="write_here_details_order">Write here the details of your order,for example: i want 1 Cheeseburger,1 Large Fries,Please write also how much is the approximate cost of your order.</string>
     <string name="done">Done</string>
+    <string name="you_can_use_coupon">Okay, you can use coupons to pay for the delivery of the order</string>
+    <string name="map">Map</string>
+    <string name="hybrid">Hybrid</string>
+    <string name="paste_google_coordination">Paste google map URL or coordination</string>
+    <string name="confirm_drop_off">Confirm drop off</string>
+    <string name="saved_location">Saved location</string>
+    <string name="location_name">Location name</string>
+    <string name="home2">Home</string>
+    <string name="work">Work</string>
+    <string name="save">Save</string>
 
 
 </resources>

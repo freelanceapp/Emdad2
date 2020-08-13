@@ -20,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_verification_code.VerificationCodeActivity;
 import com.apps.emdad.adapters.CountriesAdapter;
 import com.apps.emdad.databinding.ActivityLoginBinding;
@@ -49,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
-        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("Lang", "ar")));
+        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
 
     @Override
@@ -94,9 +95,14 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
                 }
             }
         });
+        binding.tvSkip.setOnClickListener(v -> {
+            navigateToHomeActivity();
+        });
         createCountriesDialog();
         getPhoneCodes();
     }
+
+
 
     private void getPhoneCodes() {
 
@@ -155,6 +161,12 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
         startActivity(intent);
         finish();
 
+    }
+
+    private void navigateToHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void setItemData(CountryModel countryModel) {

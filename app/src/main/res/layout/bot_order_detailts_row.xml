@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="lang"
+            type="String" />
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +54,8 @@
                     android:textSize="12sp"
                     android:textColor="@color/white"
                     android:layout_marginTop="5dp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
 
                     />
                 <View
@@ -74,7 +81,11 @@
                        android:text="@string/change"
                        android:clickable="false"
                        android:longClickable="false"
+                       android:layout_gravity="center_vertical"
                        />
+                    <Space
+                        android:layout_width="20dp"
+                        android:layout_height="1dp"/>
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
@@ -83,6 +94,11 @@
                         android:padding="5dp"
                         android:clickable="false"
                         android:longClickable="false"
+                        android:rotation='@{lang.equals("ar")?180:0}'
+                        android:layout_gravity="center_vertical"
+
+
+
                         />
                 </LinearLayout>
 

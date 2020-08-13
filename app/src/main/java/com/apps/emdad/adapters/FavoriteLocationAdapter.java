@@ -10,27 +10,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_filter.FilterActivity;
-import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
-import com.apps.emdad.databinding.CountriesRowBinding;
+import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.databinding.KeywordRowBinding;
-import com.apps.emdad.models.CountryModel;
+import com.apps.emdad.databinding.SavedLocationRowBinding;
+import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.KeywordModel;
 
 import java.util.List;
 
-public class KeywordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class FavoriteLocationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<KeywordModel> list;
+    private List<FavoriteLocationModel> list;
     private Context context;
     private LayoutInflater inflater;
-    private FilterActivity activity;
-    private int selected_pos = -1;
+    private MapSearchActivity activity;
 
-    public KeywordsAdapter(List<KeywordModel> list, Context context) {
+    public FavoriteLocationAdapter(List<FavoriteLocationModel> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        activity = (FilterActivity) context;
+        activity = (MapSearchActivity) context;
 
 
     }
@@ -40,7 +39,7 @@ public class KeywordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
 
-        KeywordRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.keyword_row, parent, false);
+        SavedLocationRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.saved_location_row, parent, false);
         return new MyHolder(binding);
 
 
@@ -50,18 +49,14 @@ public class KeywordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         MyHolder myHolder = (MyHolder) holder;
-        myHolder.binding.setKeyword(list.get(position).getName());
-        if (selected_pos == position){
-            myHolder.binding.rb.setChecked(true);
-        }else {
-            myHolder.binding.rb.setChecked(false);
+        myHolder.binding.setModel(list.get(position));
 
-        }
 
-        myHolder.binding.rb.setOnClickListener(v -> {
-            selected_pos = myHolder.getAdapterPosition();
-            activity.setItemData(list.get(myHolder.getAdapterPosition()));
-            notifyDataSetChanged();
+        myHolder.itemView.setOnClickListener(v -> {
+            FavoriteLocationModel model = list.get(myHolder.getAdapterPosition());
+            activity.setFavoriteItem(model);
+
+
         });
 
 
@@ -73,9 +68,9 @@ public class KeywordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public static class MyHolder extends RecyclerView.ViewHolder {
-        public KeywordRowBinding binding;
+        public SavedLocationRowBinding binding;
 
-        public MyHolder(@NonNull KeywordRowBinding binding) {
+        public MyHolder(@NonNull SavedLocationRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 
