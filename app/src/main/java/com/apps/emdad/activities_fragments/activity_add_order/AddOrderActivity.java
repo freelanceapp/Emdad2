@@ -124,6 +124,7 @@ public class AddOrderActivity extends AppCompatActivity {
 
 
     private void startChat() {
+        binding.cardRestart.setVisibility(View.GONE);
         binding.edtDetails.setText(null);
         chatBotModelList.clear();
         adapter.notifyDataSetChanged();

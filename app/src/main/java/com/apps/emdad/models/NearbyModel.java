@@ -29,7 +29,7 @@ public class NearbyModel implements Serializable {
         private String vicinity;
         private List<Photo> photos;
         private Geometry geometry;
-        private double distance;
+        private double distance =0.0;
 
 
         public String getId() {

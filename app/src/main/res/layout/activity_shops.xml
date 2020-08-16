@@ -94,6 +94,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/llLocation"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_gravity="center_vertical"
@@ -109,6 +110,7 @@
                     android:padding="3dp"
                     />
                 <TextView
+                    android:id="@+id/tvLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -174,12 +176,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/tvNoData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/color4"
+                android:text="@string/can_t_find_any_shop_or_service_try_different_criteria"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:gravity="center"
+                android:visibility="gone"
+                />
             <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/expandLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:el_expanded="false"
                 app:el_duration="500"
                 app:el_parallax=".5"
+                android:background="@color/gray1_trans"
                 >
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -227,23 +249,6 @@
                 </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            <TextView
-                android:id="@+id/tvNoData"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="14sp"
-                android:textColor="@color/color4"
-                android:text="@string/can_t_find_any_shop_or_service_try_different_criteria"
-                android:paddingLeft="50dp"
-                android:paddingRight="50dp"
-                android:gravity="center"
-                android:visibility="gone"
-                />
         </FrameLayout>
 
     </LinearLayout>

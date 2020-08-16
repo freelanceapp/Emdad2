@@ -107,6 +107,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
     private List<FavoriteLocationModel> favoriteLocationModelList;
     private DefaultSettings defaultSettings;
     private FavoriteLocationAdapter adapter;
+    private int type = 0;
 
 
     @Override
@@ -119,7 +120,14 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_map_search);
+        getDataFromIntent();
         initView();
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        type = intent.getIntExtra("type",0);
+
     }
 
     private void initView() {
@@ -140,7 +148,18 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
 
         }
         if (favoriteLocationModelList.size()>0){
-            binding.cardFavorite.setVisibility(View.VISIBLE);
+            if (type==0){
+                binding.cardFavorite.setVisibility(View.VISIBLE);
+            }else {
+                binding.cardFavorite.setVisibility(View.GONE);
+
+            }
+        }
+        if (type==0){
+            binding.imageCheckBox.setVisibility(View.VISIBLE);
+        }else {
+            binding.imageCheckBox.setVisibility(View.GONE);
+
         }
 
 
@@ -216,14 +235,20 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
         binding.cardFavorite.setOnClickListener(v -> {
             openSheet();
         });
+
         binding.btnConfirm.setOnClickListener(v -> {
-            Intent intent = getIntent();
-            FavoriteLocationModel model = new FavoriteLocationModel("","",address,lat,lng);
-            intent.putExtra("data",model);
-            setResult(RESULT_OK,intent);
-            finish();
+            if (canSelectLocation){
+                Intent intent = getIntent();
+                FavoriteLocationModel model = new FavoriteLocationModel("","",address,lat,lng);
+                intent.putExtra("data",model);
+                setResult(RESULT_OK,intent);
+                finish();
+            }
+
         });
         updateUI();
+
+
 
 
 
@@ -237,6 +262,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
         DialogFavoriteLocationBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_favorite_location, null, false);
         binding.tvAddress.setText(address);
         binding.btnSave.setOnClickListener(v -> {
+
             MapSearchActivity.this.binding.imageCheckBox.setBackgroundResource(R.drawable.ic_star2);
             MapSearchActivity.this.binding.cardFavorite.setVisibility(View.VISIBLE);
             String name = binding.edtLocationName.getText().toString().trim();
@@ -384,7 +410,9 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
 
             mMap.setOnCameraIdleListener(() ->{
                 mMap.clear();
-                getGeoData(mMap.getCameraPosition().target.latitude,mMap.getCameraPosition().target.longitude);
+                lat = mMap.getCameraPosition().target.latitude;
+                lng = mMap.getCameraPosition().target.longitude;
+                getGeoData(lat,lng);
                 binding.pin.setVisibility(View.VISIBLE);
             });
         }
@@ -463,6 +491,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
                         if (response.isSuccessful() && response.body() != null) {
 
                             if (response.body().getResults().size() > 0) {
+
                                 if (response.body().getResults().size()>1){
                                     address = response.body().getResults().get(1).getFormatted_address();
 
@@ -470,9 +499,16 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
                                     address = response.body().getResults().get(0).getFormatted_address();
 
                                 }
-                                MapSearchActivity.this.binding.imageCheckBox.setBackgroundResource(R.drawable.ic_star_empty);
+
+                                if (type==0){
+                                    binding.imageCheckBox.setVisibility(View.VISIBLE);
+                                    binding.imageCheckBox.setBackgroundResource(R.drawable.ic_star_empty);
+
+                                }else {
+                                    binding.imageCheckBox.setVisibility(View.GONE);
+
+                                }
                                 binding.tvAddress.setText(address + "");
-                                binding.imageCheckBox.setVisibility(View.VISIBLE);
                                 canSelectLocation = true;
                                 binding.btnConfirm.setBackgroundResource(R.drawable.small_rounded_primary);
                             }
@@ -677,7 +713,6 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-
     public void setFavoriteItem(FavoriteLocationModel model) {
         closeSheet();
         lat = model.getLat();
@@ -687,6 +722,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
         AddMarker(lat,lng);
 
     }
+
 
     @Override
     public void back() {
