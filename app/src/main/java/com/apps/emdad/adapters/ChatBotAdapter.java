@@ -27,6 +27,7 @@ import com.apps.emdad.databinding.BotOrderDetailtsRowBinding;
 import com.apps.emdad.databinding.BotPaymentDetailsRowBinding;
 import com.apps.emdad.databinding.BotPaymentRowBinding;
 import com.apps.emdad.databinding.BotPlaceDetailtsRowBinding;
+import com.apps.emdad.databinding.BotShareLocationRowBinding;
 import com.apps.emdad.databinding.BotStoreDetailsRowBinding;
 import com.apps.emdad.databinding.BotTypingRowBinding;
 import com.apps.emdad.databinding.BotWelcomRowBinding;
@@ -57,6 +58,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static final int finish_order = 17;
     public static final int typing = 18;
     public static final int empty = 19;
+    public static final int share_location = 20;
 
     public Context context;
     public List<ChatBotModel>  list;
@@ -114,6 +116,9 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }else if (viewType==drop_location_details){
             BotDropLocationDetailtsRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_drop_location_detailts_row,parent,false);
             return new DropLocationDetailsHolder(binding);
+        }else if (viewType==share_location){
+            BotShareLocationRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_share_location_row,parent,false);
+            return new ShareLocationHolder(binding);
         }else if (viewType==use_coupon){
             BotCouponRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_coupon_row,parent,false);
             return new UseCouponHolder(binding);
@@ -156,12 +161,14 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             }
 
-        }else if (holder instanceof WelcomeHolder){
+        }
+        else if (holder instanceof WelcomeHolder){
 
             WelcomeHolder welcomeHolder = (WelcomeHolder) holder;
             welcomeHolder.binding.tvMsg.setText(String.format("%s%s \n %s",context.getString(R.string.welcome_experience),getEmoji(0x1F60D),context.getString(R.string.we_deliver_anything_city)));
 
-        }else if (holder instanceof HelpHolder){
+        }
+        else if (holder instanceof HelpHolder){
             HelpHolder helpHolder = (HelpHolder) holder;
 
             if (chatBotModel.isEnabled()){
@@ -203,11 +210,13 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
 
 
-        }else if (holder instanceof NewOrderHolder){
+        }
+        else if (holder instanceof NewOrderHolder){
             NewOrderHolder newOrderHolder = (NewOrderHolder) holder;
             newOrderHolder.binding.tvNewOrder.setText(chatBotModel.getText());
 
-        }else if (holder instanceof StoreHolder){
+        }
+        else if (holder instanceof StoreHolder){
             StoreHolder storeHolder = (StoreHolder) holder;
 
 
@@ -242,19 +251,22 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-        }else if (holder instanceof StoreDetailsHolder){
+        }
+        else if (holder instanceof StoreDetailsHolder){
             StoreDetailsHolder storeDetailsHolder = (StoreDetailsHolder) holder;
             storeDetailsHolder.binding.tvStoreDetails.setText(chatBotModel.getText());
 
 
-        }else if (holder instanceof PlaceDetailsHolder){
+        }
+        else if (holder instanceof PlaceDetailsHolder){
             PlaceDetailsHolder placeDetailsHolder = (PlaceDetailsHolder) holder;
             placeDetailsHolder.binding.tvName.setText(chatBotModel.getText());
             placeDetailsHolder.binding.tvDistance.setText(String.format(Locale.ENGLISH,"%s %s",String.format(Locale.ENGLISH,"%.2f",chatBotModel.getDistance()),context.getString(R.string.km)));
             placeDetailsHolder.binding.setIcon(chatBotModel.getImage_url());
             placeDetailsHolder.binding.tvRate.setText(String.valueOf(chatBotModel.getRate()));
 
-        }else if (holder instanceof NeedsHolder){
+        }
+        else if (holder instanceof NeedsHolder){
             NeedsHolder needsHolder = (NeedsHolder) holder;
 
 
@@ -271,7 +283,8 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 }
             });
-        }else if (holder instanceof OrderDetailsHolder){
+        }
+        else if (holder instanceof OrderDetailsHolder){
             OrderDetailsHolder orderDetailsHolder = (OrderDetailsHolder) holder;
             orderDetailsHolder.binding.tvDetails.setText(chatBotModel.getText());
             orderDetailsHolder.binding.setLang(lang);
@@ -279,7 +292,8 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 activity.changeOrderDetails(orderDetailsHolder.getAdapterPosition());
             });
 
-        }else if (holder instanceof DropOffLocationHolder){
+        }
+        else if (holder instanceof DropOffLocationHolder){
             DropOffLocationHolder dropOffLocationHolder = (DropOffLocationHolder) holder;
             if (chatBotModel.isEnabled()){
                 dropOffLocationHolder.binding.tvOpenMap.setAlpha(1f);
@@ -292,14 +306,32 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     activity.openDropOffLocationMap(dropOffLocationHolder.getAdapterPosition());
                 }
             });
-        }else if (holder instanceof DropLocationDetailsHolder){
+        }
+        else if (holder instanceof ShareLocationHolder){
+            ShareLocationHolder shareLocationHolder = (ShareLocationHolder) holder;
+            if (chatBotModel.isEnabled()){
+                shareLocationHolder.binding.tvShareLocation.setAlpha(1f);
+            }else {
+                shareLocationHolder.binding.tvShareLocation.setAlpha(.5f);
+
+            }
+            shareLocationHolder.binding.tvShareLocation.setOnClickListener(v -> {
+                if (chatBotModel.isEnabled()){
+                    activity.shareLocation(shareLocationHolder.getAdapterPosition());
+
+                }
+            });
+        }
+        else if (holder instanceof DropLocationDetailsHolder){
             DropLocationDetailsHolder dropLocationDetailsHolder = (DropLocationDetailsHolder) holder;
             dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
-        }else if (holder instanceof UseCouponHolder){
+        }
+        else if (holder instanceof UseCouponHolder){
             UseCouponHolder useCouponHolder = (UseCouponHolder) holder;
 
 
-        }else if (holder instanceof AddCouponHolder){
+        }
+        else if (holder instanceof AddCouponHolder){
             AddCouponHolder addCouponHolder = (AddCouponHolder) holder;
 
 
@@ -333,10 +365,12 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             });
 
-        }else if (holder instanceof CouponDetailsHolder){
+        }
+        else if (holder instanceof CouponDetailsHolder){
             CouponDetailsHolder couponDetailsHolder = (CouponDetailsHolder) holder;
             couponDetailsHolder.binding.tvCoupon.setText(chatBotModel.getText());
-        }else if (holder instanceof PaymentHolder){
+        }
+        else if (holder instanceof PaymentHolder){
             PaymentHolder paymentHolder = (PaymentHolder) holder;
 
             if (chatBotModel.isEnabled()){
@@ -351,15 +385,19 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     activity.payment(paymentHolder.getAdapterPosition());
                 }
             });
-        }else if (holder instanceof PaymentDetailsHolder){
+        }
+        else if (holder instanceof PaymentDetailsHolder){
             PaymentDetailsHolder paymentDetailsHolder = (PaymentDetailsHolder) holder;
             paymentDetailsHolder.binding.tvCoupon.setText(chatBotModel.getText());
-        }else if (holder instanceof FinishHolder){
+        }
+        else if (holder instanceof FinishHolder){
             FinishHolder finishHolder = (FinishHolder) holder;
 
-        }else if (holder instanceof TypingHolder){
+        }
+        else if (holder instanceof TypingHolder){
             TypingHolder typingHolder = (TypingHolder) holder;
-        }else if (holder instanceof EmptyHolder){
+        }
+        else if (holder instanceof EmptyHolder){
             EmptyHolder emptyHolder = (EmptyHolder) holder;
         }
     }
@@ -458,6 +496,15 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static class DropOffLocationHolder extends RecyclerView.ViewHolder {
         private BotDropLocationRowBinding binding;
         public DropOffLocationHolder(@NonNull BotDropLocationRowBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+        }
+    }
+
+    private static class ShareLocationHolder extends RecyclerView.ViewHolder {
+        private BotShareLocationRowBinding binding;
+        public ShareLocationHolder(@NonNull BotShareLocationRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

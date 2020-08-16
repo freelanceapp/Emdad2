@@ -140,21 +140,19 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
         binding.fab.setOnClickListener(v -> {
-            //Intent intent = new Intent(this, AddOrderActivity.class);
-            Intent intent = new Intent(this, ShopsActivity.class);
+            Intent intent = new Intent(this, AddOrderActivity.class);
 
             intent.putExtra("lat",location.getLatitude());
             intent.putExtra("lng",location.getLongitude());
-            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,binding.fab,binding.fab.getTransitionName());
                 startActivity(intent,options.toBundle());
 
             }else {
                 startActivity(intent);
 
-            }*/
+            }
 
-            startActivity(intent);
 
 
         });

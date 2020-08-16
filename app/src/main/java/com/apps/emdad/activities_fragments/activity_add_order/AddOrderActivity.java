@@ -238,7 +238,7 @@ public class AddOrderActivity extends AppCompatActivity {
                     chatBotModel2 = createInstance(ChatBotAdapter.store);
 
                 } else {
-                    chatBotModel2 = createInstance(ChatBotAdapter.drop_off_location);
+                    chatBotModel2 = createInstance(ChatBotAdapter.share_location);
 
 
                 }
@@ -250,7 +250,10 @@ public class AddOrderActivity extends AppCompatActivity {
 
             }, 1000);
         }, 1000);
+
     }
+
+
 
     public void openShops_Maps(int adapterPosition, String action) {
         shopListPos = adapterPosition;
@@ -261,6 +264,7 @@ public class AddOrderActivity extends AppCompatActivity {
             intent.putExtra("lng", user_lng);
             startActivityForResult(intent, 100);
         } else {
+
 
         }
 
@@ -404,9 +408,10 @@ public class AddOrderActivity extends AppCompatActivity {
         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
     }
 
+    public void shareLocation(int adapterPosition) {
 
 
-
+    }
     private void navigateToMapSearch(int req) {
         Intent intent = new Intent(this, MapSearchActivity.class);
         startActivityForResult(intent,req);
