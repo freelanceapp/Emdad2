@@ -146,6 +146,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
             return false;
         });
 
+
         binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -159,21 +160,23 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (normalSearch){
-                    if (s.toString().isEmpty()){
-                        if (binding.expandLayout.isExpanded()){
-                            binding.expandLayout.collapse(true);
+                if (s.toString().isEmpty()){
+                    if (binding.expandLayout.isExpanded()){
+                        binding.expandLayout.collapse(true);
 
-                        }
-                        clear();
-                    }else {
-                        if (recentSearchList.size()>0){
-
-                            binding.expandLayout.expand(true);
-                        }
-                        binding.tvCancel.setVisibility(View.VISIBLE);
                     }
+                    if (normalSearch){
+                        clear();
+                    }
+                }else {
+                    if (recentSearchList.size()>0){
+
+                        binding.expandLayout.expand(true);
+                    }
+                    binding.tvCancel.setVisibility(View.VISIBLE);
                 }
+
+
 
             }
         });
