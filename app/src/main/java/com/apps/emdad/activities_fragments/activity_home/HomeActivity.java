@@ -91,7 +91,13 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private final int loc_req = 22;
     private Location location;
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        binding.bottomAppBar.performShow();
 
+
+    }
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -140,6 +146,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
         binding.fab.setOnClickListener(v -> {
+
+            binding.bottomAppBar.performHide();
             Intent intent = new Intent(this, AddOrderActivity.class);
 
             intent.putExtra("lat",location.getLatitude());
@@ -152,6 +160,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(intent);
 
             }
+
 
 
 

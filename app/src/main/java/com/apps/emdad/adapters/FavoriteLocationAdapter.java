@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_filter.FilterActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
+import com.apps.emdad.activities_fragments.activity_package_map.PackageMapActivity;
 import com.apps.emdad.databinding.KeywordRowBinding;
 import com.apps.emdad.databinding.SavedLocationRowBinding;
 import com.apps.emdad.models.FavoriteLocationModel;
@@ -23,13 +25,13 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<FavoriteLocationModel> list;
     private Context context;
     private LayoutInflater inflater;
-    private MapSearchActivity activity;
+    private AppCompatActivity activity;
 
     public FavoriteLocationAdapter(List<FavoriteLocationModel> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        activity = (MapSearchActivity) context;
+        activity = (AppCompatActivity) context;
 
 
     }
@@ -54,7 +56,15 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         myHolder.itemView.setOnClickListener(v -> {
             FavoriteLocationModel model = list.get(myHolder.getAdapterPosition());
-            activity.setFavoriteItem(model);
+            if (activity instanceof MapSearchActivity){
+                MapSearchActivity mapSearchActivity = (MapSearchActivity) activity;
+                mapSearchActivity.setFavoriteItem(model);
+
+            }else if (activity instanceof PackageMapActivity){
+                PackageMapActivity packageMapActivity = (PackageMapActivity) activity;
+                packageMapActivity.setFavoriteItem(model);
+
+            }
 
 
         });

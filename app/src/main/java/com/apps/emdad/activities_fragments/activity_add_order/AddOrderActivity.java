@@ -13,12 +13,14 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
+import com.apps.emdad.activities_fragments.activity_package_map.PackageMapActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.ChatBotAdapter;
 import com.apps.emdad.databinding.ActivityAddOrderBinding;
@@ -27,6 +29,8 @@ import com.apps.emdad.models.ChatBotModel;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.share.Common;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +51,9 @@ public class AddOrderActivity extends AppCompatActivity {
     private int write_order_details_pos = -1;
     private int order_details_pos = -1;
     private int drop_off_pos = -1;
+    private int share_location_pos = -1;
+    private FavoriteLocationModel fromLocation, toLocation;
+    private boolean isPackageOrder = false;
 
 
     @Override
@@ -75,7 +82,8 @@ public class AddOrderActivity extends AppCompatActivity {
         user_lng = intent.getDoubleExtra("lng", 0.0);
     }
 
-    private void initView() {
+    private void initView()
+    {
         chatBotModelList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
@@ -116,14 +124,19 @@ public class AddOrderActivity extends AppCompatActivity {
         binding.btnDone.setOnClickListener(v -> {
             String details = binding.edtDetails.getText().toString().trim();
             if (!details.isEmpty()) {
-               addOrderDetails(details);
+                addOrderDetails(details);
             }
         });
 
     }
-
-
-    private void startChat() {
+    private void startChat()
+    {
+        shopListPos =-1;
+        write_order_details_pos = -1;
+        order_details_pos = -1;
+        drop_off_pos = -1;
+        share_location_pos = -1;
+        isPackageOrder = false;
         binding.cardRestart.setVisibility(View.GONE);
         binding.edtDetails.setText(null);
         chatBotModelList.clear();
@@ -201,14 +214,14 @@ public class AddOrderActivity extends AppCompatActivity {
 
                 }, 3000);
     }
-
-    private ChatBotModel createInstance(int type) {
+    private ChatBotModel createInstance(int type)
+    {
         ChatBotModel chatBotModel = new ChatBotModel();
         chatBotModel.setType(type);
         return chatBotModel;
     }
-
-    public void addOrder_Package(String action, int adapterPosition) {
+    public void addOrder_Package(String action, int adapterPosition)
+    {
         binding.cardRestart.setVisibility(View.VISIBLE);
         ChatBotModel chatBotModel1 = chatBotModelList.get(adapterPosition);
         chatBotModel1.setEnabled(false);
@@ -252,10 +265,8 @@ public class AddOrderActivity extends AppCompatActivity {
         }, 1000);
 
     }
-
-
-
-    public void openShops_Maps(int adapterPosition, String action) {
+    public void openShops_Maps(int adapterPosition, String action)
+    {
         shopListPos = adapterPosition;
 
         if (action.equals(getString(R.string.shop_list))) {
@@ -270,12 +281,12 @@ public class AddOrderActivity extends AppCompatActivity {
 
 
     }
-
-    private void addOrderDetails(String details) {
-        Common.CloseKeyBoard(this,binding.edtDetails);
+    private void addOrderDetails(String details)
+    {
+        Common.CloseKeyBoard(this, binding.edtDetails);
         closeSheet();
 
-        if (order_details_pos==-1){
+        if (order_details_pos == -1) {
             ChatBotModel chatBotModel2 = chatBotModelList.get(write_order_details_pos);
             chatBotModel2.setEnabled(false);
             chatBotModelList.set(write_order_details_pos, chatBotModel2);
@@ -290,27 +301,59 @@ public class AddOrderActivity extends AppCompatActivity {
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
             new Handler()
-                    .postDelayed(()->{
+                    .postDelayed(() -> {
                         chatBotModelList.add(null);
                         adapter.notifyItemInserted(chatBotModelList.size() - 1);
                         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
                         new Handler()
-                                .postDelayed(()->{
+                                .postDelayed(() -> {
                                     chatBotModelList.remove(chatBotModelList.size() - 1);
                                     adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
-                                    ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.drop_off_location);
-                                    chatBotModelList.add(chatBotModel3);
-                                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+                                    if (isPackageOrder){
+
+                                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.use_coupon);
+                                        chatBotModelList.add(chatBotModel3);
+                                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
 
-                                },1000);
+                                        new Handler().postDelayed(() -> {
+                                            chatBotModelList.add(null);
+                                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                                            new Handler().postDelayed(() -> {
+                                                chatBotModelList.remove(chatBotModelList.size() - 1);
+                                                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
 
-                    },1000);
-        }else {
+                                                ChatBotModel chatBotModel4 = createInstance(ChatBotAdapter.add_coupon);
+                                                chatBotModelList.add(chatBotModel4);
+                                                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                                            }, 1000);
+
+
+                                        }, 1000);
+
+                                    }else {
+                                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.drop_off_location);
+                                        chatBotModelList.add(chatBotModel3);
+                                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                                    }
+
+
+                                }, 1000);
+
+
+                    }, 1000);
+        } else {
             ChatBotModel chatBotModel = chatBotModelList.get(order_details_pos);
             chatBotModel.setText(details);
             chatBotModelList.set(order_details_pos, chatBotModel);
@@ -319,14 +362,14 @@ public class AddOrderActivity extends AppCompatActivity {
         }
 
     }
-
-    public void openDropOffLocationMap(int adapterPosition) {
+    public void openDropOffLocationMap(int adapterPosition)
+    {
         this.drop_off_pos = adapterPosition;
         navigateToMapSearch(200);
     }
-
-    public void addCoupon(String coupon, int adapterPosition) {
-        if (coupon.equals(getString(R.string.don_t_have_coupon))){
+    public void addCoupon(String coupon, int adapterPosition)
+    {
+        if (coupon.equals(getString(R.string.don_t_have_coupon))) {
 
             ChatBotModel chatBotModel2 = chatBotModelList.get(adapterPosition);
             chatBotModel2.setEnabled(false);
@@ -339,12 +382,12 @@ public class AddOrderActivity extends AppCompatActivity {
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-            new Handler().postDelayed(()->{
+            new Handler().postDelayed(() -> {
                 chatBotModelList.add(null);
                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-                new Handler().postDelayed(()->{
+                new Handler().postDelayed(() -> {
                     chatBotModelList.remove(chatBotModelList.size() - 1);
                     adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
@@ -354,19 +397,18 @@ public class AddOrderActivity extends AppCompatActivity {
                     binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
 
+                }, 1000);
+            }, 1000);
 
-                },1000);
-            },1000);
-
-        }else {
+        } else {
 
         }
     }
-
-    public void payment(int adapterPosition) {
+    public void payment(int adapterPosition)
+    {
         ChatBotModel chatBotModel = chatBotModelList.get(adapterPosition);
         chatBotModel.setEnabled(false);
-        chatBotModelList.set(adapterPosition,chatBotModel);
+        chatBotModelList.set(adapterPosition, chatBotModel);
         adapter.notifyItemChanged(adapterPosition);
 
         ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.payment_details);
@@ -380,7 +422,7 @@ public class AddOrderActivity extends AppCompatActivity {
         adapter.notifyItemInserted(chatBotModelList.size() - 1);
         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-        new Handler().postDelayed(()->{
+        new Handler().postDelayed(() -> {
             chatBotModelList.remove(chatBotModelList.size() - 1);
             adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
@@ -389,12 +431,11 @@ public class AddOrderActivity extends AppCompatActivity {
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-        },1000);
+        }, 1000);
 
     }
-
-
-    private void updateSelectedShopListUi() {
+    private void updateSelectedShopListUi()
+    {
         ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
         chatBotModel1.setEnabled(false);
         chatBotModelList.set(shopListPos, chatBotModel1);
@@ -407,25 +448,31 @@ public class AddOrderActivity extends AppCompatActivity {
         adapter.notifyItemInserted(chatBotModelList.size() - 1);
         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
     }
-
-    public void shareLocation(int adapterPosition) {
-
+    public void shareLocation(int adapterPosition)
+    {
+        share_location_pos = adapterPosition;
+        navigateToPackageMapActivity(300);
 
     }
-    private void navigateToMapSearch(int req) {
+    private void navigateToPackageMapActivity(int req)
+    {
+        Intent intent = new Intent(this, PackageMapActivity.class);
+        startActivityForResult(intent, req);
+    }
+    private void navigateToMapSearch(int req)
+    {
         Intent intent = new Intent(this, MapSearchActivity.class);
-        startActivityForResult(intent,req);
+        startActivityForResult(intent, req);
     }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
             NearbyModel.Result result = (NearbyModel.Result) data.getSerializableExtra("data");
             updateSelectedShopUI(result);
 
-        }else if (requestCode == 200 && resultCode == RESULT_OK && data != null)
-        {
+        } else if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
             FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
             ChatBotModel chatBotModel1 = chatBotModelList.get(drop_off_pos);
             chatBotModel1.setEnabled(false);
@@ -437,8 +484,7 @@ public class AddOrderActivity extends AppCompatActivity {
             chatBotModel2.setFrom_lat(favoriteLocationModel.getLat());
             chatBotModel2.setFrom_lng(favoriteLocationModel.getLng());
             chatBotModelList.add(chatBotModel2);
-            adapter.notifyItemInserted(chatBotModelList.size()-1);
-
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
 
 
             chatBotModelList.add(null);
@@ -457,12 +503,12 @@ public class AddOrderActivity extends AppCompatActivity {
                         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
 
-                        new Handler().postDelayed(()->{
+                        new Handler().postDelayed(() -> {
                             chatBotModelList.add(null);
                             adapter.notifyItemInserted(chatBotModelList.size() - 1);
                             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-                            new Handler().postDelayed(()->{
+                            new Handler().postDelayed(() -> {
                                 chatBotModelList.remove(chatBotModelList.size() - 1);
                                 adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
@@ -473,25 +519,61 @@ public class AddOrderActivity extends AppCompatActivity {
                                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
 
-
-                            },1000);
-
+                            }, 1000);
 
 
-                        },1000);
-
-
-
-
+                        }, 1000);
 
 
                     }, 1000);
 
 
+        } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
+            isPackageOrder = true;
+            fromLocation = (FavoriteLocationModel) data.getSerializableExtra("data1");
+            toLocation = (FavoriteLocationModel) data.getSerializableExtra("data2");
+
+            ChatBotModel chatBotModel1 = chatBotModelList.get(share_location_pos);
+            chatBotModel1.setEnabled(false);
+            chatBotModelList.set(share_location_pos, chatBotModel1);
+            adapter.notifyItemChanged(share_location_pos);
+
+            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.drop_off_location_package_details);
+            chatBotModel2.setFrom_address(fromLocation.getAddress());
+            chatBotModel2.setFrom_lat(fromLocation.getLat());
+            chatBotModel2.setFrom_lng(fromLocation.getLng());
+            chatBotModel2.setTo_address(toLocation.getAddress());
+            chatBotModel2.setTo_lat(toLocation.getLat());
+            chatBotModel2.setTo_lng(toLocation.getLng());
+            chatBotModel2.setDistance(calculateDistance(new LatLng(fromLocation.getLat(), fromLocation.getLng()), new LatLng(toLocation.getLat(), toLocation.getLng())));
+
+
+            chatBotModelList.add(chatBotModel2);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+            chatBotModelList.add(null);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+            new Handler()
+                    .postDelayed(() -> {
+                        chatBotModelList.remove(chatBotModelList.size() - 1);
+                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.needs);
+                        chatBotModelList.add(chatBotModel3);
+                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+
+                    }, 1000);
         }
     }
-
-    private void updateSelectedShopUI(NearbyModel.Result result) {
+    private void updateSelectedShopUI(NearbyModel.Result result)
+    {
 
         updateSelectedShopListUi();
         ChatBotModel chatBotModel = createInstance(ChatBotAdapter.place_details);
@@ -532,21 +614,19 @@ public class AddOrderActivity extends AppCompatActivity {
 
 
     }
-
-
-    public void writeOrderDetails(int adapterPosition) {
+    public void writeOrderDetails(int adapterPosition)
+    {
         write_order_details_pos = adapterPosition;
         openSheet();
     }
-
-
-    public void changeOrderDetails(int adapterPosition) {
-        order_details_pos =adapterPosition;
+    public void changeOrderDetails(int adapterPosition)
+    {
+        order_details_pos = adapterPosition;
         openSheet();
 
     }
-
-    private void openSheet() {
+    private void openSheet()
+    {
         binding.root.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
         binding.root.startAnimation(animation);
@@ -567,8 +647,8 @@ public class AddOrderActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void closeSheet() {
+    private void closeSheet()
+    {
         binding.root.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
         binding.root.startAnimation(animation);
@@ -589,6 +669,10 @@ public class AddOrderActivity extends AppCompatActivity {
             }
         });
     }
+    private double calculateDistance(LatLng latLng1, LatLng latLng2)
+    {
+        return SphericalUtil.computeDistanceBetween(latLng1, latLng2) / 1000;
+    }
 
     @Override
     public void onBackPressed() {
@@ -600,7 +684,6 @@ public class AddOrderActivity extends AppCompatActivity {
         }
 
     }
-
 
 
 }

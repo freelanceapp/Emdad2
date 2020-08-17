@@ -16,6 +16,8 @@ import com.apps.emdad.databinding.BotChooseStoreRowBinding;
 import com.apps.emdad.databinding.BotCouponDetailsRowBinding;
 import com.apps.emdad.databinding.BotCouponRowBinding;
 import com.apps.emdad.databinding.BotDropLocationDetailtsRowBinding;
+import com.apps.emdad.databinding.BotDropLocationPackageDetailtsRowBinding;
+import com.apps.emdad.databinding.BotDropLocationPackageDetailtsRowBindingImpl;
 import com.apps.emdad.databinding.BotDropLocationRowBinding;
 import com.apps.emdad.databinding.BotEmptyRowBinding;
 import com.apps.emdad.databinding.BotFinishOrderRowBinding;
@@ -59,6 +61,7 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static final int typing = 18;
     public static final int empty = 19;
     public static final int share_location = 20;
+    public static final int drop_off_location_package_details = 21;
 
     public Context context;
     public List<ChatBotModel>  list;
@@ -119,6 +122,9 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }else if (viewType==share_location){
             BotShareLocationRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_share_location_row,parent,false);
             return new ShareLocationHolder(binding);
+        }else if (viewType==drop_off_location_package_details){
+            BotDropLocationPackageDetailtsRowBindingImpl binding = DataBindingUtil.inflate(inflater, R.layout.bot_drop_location_package_detailts_row,parent,false);
+            return new DropLocationPackageDetailsHolder(binding);
         }else if (viewType==use_coupon){
             BotCouponRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_coupon_row,parent,false);
             return new UseCouponHolder(binding);
@@ -326,6 +332,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             DropLocationDetailsHolder dropLocationDetailsHolder = (DropLocationDetailsHolder) holder;
             dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
         }
+        else if (holder instanceof DropLocationPackageDetailsHolder){
+            DropLocationPackageDetailsHolder dropLocationPackageDetailsHolder = (DropLocationPackageDetailsHolder) holder;
+            dropLocationPackageDetailsHolder.binding.tvDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",chatBotModel.getDistance(),context.getString(R.string.km)));
+        }
         else if (holder instanceof UseCouponHolder){
             UseCouponHolder useCouponHolder = (UseCouponHolder) holder;
 
@@ -515,6 +525,15 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static class DropLocationDetailsHolder extends RecyclerView.ViewHolder {
         private BotDropLocationDetailtsRowBinding binding;
         public DropLocationDetailsHolder(@NonNull BotDropLocationDetailtsRowBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+        }
+    }
+
+    private static class DropLocationPackageDetailsHolder extends RecyclerView.ViewHolder {
+        private BotDropLocationPackageDetailtsRowBinding binding;
+        public DropLocationPackageDetailsHolder(@NonNull BotDropLocationPackageDetailtsRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

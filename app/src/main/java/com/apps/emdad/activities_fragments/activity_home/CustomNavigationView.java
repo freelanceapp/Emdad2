@@ -58,6 +58,10 @@ public class CustomNavigationView extends CardView {
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mPaint.setColor(ContextCompat.getColor(getContext(), R.color.white));
         setBackgroundColor(Color.TRANSPARENT);
+        setCardElevation(10.0f);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setElevation(10.0f);
+        }
 
     }
 

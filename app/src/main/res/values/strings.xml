@@ -148,6 +148,12 @@
     <string name="home2">Home</string>
     <string name="work">Work</string>
     <string name="save">Save</string>
+    <string name="pick_up">Pick Up</string>
+    <string name="drop_off">Drop off</string>
+    <string name="change_location_current_location">Change location (Current location)</string>
+    <string name="choose_location">Choose location</string>
+    <string name="not_yet_chosen_location">Not yet chosen location</string>
+    <string name="select_location_on_map">Select location on map</string>
 
 
 </resources>
