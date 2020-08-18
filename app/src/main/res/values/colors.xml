@@ -22,6 +22,8 @@
     <color name="gray6">#a0a0a0</color>
     <color name="gray8">#b0afbb</color>
     <color name="gray9">#757575</color>
+    <color name="gray10">#f2f2f2</color>
+    <color name="gray11">#686868</color>
 
     <color name="transparent">#00000000</color>
     <color name="color_red">#ef0607</color>

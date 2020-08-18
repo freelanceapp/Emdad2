@@ -155,5 +155,13 @@
     <string name="choose_location">تأكيد الموقع</string>
     <string name="not_yet_chosen_location">لم يتم اختيار الموقع بعد</string>
     <string name="select_location_on_map">حدد الموقع على الخريطة</string>
+    <string name="account_balance">رصيد الحساب</string>
+    <string name="number_of_orders">عدد الطلبات</string>
+    <string name="service_reviews">تقييمات الخدمات</string>
+    <string name="users_feedback">ملاحظات المستخدمين</string>
+    <string name="coupons">الكوبونات</string>
+    <string name="settings">إعدادات</string>
+    <string name="payment_methods">طريقة السداد</string>
+    <string name="get_in_touch_with_us_at_telegram">اتصل بنا على تليجرام</string>
 
 </resources>

@@ -9,7 +9,9 @@
         >
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/gray1"
+            >
 
             <FrameLayout
                 android:id="@+id/fragment_app"
@@ -20,299 +22,180 @@
 
                 />
 
-            <!--<com.apps.emdad.activities_fragments.activity_home.CustomNavigationView
-                android:id="@+id/bottomAppBar"
+            <FrameLayout
+                android:id="@+id/flBottomAppBar"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:background="@color/white"
-                app:cardElevation="5dp"
-
+                android:background="@color/gray1"
                 >
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:weightSum="4"
-
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="@color/transparent"
                     >
-
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:src="@drawable/bottom_nav"
+                        android:scaleType="fitXY"
+                        />
                     <LinearLayout
-                        android:id="@+id/llStore"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal"
+                        android:weightSum="4"
+                        android:layout_gravity="center"
+                        android:background="@color/transparent"
 
-                        <ImageView
-                            android:id="@+id/iconStore"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_shop"
-                            android:tint="@color/colorPrimary"
+                        >
 
+                        <LinearLayout
+                            android:id="@+id/llStore"
+                            android:layout_width="0dp"
+                            android:layout_height="56dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/transparent"
+                            >
+
+                            <ImageView
+                                android:id="@+id/iconStore"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_shop"
+                                android:tint="@color/colorPrimary"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/tvStore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/stores"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/llOrder"
+
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:background="@color/transparent"
+
+                            >
+
+                            <ImageView
+                                android:id="@+id/iconOrder"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_delivery_truck"
+                                android:tint="@color/gray11" />
+
+                            <TextView
+                                android:id="@+id/tvOrder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/order"
+                                android:textColor="@color/gray11"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <Space
+                            android:layout_width="60dp"
+                            android:layout_height="0dp"
                             />
+                        <LinearLayout
+                            android:id="@+id/llNotification"
 
-                        <TextView
-                            android:id="@+id/tvStore"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/stores"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="13sp" />
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:background="@color/transparent"
+
+                            >
+
+                            <ImageView
+                                android:id="@+id/iconNotification"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_megaphone"
+                                android:tint="@color/gray11" />
+
+                            <TextView
+                                android:id="@+id/tvNotification"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/notifications"
+                                android:textColor="@color/gray11"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/llProfile"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:background="@color/transparent"
+
+                            >
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/imageProfile"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/image_avatar"
+                                android:tint="@color/color4"
+                                app:civ_border_color="@color/black"
+                                app:civ_border_width="1px" />
+
+                            <TextView
+                                android:id="@+id/tvProfile"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/profile"
+                                android:textColor="@color/gray11"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/llOrder"
-
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/iconOrder"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_order"
-                            android:tint="@color/color4" />
-
-                        <TextView
-                            android:id="@+id/tvOrder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/order"
-                            android:textColor="@color/gray4"
-                            android:textSize="13sp" />
-                    </LinearLayout>
+                </FrameLayout>
 
 
-                    <LinearLayout
-                        android:id="@+id/llNotification"
+            </FrameLayout>
 
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/iconNotification"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_nav_notification"
-                            android:tint="@color/color4" />
-
-                        <TextView
-                            android:id="@+id/tvNotification"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/notifications"
-                            android:textColor="@color/gray4"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/llProfile"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/imageProfile"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/image_avatar"
-                            android:tint="@color/color4"
-                            app:civ_border_color="@color/black"
-                            app:civ_border_width="1px" />
-
-                        <TextView
-                            android:id="@+id/tvProfile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/profile"
-                            android:textColor="@color/gray4"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-
-                </LinearLayout>
-            </com.apps.emdad.activities_fragments.activity_home.CustomNavigationView>-->
-
-<!--
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorPrimary"
                 android:src="@drawable/logo_e"
-                app:elevation="5dp"
+                app:elevation="2dp"
                 app:fabSize="normal"
-                app:layout_anchor="@+id/bottomAppBar"
+                app:layout_anchor="@+id/flBottomAppBar"
                 android:transitionName="fab"
                 app:layout_anchorGravity="center_horizontal"
                 tools:ignore="UnusedAttribute"
+                android:layout_gravity="center"
 
                 >
 
             </com.google.android.material.floatingactionbutton.FloatingActionButton>
--->
 
-             <com.google.android.material.bottomappbar.BottomAppBar
-                 android:id="@+id/bottomAppBar"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="bottom"
-                 app:contentInsetEnd="0dp"
-                 app:contentInsetLeft="0dp"
-                 app:contentInsetRight="0dp"
-                 app:contentInsetStart="0dp"
-                 app:elevation="10dp"
-                 app:fabCradleMargin="5dp"
-                 app:fabCradleVerticalOffset="8dp"
-                 app:fabAlignmentMode="center"
-                 app:fabCradleRoundedCornerRadius="30dp"
-                 android:theme="@style/bottomBar"
-
-                 >
-
-                 <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:orientation="horizontal"
-                     android:weightSum="4"
-                     android:background="@color/transparent"
-
-                     >
-
-                     <LinearLayout
-                         android:id="@+id/llStore"
-                         android:layout_width="0dp"
-                         android:layout_height="match_parent"
-                         android:layout_weight="1"
-                         android:gravity="center"
-                         android:orientation="vertical">
-
-                         <ImageView
-                             android:id="@+id/iconStore"
-                             android:layout_width="24dp"
-                             android:layout_height="24dp"
-                             android:src="@drawable/ic_shop"
-                             android:tint="@color/colorPrimary"
-
-                             />
-
-                         <TextView
-                             android:id="@+id/tvStore"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:text="@string/stores"
-                             android:textColor="@color/colorPrimary"
-                             android:textSize="13sp" />
-                     </LinearLayout>
-
-                     <LinearLayout
-                         android:id="@+id/llOrder"
-
-                         android:layout_width="0dp"
-                         android:layout_height="match_parent"
-                         android:layout_weight="1"
-                         android:gravity="center"
-                         android:orientation="vertical">
-
-                         <ImageView
-                             android:id="@+id/iconOrder"
-                             android:layout_width="24dp"
-                             android:layout_height="24dp"
-                             android:src="@drawable/ic_order"
-                             android:tint="@color/color4" />
-
-                         <TextView
-                             android:id="@+id/tvOrder"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:text="@string/order"
-                             android:textColor="@color/gray4"
-                             android:textSize="13sp" />
-                     </LinearLayout>
-
-
-                     <LinearLayout
-                         android:id="@+id/llNotification"
-
-                         android:layout_width="0dp"
-                         android:layout_height="match_parent"
-                         android:layout_weight="1"
-                         android:gravity="center"
-                         android:orientation="vertical">
-
-                         <ImageView
-                             android:id="@+id/iconNotification"
-                             android:layout_width="24dp"
-                             android:layout_height="24dp"
-                             android:src="@drawable/ic_nav_notification"
-                             android:tint="@color/color4" />
-
-                         <TextView
-                             android:id="@+id/tvNotification"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:text="@string/notifications"
-                             android:textColor="@color/gray4"
-                             android:textSize="13sp" />
-                     </LinearLayout>
-
-                     <LinearLayout
-                         android:id="@+id/llProfile"
-                         android:layout_width="0dp"
-                         android:layout_height="match_parent"
-                         android:layout_weight="1"
-                         android:gravity="center"
-                         android:orientation="vertical">
-
-                         <de.hdodenhof.circleimageview.CircleImageView
-                             android:id="@+id/imageProfile"
-                             android:layout_width="24dp"
-                             android:layout_height="24dp"
-                             android:src="@drawable/image_avatar"
-                             android:tint="@color/color4"
-                             app:civ_border_color="@color/black"
-                             app:civ_border_width="1px" />
-
-                         <TextView
-                             android:id="@+id/tvProfile"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:text="@string/profile"
-                             android:textColor="@color/gray4"
-                             android:textSize="13sp" />
-                     </LinearLayout>
-
-
-                 </LinearLayout>
-
-             </com.google.android.material.bottomappbar.BottomAppBar>
-
-             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                 android:id="@+id/fab"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:backgroundTint="@color/colorPrimary"
-                 android:src="@drawable/logo_e"
-                 app:elevation="0dp"
-                 app:fabSize="normal"
-                 app:borderWidth="0dp"
-                 app:layout_anchor="@+id/bottomAppBar"
-                 android:transitionName="fab"
-                 tools:ignore="UnusedAttribute"
-                 >
-
-             </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
         <FrameLayout

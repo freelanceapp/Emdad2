@@ -94,8 +94,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onRestart() {
         super.onRestart();
-        binding.bottomAppBar.performShow();
-
+        binding.fab.show();
 
     }
 
@@ -147,7 +146,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         binding.fab.setOnClickListener(v -> {
 
-            binding.bottomAppBar.performHide();
             Intent intent = new Intent(this, AddOrderActivity.class);
 
             intent.putExtra("lat",location.getLatitude());
@@ -160,7 +158,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(intent);
 
             }
-
+            binding.fab.hide();
 
 
 
@@ -170,8 +168,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-
-    private void displayFragmentMain(){
+    private void displayFragmentMain()
+    {
         updateMainUi();
 
         if (fragment_main ==null){
@@ -199,7 +197,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     }
-    private void displayFragmentNotification(){
+    private void displayFragmentNotification()
+    {
         updateNotificationUi();
 
 
@@ -227,7 +226,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
     }
-    private void displayFragmentOrder(){
+    private void displayFragmentOrder()
+    {
         updateOrderUi();
 
         if (fragment_order ==null){
@@ -254,7 +254,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
     }
-    private void displayFragmentProfile(){
+    private void displayFragmentProfile()
+    {
         updateProfileUi();
 
         if (fragment_profile ==null){
@@ -282,62 +283,57 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     }
-
-
-    private void updateMainUi(){
+    private void updateMainUi()
+    {
         binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
+        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray4));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray4));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray4));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray11));
 
     }
+    private void updateNotificationUi()
+    {
 
-    private void updateNotificationUi(){
-
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
+        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
         binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
+        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
 
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray4));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray4));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray4));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray11));
 
     }
+    private void updateOrderUi()
+    {
 
-    private void updateOrderUi(){
 
-
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
+        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
         binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
 
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray4));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray4));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray4));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray11));
     }
+    private void updateProfileUi()
+    {
 
-    private void updateProfileUi(){
+        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
 
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray4));
-
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray4));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray4));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray4));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
 
     }
-
-
-
-
     private void initGoogleApiClient()
     {
         googleApiClient = new GoogleApiClient.Builder(this)
@@ -347,7 +343,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
         googleApiClient.connect();
     }
-
     private void CheckPermission()
     {
         if (ActivityCompat.checkSelfPermission(this, gps_perm) != PackageManager.PERMISSION_GRANTED) {
@@ -358,9 +353,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
     }
-
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -381,7 +373,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         }
     }
-
 
     private void initLocationRequest()
     {
@@ -461,7 +452,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -473,8 +463,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             startLocationUpdate();
         }
     }
-
-
 
     @Override
     public void onBackPressed() {

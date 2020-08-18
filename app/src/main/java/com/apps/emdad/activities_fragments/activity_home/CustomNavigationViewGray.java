@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat;
 import com.apps.emdad.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class CustomNavigationView extends CardView {
+public class CustomNavigationViewGray extends CardView {
     private Path mPath;
     private Paint mPaint;
 
@@ -37,17 +37,17 @@ public class CustomNavigationView extends CardView {
     private int mNavigationBarWidth;
     private int mNavigationBarHeight;
 
-    public CustomNavigationView(Context context) {
+    public CustomNavigationViewGray(Context context) {
         super(context);
         init();
     }
 
-    public CustomNavigationView(Context context, AttributeSet attrs) {
+    public CustomNavigationViewGray(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public CustomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomNavigationViewGray(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -57,7 +57,7 @@ public class CustomNavigationView extends CardView {
 
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        mPaint.setColor(ContextCompat.getColor(getContext(), R.color.white));
+        mPaint.setColor(ContextCompat.getColor(getContext(), R.color.gray4));
         setBackgroundColor(ContextCompat.getColor(getContext(),R.color.gray2));
 
 
@@ -72,6 +72,7 @@ public class CustomNavigationView extends CardView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
         // get width and height of navigation bar
         // Navigation bar bounds (width & height)
         mNavigationBarWidth = getWidth();
@@ -108,6 +109,7 @@ public class CustomNavigationView extends CardView {
         mPath.lineTo(mNavigationBarWidth, mNavigationBarHeight);
         mPath.lineTo(0, mNavigationBarHeight);
         mPath.close();
+
     }
 
     @Override
