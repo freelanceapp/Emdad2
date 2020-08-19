@@ -1,5 +1,6 @@
 package com.apps.emdad.activities_fragments.activity_home.fragments.fragment_order;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
 import com.apps.emdad.adapters.MyPagerAdapter;
 import com.apps.emdad.databinding.FragmentOrdersBinding;
 
@@ -54,5 +56,10 @@ public class Fragment_Order extends Fragment {
         titles.add(getString(R.string.delivering));
         adapter = new MyPagerAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,fragmentList,titles);
         binding.pager.setAdapter(adapter);
+
+        binding.flOldOrders.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, OldOrdersActivity.class);
+            startActivity(intent);
+        });
     }
 }

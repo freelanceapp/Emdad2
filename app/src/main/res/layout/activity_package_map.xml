@@ -33,15 +33,32 @@
                 android:layout_height="wrap_content"
 
                 >
-                <ImageView
+
+                <FrameLayout
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_next"
-                    android:padding="8dp"
-                    android:tint="@color/color4"
-                    android:rotation='@{lang.equals("ar")?180:0}'
-                    android:onClick="@{()->listener.back()}"
-                    />
+                    >
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:src="@color/gray1_trans"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        />
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_next"
+                        android:padding="8dp"
+                        android:tint="@color/color4"
+                        android:rotation='@{lang.equals("ar")?180:0}'
+                        android:onClick="@{()->listener.back()}"
+                        />
+
+                </FrameLayout>
+
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

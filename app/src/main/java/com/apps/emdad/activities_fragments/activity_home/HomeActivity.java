@@ -21,6 +21,7 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -91,12 +92,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private final int loc_req = 22;
     private Location location;
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        binding.fab.show();
 
-    }
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -144,21 +140,22 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             displayFragmentProfile();
         });
 
-        binding.fab.setOnClickListener(v -> {
+        binding.fab2.setOnClickListener(v -> {
 
             Intent intent = new Intent(this, AddOrderActivity.class);
 
             intent.putExtra("lat",location.getLatitude());
             intent.putExtra("lng",location.getLongitude());
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,binding.fab,binding.fab.getTransitionName());
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,binding.fab2,binding.fab2.getTransitionName());
                 startActivity(intent,options.toBundle());
 
             }else {
                 startActivity(intent);
 
             }
-            binding.fab.hide();
+
+
 
 
 
@@ -168,7 +165,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    private void displayFragmentMain()
+    public void displayFragmentMain()
     {
         updateMainUi();
 
@@ -285,9 +282,10 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     }
     private void updateMainUi()
     {
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconStore.setImageResource(R.drawable.shop1);
+        binding.iconNotification.setImageResource(R.drawable.mega_phone2);
+        binding.iconOrder.setImageResource(R.drawable.truck2);
+
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
@@ -298,9 +296,9 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private void updateNotificationUi()
     {
 
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconStore.setImageResource(R.drawable.shop2);
+        binding.iconNotification.setImageResource(R.drawable.mega_phone1);
+        binding.iconOrder.setImageResource(R.drawable.truck1);
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
@@ -312,9 +310,9 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     {
 
 
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary));
+        binding.iconStore.setImageResource(R.drawable.shop2);
+        binding.iconNotification.setImageResource(R.drawable.mega_phone2);
+        binding.iconOrder.setImageResource(R.drawable.truck1);
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
@@ -324,9 +322,9 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private void updateProfileUi()
     {
 
-        binding.iconStore.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
-        binding.iconNotification.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
-        binding.iconOrder.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
+        binding.iconStore.setImageResource(R.drawable.shop2);
+        binding.iconNotification.setImageResource(R.drawable.mega_phone2);
+        binding.iconOrder.setImageResource(R.drawable.truck2);
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
@@ -498,4 +496,5 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
     }
+
 }

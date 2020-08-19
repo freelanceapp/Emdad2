@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_package_map.PackageMapActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
@@ -52,6 +53,8 @@ public class AddOrderActivity extends AppCompatActivity {
     private int order_details_pos = -1;
     private int drop_off_pos = -1;
     private int share_location_pos = -1;
+    private int coupon_pos = -1;
+
     private FavoriteLocationModel fromLocation, toLocation;
     private boolean isPackageOrder = false;
 
@@ -136,6 +139,7 @@ public class AddOrderActivity extends AppCompatActivity {
         order_details_pos = -1;
         drop_off_pos = -1;
         share_location_pos = -1;
+        coupon_pos = -1;
         isPackageOrder = false;
         binding.cardRestart.setVisibility(View.GONE);
         binding.edtDetails.setText(null);
@@ -369,40 +373,44 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     public void addCoupon(String coupon, int adapterPosition)
     {
+        this.coupon_pos = adapterPosition;
         if (coupon.equals(getString(R.string.don_t_have_coupon))) {
+            updateCouponAction(coupon);
+        }
+        else {
+            Intent intent = new Intent(this, AddCouponActivity.class);
+            startActivityForResult(intent,400);
+        }
+    }
+    private void updateCouponAction(String coupon){
+        ChatBotModel chatBotModel2 = chatBotModelList.get(coupon_pos);
+        chatBotModel2.setEnabled(false);
+        chatBotModelList.set(coupon_pos, chatBotModel2);
+        adapter.notifyItemChanged(coupon_pos);
 
-            ChatBotModel chatBotModel2 = chatBotModelList.get(adapterPosition);
-            chatBotModel2.setEnabled(false);
-            chatBotModelList.set(adapterPosition, chatBotModel2);
-            adapter.notifyItemChanged(adapterPosition);
+        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.coupon_details);
+        chatBotModel.setText(coupon);
+        chatBotModelList.add(chatBotModel);
+        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.coupon_details);
-            chatBotModel.setText(coupon);
-            chatBotModelList.add(chatBotModel);
+        new Handler().postDelayed(() -> {
+            chatBotModelList.add(null);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
             new Handler().postDelayed(() -> {
-                chatBotModelList.add(null);
+                chatBotModelList.remove(chatBotModelList.size() - 1);
+                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.payment);
+                chatBotModelList.add(chatBotModel3);
                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-                new Handler().postDelayed(() -> {
-                    chatBotModelList.remove(chatBotModelList.size() - 1);
-                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
-                    ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.payment);
-                    chatBotModelList.add(chatBotModel3);
-                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-
-                }, 1000);
             }, 1000);
-
-        } else {
-
-        }
+        }, 1000);
     }
     public void payment(int adapterPosition)
     {
@@ -570,6 +578,8 @@ public class AddOrderActivity extends AppCompatActivity {
 
 
                     }, 1000);
+        }else if (requestCode == 400 && resultCode == RESULT_OK && data != null) {
+           updateCouponAction("تم حصولك على خصم 10%");
         }
     }
     private void updateSelectedShopUI(NearbyModel.Result result)

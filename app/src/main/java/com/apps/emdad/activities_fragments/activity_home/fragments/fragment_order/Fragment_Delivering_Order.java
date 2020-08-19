@@ -11,9 +11,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.databinding.CurrentPreviousDeliveringLayoutBinding;
 
 public class Fragment_Delivering_Order extends Fragment {
+    private HomeActivity activity;
     private CurrentPreviousDeliveringLayoutBinding binding;
 
 
@@ -30,7 +32,8 @@ public class Fragment_Delivering_Order extends Fragment {
     }
 
     private void initView() {
-
+        activity = (HomeActivity) getActivity();
+        binding.btnBack.setOnClickListener(v -> activity.displayFragmentMain());
 
     }
 }

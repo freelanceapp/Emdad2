@@ -19,11 +19,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".activities_fragments.activity_setting.SettingsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
+        <activity android:name=".activities_fragments.activity_old_orders.OldOrdersActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
+        <activity
+            android:name=".activities_fragments.activity_add_coupon.AddCouponActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities_fragments.activity_package_map.PackageMapActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_map_search.MapSearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -47,9 +58,8 @@
         <activity
             android:name=".activities_fragments.activity_home.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:screenOrientation="portrait"
-            >
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,7 +78,7 @@
             android:name=".activities_fragments.activity_intro_slider.IntroSliderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities_fragments.activity_splash.SplashActivity"></activity>
+        <activity android:name=".activities_fragments.activity_splash.SplashActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

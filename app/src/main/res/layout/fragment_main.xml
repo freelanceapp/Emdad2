@@ -2,17 +2,62 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
 
     >
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gray10"
+        android:orientation="vertical"
         >
-
-        <TextView
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Home"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                >
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_search"
+                    android:tint="@color/color4"
+                    />
+                <TextView
+                    android:id="@+id/edtSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:singleLine="true"
+                    android:background="@color/transparent"
+                    android:textColorHint="@color/gray9"
+                    android:textSize="14sp"
+                    android:textColor="@color/color4"
+                    android:hint="@string/i_want_restaurant"
+                    android:gravity="center_vertical"
+                    />
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"/>
+                <TextView
+                    android:id="@+id/tvCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray9"
+                    android:textSize="13sp"
+                    android:text="@string/cancel"
+                    android:visibility="gone"
+                    />
+
+            </LinearLayout>
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </LinearLayout>
 </layout>

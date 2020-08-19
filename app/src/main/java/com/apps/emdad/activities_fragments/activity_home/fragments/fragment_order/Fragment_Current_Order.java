@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.adapters.MyPagerAdapter;
 import com.apps.emdad.databinding.CurrentPreviousDeliveringLayoutBinding;
 import com.apps.emdad.databinding.FragmentOrdersBinding;
@@ -18,8 +19,8 @@ import com.apps.emdad.databinding.FragmentOrdersBinding;
 import java.util.List;
 
 public class Fragment_Current_Order extends Fragment {
+    private HomeActivity activity;
     private CurrentPreviousDeliveringLayoutBinding binding;
-
 
     public static Fragment_Current_Order newInstance(){
         return new Fragment_Current_Order();
@@ -34,7 +35,7 @@ public class Fragment_Current_Order extends Fragment {
     }
 
     private void initView() {
-
-
+        activity = (HomeActivity) getActivity();
+        binding.btnBack.setOnClickListener(v -> activity.displayFragmentMain());
     }
 }

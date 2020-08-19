@@ -22,4 +22,28 @@ public interface Listeners {
         void validate();
         void showCountryDialog();
     }
+
+    interface ProfileAction{
+        void onReviews();
+        void onFeedback();
+        void onCoupons();
+        void onAddCoupon();
+        void onSetting();
+        void onPayment();
+        void onTelegram();
+        void onNotification();
+        void logout();
+    }
+
+    interface SettingAction{
+        void onTone();
+        void onComplaint();
+        void onEditProfile();
+        void onLanguageSetting();
+        void onTerms();
+        void onPrivacy();
+        void onRate();
+        void onTour();
+        void onDelegate();
+    }
 }
