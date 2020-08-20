@@ -7,6 +7,8 @@ import java.util.List;
 public class DefaultSettings implements Serializable {
     private boolean isLanguageSelected = false;
     private boolean showIntroSlider = true;
+    private String ringToneUri;
+    private String ringToneName;
     private List<FavoriteLocationModel> favoriteLocationModelList = new ArrayList<>();
     private List<String> recentSearchList = new ArrayList<>();
 
@@ -43,5 +45,21 @@ public class DefaultSettings implements Serializable {
 
     public void setRecentSearchList(List<String> recentSearchList) {
         this.recentSearchList = recentSearchList;
+    }
+
+    public String getRingToneUri() {
+        return ringToneUri;
+    }
+
+    public void setRingToneUri(String ringToneUri) {
+        this.ringToneUri = ringToneUri;
+    }
+
+    public String getRingToneName() {
+        return ringToneName;
+    }
+
+    public void setRingToneName(String ringToneName) {
+        this.ringToneName = ringToneName;
     }
 }

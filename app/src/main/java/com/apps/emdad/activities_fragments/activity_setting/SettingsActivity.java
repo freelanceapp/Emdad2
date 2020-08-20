@@ -9,17 +9,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.apps.emdad.BuildConfig;
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_language.LanguageActivity;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.databinding.ActivitySettingsBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.DefaultSettings;
+import com.apps.emdad.preferences.Preferences;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +34,8 @@ import io.paperdb.Paper;
 public class SettingsActivity extends AppCompatActivity implements Listeners.SettingAction {
     private ActivitySettingsBinding binding;
     private String lang;
+    private DefaultSettings defaultSettings;
+    private Preferences preferences;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -44,12 +51,26 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
     }
 
     private void initView() {
+        preferences = Preferences.getInstance();
+        defaultSettings = preferences.getAppSetting(this);
+
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
         binding.setActions(this);
         binding.close.setOnClickListener(v -> finish());
         binding.tvVersion.setText(BuildConfig.VERSION_NAME);
+
+        if (defaultSettings!=null){
+            if (defaultSettings.getRingToneName()!=null&&!defaultSettings.getRingToneName().isEmpty()){
+                binding.tvRingtoneName.setText(defaultSettings.getRingToneName());
+            }else {
+                binding.tvRingtoneName.setText(getString(R.string.default1));
+            }
+        }else {
+            binding.tvRingtoneName.setText(getString(R.string.default1));
+
+        }
     }
 
     @Override
@@ -73,7 +94,8 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     @Override
     public void onLanguageSetting() {
-
+        Intent intent = new Intent(this, LanguageActivity.class);
+        startActivityForResult(intent, 200);
     }
 
     @Override
@@ -139,9 +161,26 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 
+
             if (uri != null) {
-                Log.e("url", uri.toString());
+                Ringtone ringtone = RingtoneManager.getRingtone(this,uri);
+                String name = ringtone.getTitle(this);
+                binding.tvRingtoneName.setText(name);
+
+                if (defaultSettings==null){
+                  defaultSettings = new DefaultSettings();
+                }
+
+                defaultSettings.setRingToneUri(uri.toString());
+                defaultSettings.setRingToneName(name);
+                preferences.createUpdateAppSetting(this,defaultSettings);
+
+
             }
+        } else if (requestCode == 200 && resultCode == RESULT_OK ) {
+
+            setResult(RESULT_OK);
+            finish();
         }
     }
 }

@@ -280,6 +280,10 @@ public class AddOrderActivity extends AppCompatActivity {
             startActivityForResult(intent, 100);
         } else {
 
+            Intent intent = new Intent(this, ShopsActivity.class);
+            intent.putExtra("lat", user_lat);
+            intent.putExtra("lng", user_lng);
+            startActivityForResult(intent, 100);
 
         }
 

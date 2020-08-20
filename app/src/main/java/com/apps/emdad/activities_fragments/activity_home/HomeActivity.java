@@ -90,7 +90,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private LocationCallback locationCallback;
     private final String gps_perm = Manifest.permission.ACCESS_FINE_LOCATION;
     private final int loc_req = 22;
-    private Location location;
+    public Location location;
 
 
 
@@ -170,7 +170,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         updateMainUi();
 
         if (fragment_main ==null){
-            fragment_main = Fragment_Main.newInstance();
+            fragment_main = Fragment_Main.newInstance(location.getLatitude(),location.getLatitude());
         }
 
         if (fragment_order!=null&&fragment_order.isAdded()){
@@ -462,6 +462,18 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    private void navigateToLoginActivity() {
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void refreshActivity(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
     @Override
     public void onBackPressed() {
         if (fragment_main!=null&&fragment_main.isAdded()&&fragment_main.isVisible()){
@@ -475,12 +487,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    private void navigateToLoginActivity() {
-
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     @Override
     protected void onDestroy() {

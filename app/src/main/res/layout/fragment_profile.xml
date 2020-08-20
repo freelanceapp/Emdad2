@@ -65,11 +65,13 @@
                     app:srb_isIndicator="true"
                     app:srb_rating="0"
                     app:srb_numberOfStars="5"
-                    app:srb_starBackgroundColor="@color/gray2"
+                    app:srb_starBackgroundColor="@color/gray3"
                     app:srb_starBorderWidth="1"
                     app:srb_starSize="20dp"
                     app:srb_starsSeparation="8dp"
                     android:layout_marginTop="5dp"
+                    app:srb_borderColor="@color/gray3"
+                    app:srb_fillColor="@color/rate_color"
                     />
 
                 <ImageView

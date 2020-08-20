@@ -185,5 +185,12 @@
     <string name="app_tour">نبذة عن التطبيق</string>
     <string name="how_to_be_come_a_delegate">كيف أعمل فى إمداد ؟</string>
     <string name="version_no">رقم الاصدار:</string>
+    <string name="customers_rating">تقييمات المستخدمين</string>
+    <string name="customer_reviews">تقييمات العملاء</string>
+    <string name="show">عرض الاوقات</string>
+    <string name="open_now">مفتوح</string>
+    <string name="closed">مغلق</string>
+    <string name="working_hours">ساعات العمل</string>
+    <string name="work_hour_not_aval">ساعات العمل غير متاحة</string>
 
 </resources>

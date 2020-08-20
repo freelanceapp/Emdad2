@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_filter.FilterActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
+import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.adapters.NearbyAdapter;
 import com.apps.emdad.adapters.ResentSearchAdapter;
 import com.apps.emdad.databinding.ActivityShopsBinding;
@@ -66,6 +67,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     private List<String> recentSearchList;
     private Preferences preferences;
     private boolean normalSearch = true;
+    private boolean type = false;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -209,7 +211,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
         Intent intent = getIntent();
         user_lat = intent.getDoubleExtra("lat",0.0);
         user_lng = intent.getDoubleExtra("lng",0.0);
-
+        type = intent.getBooleanExtra("type",false);
     }
 
     private void clear() {
@@ -562,11 +564,9 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
         binding.setCount(resultList.size());
 
         if (resultList.size()>0){
-            Log.e("1","1");
             sortData();
 
         }else {
-            Log.e("2","2");
             binding.tvNoData.setVisibility(View.VISIBLE);
 
         }
@@ -635,10 +635,23 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     }
 
     public void setShopData(NearbyModel.Result placeModel) {
-        Intent intent = getIntent();
-        intent.putExtra("data",placeModel);
-        setResult(RESULT_OK,intent);
-        finish();
+        if (type){
+            //from main fragment
+            if (isRestaurant(placeModel)){
+                Intent intent = new Intent(this, ShopDetailsActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivity(intent);
+            }else {
+
+            }
+
+        }else {
+            Intent intent = getIntent();
+            intent.putExtra("data",placeModel);
+            setResult(RESULT_OK,intent);
+            finish();
+        }
+
     }
 
     public void setRecentSearchItem(String query) {
@@ -689,6 +702,16 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
     }
 
+    private boolean isRestaurant(NearbyModel.Result result){
+
+        for (String type :result.getTypes()){
+            if (type.equals("restaurant")){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

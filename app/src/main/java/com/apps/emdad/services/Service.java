@@ -1,6 +1,7 @@
 package com.apps.emdad.services;
 
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
 
@@ -42,5 +43,11 @@ public interface Service {
                                       @Query(value = "language") String language,
                                       @Query(value = "key") String key);
 
+    @GET("place/details/json")
+    Call<PlaceDetailsModel> getPlaceDetails(@Query(value = "placeid") String placeid,
+                                            @Query(value = "fields") String fields,
+                                            @Query(value = "language") String language,
+                                            @Query(value = "key") String key
+    );
 
 }

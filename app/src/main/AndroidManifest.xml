@@ -19,14 +19,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities_fragments.activity_setting.SettingsActivity"
+        <activity android:name=".activities_fragments.activity_shop_details.ShopDetailsActivity"></activity>
+        <activity
+            android:name=".activities_fragments.activity_language.LanguageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-        <activity android:name=".activities_fragments.activity_old_orders.OldOrdersActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_setting.SettingsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_old_orders.OldOrdersActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_add_coupon.AddCouponActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

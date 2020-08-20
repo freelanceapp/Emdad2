@@ -29,8 +29,12 @@ public class NearbyModel implements Serializable {
         private String vicinity;
         private List<Photo> photos;
         private Geometry geometry;
+        private List<String> types;
         private double distance =0.0;
-
+        private boolean isOpen = false;
+        private PlaceDetailsModel.Opening_Hours work_hours;
+        private List<PhotosModel> photosModels;
+        private List<PlaceDetailsModel.Reviews> reviews;
 
         public String getId() {
             return id;
@@ -70,6 +74,42 @@ public class NearbyModel implements Serializable {
 
         public void setDistance(double distance) {
             this.distance = distance;
+        }
+
+        public boolean isOpen() {
+            return isOpen;
+        }
+
+        public void setOpen(boolean open) {
+            isOpen = open;
+        }
+
+        public PlaceDetailsModel.Opening_Hours getWork_hours() {
+            return work_hours;
+        }
+
+        public void setWork_hours(PlaceDetailsModel.Opening_Hours work_hours) {
+            this.work_hours = work_hours;
+        }
+
+        public List<PhotosModel> getPhotosModels() {
+            return photosModels;
+        }
+
+        public void setPhotosModels(List<PhotosModel> photosModels) {
+            this.photosModels = photosModels;
+        }
+
+        public List<PlaceDetailsModel.Reviews> getReviews() {
+            return reviews;
+        }
+
+        public void setReviews(List<PlaceDetailsModel.Reviews> reviews) {
+            this.reviews = reviews;
+        }
+
+        public List<String> getTypes() {
+            return types;
         }
     }
 

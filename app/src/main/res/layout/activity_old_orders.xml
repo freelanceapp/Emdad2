@@ -98,8 +98,8 @@
                 android:gravity="center"
                 >
                 <ImageView
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:src="@drawable/ic_delivery_truck2"
                     android:tint="@color/gray6"
                     />
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textColor="@color/gray6"
-                    android:textSize="28sp"
+                    android:textSize="25sp"
                     android:text="@string/no_old_orders_found"
                     />
 

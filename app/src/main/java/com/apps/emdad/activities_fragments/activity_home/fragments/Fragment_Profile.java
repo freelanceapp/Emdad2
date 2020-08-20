@@ -1,6 +1,9 @@
 package com.apps.emdad.activities_fragments.activity_home.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -100,5 +103,13 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
     @Override
     public void logout() {
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 200 && resultCode == Activity.RESULT_OK ) {
+            activity.refreshActivity();
+        }
     }
 }

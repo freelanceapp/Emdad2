@@ -184,6 +184,13 @@
     <string name="app_tour">App Tour</string>
     <string name="how_to_be_come_a_delegate">How to be come a DELEGATE</string>
     <string name="version_no">Version No:</string>
+    <string name="customers_rating">Customers Rating</string>
+    <string name="customer_reviews">Customer Reviews</string>
+    <string name="show">Show</string>
+    <string name="open_now">Open Now</string>
+    <string name="closed">Closed</string>
+    <string name="working_hours">Working Hours</string>
+    <string name="work_hour_not_aval">Working Hours Not Available</string>
 
 
 </resources>
