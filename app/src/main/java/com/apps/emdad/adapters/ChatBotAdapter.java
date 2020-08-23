@@ -28,7 +28,9 @@ import com.apps.emdad.databinding.BotNewOrderRowBinding;
 import com.apps.emdad.databinding.BotOrderDetailtsRowBinding;
 import com.apps.emdad.databinding.BotPaymentDetailsRowBinding;
 import com.apps.emdad.databinding.BotPaymentRowBinding;
+import com.apps.emdad.databinding.BotPickUpLocationDetailtsRowBinding;
 import com.apps.emdad.databinding.BotPlaceDetailtsRowBinding;
+import com.apps.emdad.databinding.BotShareLocationDetailtsRowBinding;
 import com.apps.emdad.databinding.BotShareLocationRowBinding;
 import com.apps.emdad.databinding.BotStoreDetailsRowBinding;
 import com.apps.emdad.databinding.BotTypingRowBinding;
@@ -62,6 +64,8 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static final int empty = 19;
     public static final int share_location = 20;
     public static final int drop_off_location_package_details = 21;
+    public static final int share_location_details = 22;
+    public static final int pick_up_location_details = 23;
 
     public Context context;
     public List<ChatBotModel>  list;
@@ -119,12 +123,18 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }else if (viewType==drop_location_details){
             BotDropLocationDetailtsRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_drop_location_detailts_row,parent,false);
             return new DropLocationDetailsHolder(binding);
+        }else if (viewType==share_location_details){
+            BotShareLocationDetailtsRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_share_location_detailts_row,parent,false);
+            return new ShareLocationDetailsHolder(binding);
         }else if (viewType==share_location){
             BotShareLocationRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_share_location_row,parent,false);
             return new ShareLocationHolder(binding);
         }else if (viewType==drop_off_location_package_details){
             BotDropLocationPackageDetailtsRowBindingImpl binding = DataBindingUtil.inflate(inflater, R.layout.bot_drop_location_package_detailts_row,parent,false);
             return new DropLocationPackageDetailsHolder(binding);
+        }else if (viewType==pick_up_location_details){
+            BotPickUpLocationDetailtsRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_pick_up_location_detailts_row,parent,false);
+            return new PickUpLocationDetailsHolder(binding);
         }else if (viewType==use_coupon){
             BotCouponRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.bot_coupon_row,parent,false);
             return new UseCouponHolder(binding);
@@ -330,7 +340,20 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         else if (holder instanceof DropLocationDetailsHolder){
             DropLocationDetailsHolder dropLocationDetailsHolder = (DropLocationDetailsHolder) holder;
-            dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
+            dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getTo_address());
+
+
+
+        }else if (holder instanceof ShareLocationDetailsHolder){
+            ShareLocationDetailsHolder pickUpLocationDetailsHolder = (ShareLocationDetailsHolder) holder;
+            pickUpLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
+
+
+
+        }else if (holder instanceof PickUpLocationDetailsHolder){
+            PickUpLocationDetailsHolder pickUpLocationDetailsHolder = (PickUpLocationDetailsHolder) holder;
+            pickUpLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
+
         }
         else if (holder instanceof DropLocationPackageDetailsHolder){
             DropLocationPackageDetailsHolder dropLocationPackageDetailsHolder = (DropLocationPackageDetailsHolder) holder;
@@ -402,7 +425,9 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         else if (holder instanceof FinishHolder){
             FinishHolder finishHolder = (FinishHolder) holder;
-
+            finishHolder.binding.tvCancel.setOnClickListener(v -> {
+                activity.cancelOrder();
+            });
         }
         else if (holder instanceof TypingHolder){
             TypingHolder typingHolder = (TypingHolder) holder;
@@ -525,6 +550,24 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static class DropLocationDetailsHolder extends RecyclerView.ViewHolder {
         private BotDropLocationDetailtsRowBinding binding;
         public DropLocationDetailsHolder(@NonNull BotDropLocationDetailtsRowBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+        }
+    }
+
+    private static class PickUpLocationDetailsHolder extends RecyclerView.ViewHolder {
+        private BotPickUpLocationDetailtsRowBinding binding;
+        public PickUpLocationDetailsHolder(@NonNull BotPickUpLocationDetailtsRowBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+        }
+    }
+
+    private static class ShareLocationDetailsHolder extends RecyclerView.ViewHolder {
+        private BotShareLocationDetailtsRowBinding binding;
+        public ShareLocationDetailsHolder(@NonNull BotShareLocationDetailtsRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

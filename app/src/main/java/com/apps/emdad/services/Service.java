@@ -5,9 +5,11 @@ import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface Service {
 
@@ -49,5 +51,8 @@ public interface Service {
                                             @Query(value = "language") String language,
                                             @Query(value = "key") String key
     );
+
+    @GET
+    Call<ResponseBody> getFullUrl(@Url String url);
 
 }

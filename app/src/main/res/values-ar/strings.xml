@@ -62,6 +62,11 @@
     <string name="choose_language">إختر لغتك</string>
     <string name="next">التالي</string>
     <string name="welcome_in_emdad"><![CDATA[مرحبا بك فى <font color="#1db198">إمداد</font>]]></string>
+    <string name="get_all_service"><![CDATA[تفضل واطلب من جميع انواع المتاجر <font color="#2e3233">في كل مكان</font> من داخل مدينتك]]></string>
+    <string name="when_it_comes"><![CDATA[نقدم لك  <font color="#2e3233">أفضل التجارب</font> لما نجي نتكلم عن الطلبات في إمداد]]></string>
+    <string name="free_order_discussion"><![CDATA[مو بس كدا تقدر <font color="#2e3233">تتواصل</font> مع المراسيل في الطلبات دائما]]></string>
+
+
     <string name="we_deliver_order">نقوم بتوصيل طلبك الى موقعك او اي موقع تختارة</string>
     <string name="get_discounts"><![CDATA[ احصل على <font color="#1db198">خصومات</font>]]></string>
     <string name="easy_comm"><![CDATA[سهولة <font color="#1db198">التواصل</font>]]></string>
@@ -192,5 +197,7 @@
     <string name="closed">مغلق</string>
     <string name="working_hours">ساعات العمل</string>
     <string name="work_hour_not_aval">ساعات العمل غير متاحة</string>
+    <string name="order_canceled">إلغاء الطلب</string>
+    <string name="invalid_url">الرابط غير صحيح</string>
 
 </resources>

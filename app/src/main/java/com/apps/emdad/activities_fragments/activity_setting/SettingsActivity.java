@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.apps.emdad.BuildConfig;
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_intro_slider.IntroSliderActivity;
 import com.apps.emdad.activities_fragments.activity_language.LanguageActivity;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.databinding.ActivitySettingsBinding;
@@ -146,7 +147,9 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     @Override
     public void onTour() {
-
+        Intent intent = new Intent(this, IntroSliderActivity.class);
+        intent.putExtra("type",1);
+        startActivity(intent);
     }
 
     @Override

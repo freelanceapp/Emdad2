@@ -82,6 +82,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -165,7 +166,23 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
 
         binding.cardIconSearch.setOnClickListener(v -> {
             if (isSearchOpen) {
+                String url  = binding.edtUrl.getText().toString().trim();
 
+                if (!url.isEmpty()){
+                    if (url.contains("https://goo.gl/maps/")){
+                        getFullUrl(url);
+                    }else if (url.contains("https://www.google.com.eg/maps/place/")&&url.contains("@"))
+                    {
+                        getLatLongFromUrl(url);
+                    }else {
+                        Common.CreateDialogAlert(MapSearchActivity.this,getString(R.string.invalid_url));
+
+                    }
+
+                }else {
+                    Common.CreateDialogAlert(MapSearchActivity.this,getString(R.string.invalid_url));
+
+                }
             }else {
                 setUpAnimationSearch(0,(int) getResources().getDimension(R.dimen.map_search));
 
@@ -175,6 +192,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
         });
         binding.imageSearchClose.setOnClickListener(v -> {
             setUpAnimationSearch((int) getResources().getDimension(R.dimen.map_search),0);
+            binding.edtUrl.setText(null);
             isSearchOpen = false;
         });
         binding.cardIconMap.setOnClickListener(v -> {
@@ -419,61 +437,8 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
 
-    private void searchByPlaceId(String place_id){
-        
-
-    }
-    private void Search(String query) {
-
-        binding.progBar.setVisibility(View.VISIBLE);
-        binding.imagePin.setVisibility(View.GONE);
-
-        String fields = "id,place_id,name,geometry,formatted_address";
-
-        Api.getService("https://maps.googleapis.com/maps/api/")
-                .searchOnMap("textquery", query, fields, lang, getString(R.string.map_api_key))
-                .enqueue(new Callback<PlaceMapDetailsData>() {
-                    @Override
-                    public void onResponse(Call<PlaceMapDetailsData> call, Response<PlaceMapDetailsData> response) {
-                        binding.progBar.setVisibility(View.GONE);
-                        binding.imagePin.setVisibility(View.VISIBLE);
-
-                        if (response.isSuccessful() && response.body() != null) {
 
 
-                            if (response.body().getCandidates().size() > 0) {
-
-                                address = response.body().getCandidates().get(0).getFormatted_address().replace("Unnamed Road,", "");
-                                binding.tvAddress.setText(address + "");
-                                AddMarker(response.body().getCandidates().get(0).getGeometry().getLocation().getLat(), response.body().getCandidates().get(0).getGeometry().getLocation().getLng());
-                            }
-                        } else {
-                            binding.progBar.setVisibility(View.GONE);
-                            binding.imagePin.setVisibility(View.VISIBLE);
-
-                            try {
-                                Log.e("error_code", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<PlaceMapDetailsData> call, Throwable t) {
-                        try {
-                            binding.progBar.setVisibility(View.GONE);
-                            binding.imagePin.setVisibility(View.VISIBLE);
-
-                            Toast.makeText(MapSearchActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
-                        } catch (Exception e) {
-
-                        }
-                    }
-                });
-    }
 
     private void getGeoData(final double lat, double lng) {
         binding.progBar.setVisibility(View.VISIBLE);
@@ -538,6 +503,65 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
                 });
     }
 
+    private void getFullUrl(String shortUrl){
+
+        Api.getService("https://maps.googleapis.com/maps/api/")
+                .getFullUrl(shortUrl)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            String url = response.raw().request().url().toString();
+                            if (url.contains("@")){
+
+                                getLatLongFromUrl(url);
+
+                            }else {
+                                Common.CreateDialogAlert(MapSearchActivity.this,getString(R.string.invalid_url));
+                            }
+                        } else {
+                            Common.CreateDialogAlert(MapSearchActivity.this,getString(R.string.invalid_url));
+
+                            try {
+                                Log.e("error_code", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            Common.CreateDialogAlert(MapSearchActivity.this,getString(R.string.invalid_url));
+
+                            Toast.makeText(MapSearchActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    private void getLatLongFromUrl(String url) {
+        String [] data1 = url.split("@");
+        String part1 = data1[1];
+        String [] data2 = part1.split(",",3);
+
+        try {
+            lat = Double.parseDouble(data2[0]);
+            lng = Double.parseDouble(data2[1]);
+            AddMarker(lat,lng);
+
+        }catch (Exception e){
+            Common.CreateDialogAlert(MapSearchActivity.this,getString(R.string.invalid_url));
+
+        }
+
+    }
+
     private void AddMarker(double lat, double lng) {
 
         this.lat = lat;
@@ -554,7 +578,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
             marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())));
         }
         marker.setDraggable(false);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
     }
 
     @Override

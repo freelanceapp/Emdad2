@@ -3,6 +3,7 @@ package com.apps.emdad.activities_fragments.activity_intro_slider;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 
@@ -15,6 +16,7 @@ import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -29,6 +31,7 @@ import com.apps.emdad.language.Language;
 import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.preferences.Preferences;
 
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,7 @@ public class IntroSliderActivity extends AppCompatActivity {
     private ActivityIntroSliderBinding binding;
     private IntroAdapter adapter;
     private Preferences preferences;
+    private int type = 0;
 
 
     @Override
@@ -60,7 +64,13 @@ public class IntroSliderActivity extends AppCompatActivity {
         }
 
         binding = DataBindingUtil.setContentView(this,R.layout.activity_intro_slider);
+        getDataFromIntent();
         initView();
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();;
+        type = intent.getIntExtra("type",0);
     }
 
     private void initView() {
@@ -72,8 +82,16 @@ public class IntroSliderActivity extends AppCompatActivity {
         binding.pager.setOffscreenPageLimit(3);
 
 
-        binding.tvTitle.setText(Html.fromHtml(getString(R.string.welcome_in_emdad)));
-        binding.tvContent.setText(getString(R.string.we_deliver_order));
+        if (type==0){
+            binding.tvTitle.setText(Html.fromHtml(getString(R.string.welcome_in_emdad)));
+            binding.tvContent.setText(getString(R.string.we_deliver_order));
+
+        }else {
+            binding.tvTitle.setText("");
+            binding.tvContent.setText(Html.fromHtml(getString(R.string.get_all_service)));
+            binding.tvContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP,18.0f);
+            binding.tvContent.setTextColor(ContextCompat.getColor(this,R.color.gray11r I));
+        }
 
 
 
@@ -94,21 +112,49 @@ public class IntroSliderActivity extends AppCompatActivity {
                     case 0:
                         binding.btnStart.setVisibility(View.GONE);
                         binding.cons.setVisibility(View.VISIBLE);
-                        binding.tvTitle.setText(Html.fromHtml(getString(R.string.welcome_in_emdad)));
-                        binding.tvContent.setText(getString(R.string.we_deliver_order));
+
+                        if (type==0){
+                            binding.tvTitle.setText(Html.fromHtml(getString(R.string.welcome_in_emdad)));
+                            binding.tvContent.setText(getString(R.string.we_deliver_order));
+
+                        }else {
+                            binding.tvTitle.setText("");
+                            binding.tvContent.setText(Html.fromHtml(getString(R.string.get_all_service)));
+
+                        }
+
+
                         break;
                     case 1:
                         binding.btnStart.setVisibility(View.GONE);
                         binding.cons.setVisibility(View.VISIBLE);
-                        binding.tvTitle.setText(Html.fromHtml(getString(R.string.get_discounts)));
-                        binding.tvContent.setText(getString(R.string.many_discount));
+
+                        if (type==0){
+                            binding.tvTitle.setText(Html.fromHtml(getString(R.string.get_discounts)));
+                            binding.tvContent.setText(getString(R.string.many_discount));
+
+                        }else {
+                            binding.tvTitle.setText("");
+                            binding.tvContent.setText(Html.fromHtml(getString(R.string.when_it_comes)));
+
+                        }
+
                         break;
 
                     case 2:
                         binding.btnStart.setVisibility(View.VISIBLE);
                         binding.cons.setVisibility(View.GONE);
-                        binding.tvTitle.setText(Html.fromHtml(getString(R.string.easy_comm)));
-                        binding.tvContent.setText(getString(R.string.delegate_contact));
+
+                        if (type==0){
+                            binding.tvTitle.setText(Html.fromHtml(getString(R.string.easy_comm)));
+                            binding.tvContent.setText(getString(R.string.delegate_contact));
+
+                        }else {
+                            binding.tvTitle.setText("");
+                            binding.tvContent.setText(Html.fromHtml(getString(R.string.free_order_discussion)));
+
+                        }
+
                         break;
                 }
             }
@@ -126,13 +172,23 @@ public class IntroSliderActivity extends AppCompatActivity {
         });
 
         binding.btnSkip.setOnClickListener(v -> {
-           start();
+            if (type==0){
+                start();
+
+            }else {
+                finish();
+            }
 
         });
 
 
         binding.btnStart.setOnClickListener(v -> {
-            start();
+            if (type==0){
+                start();
+
+            }else {
+                finish();
+            }
         });
 
     }

@@ -61,6 +61,10 @@
     <string name="choose_language">Choose Language</string>
     <string name="next">next</string>
     <string name="welcome_in_emdad"><![CDATA[Welcome in <font color="#1db198">Emdad</font>]]></string>
+    <string name="get_all_service"><![CDATA[Get all kinds of Services for <font color="#2e3233">anywhere</font>in your city]]></string>
+    <string name="when_it_comes"><![CDATA[When it comes to ordering we has the <font color="#2e3233">best experience</font>]]></string>
+    <string name="free_order_discussion"><![CDATA[Free order discussion with the couriers <font color="#2e3233">all the time</font>]]></string>
+
     <string name="we_deliver_order">We deliver your order to your site or wherever you choose</string>
     <string name="get_discounts"><![CDATA[Get <font color="#1db198">discounts</font>]]></string>
     <string name="easy_comm"><![CDATA[Easy <font color="#1db198">Communication</font>]]></string>
@@ -191,6 +195,8 @@
     <string name="closed">Closed</string>
     <string name="working_hours">Working Hours</string>
     <string name="work_hour_not_aval">Working Hours Not Available</string>
+    <string name="order_canceled">Order canceled</string>
+    <string name="invalid_url">Invalid URL</string>
 
 
 </resources>

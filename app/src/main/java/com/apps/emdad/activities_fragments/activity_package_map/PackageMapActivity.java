@@ -372,13 +372,23 @@ public class PackageMapActivity extends AppCompatActivity implements OnMapReadyC
 
     private void updateActionUi() {
         if (fromLocationModel != null && toLocationModel != null) {
-            canSelectLocation = true;
 
-            binding.btnOk.setBackgroundResource(R.drawable.small_rounded_primary);
-            binding.btnOk.setTextColor(ContextCompat.getColor(this, R.color.white));
-            canDraggable = true;
+            double distance = calculateDistance();
+            binding.tvDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",distance,getString(R.string.km)));
             onMapReady(mMap);
-            binding.tvDistance.setText(calculateDistance());
+            canDraggable = true;
+
+            if (distance>0.0){
+                canSelectLocation = true;
+                binding.btnOk.setBackgroundResource(R.drawable.small_rounded_primary);
+                binding.btnOk.setTextColor(ContextCompat.getColor(this, R.color.white));
+            }else {
+                canSelectLocation = false;
+                binding.btnOk.setBackgroundResource(R.drawable.small_rounded_gray);
+                binding.btnOk.setTextColor(ContextCompat.getColor(this, R.color.gray9));
+
+            }
+
         } else {
             canSelectLocation = false;
             binding.btnOk.setBackgroundResource(R.drawable.small_rounded_gray);
@@ -389,9 +399,10 @@ public class PackageMapActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 
-    private String calculateDistance(){
+    private double calculateDistance(){
         double dis = SphericalUtil.computeDistanceBetween(new LatLng(fromLocationModel.getLat(),fromLocationModel.getLng()),new LatLng(toLocationModel.getLat(),toLocationModel.getLng()))/1000;
-        return String.format(Locale.ENGLISH,"%.2f %s",dis,getString(R.string.km));
+        return dis;
+        //return String.format(Locale.ENGLISH,"%.2f %s",dis,getString(R.string.km));
     }
 
     @SuppressLint("MissingPermission")

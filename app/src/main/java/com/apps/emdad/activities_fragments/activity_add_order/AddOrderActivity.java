@@ -54,6 +54,7 @@ public class AddOrderActivity extends AppCompatActivity {
     private int drop_off_pos = -1;
     private int share_location_pos = -1;
     private int coupon_pos = -1;
+    private boolean mapLocation = false;
 
     private FavoriteLocationModel fromLocation, toLocation;
     private boolean isPackageOrder = false;
@@ -141,6 +142,7 @@ public class AddOrderActivity extends AppCompatActivity {
         share_location_pos = -1;
         coupon_pos = -1;
         isPackageOrder = false;
+        mapLocation = false;
         binding.cardRestart.setVisibility(View.GONE);
         binding.edtDetails.setText(null);
         chatBotModelList.clear();
@@ -279,11 +281,7 @@ public class AddOrderActivity extends AppCompatActivity {
             intent.putExtra("lng", user_lng);
             startActivityForResult(intent, 100);
         } else {
-
-            Intent intent = new Intent(this, ShopsActivity.class);
-            intent.putExtra("lat", user_lat);
-            intent.putExtra("lng", user_lng);
-            startActivityForResult(intent, 100);
+            navigateToMapSearch(500);
 
         }
 
@@ -386,7 +384,8 @@ public class AddOrderActivity extends AppCompatActivity {
             startActivityForResult(intent,400);
         }
     }
-    private void updateCouponAction(String coupon){
+    private void updateCouponAction(String coupon)
+    {
         ChatBotModel chatBotModel2 = chatBotModelList.get(coupon_pos);
         chatBotModel2.setEnabled(false);
         chatBotModelList.set(coupon_pos, chatBotModel2);
@@ -466,6 +465,36 @@ public class AddOrderActivity extends AppCompatActivity {
         navigateToPackageMapActivity(300);
 
     }
+    public void cancelOrder()
+    {
+        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.new_order);
+        chatBotModel.setText(getString(R.string.order_canceled));
+        chatBotModelList.add(chatBotModel);
+        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+        new Handler().postDelayed(() -> {
+            chatBotModelList.add(null);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+            new Handler().postDelayed(() -> {
+                chatBotModelList.remove(chatBotModelList.size() - 1);
+                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                ChatBotModel chatBotModel2;
+                chatBotModel2 = createInstance(ChatBotAdapter.new_order);
+
+
+                chatBotModelList.add(chatBotModel2);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+                startChat();
+            }, 1000);
+        }, 1000);
+
+    }
     private void navigateToPackageMapActivity(int req)
     {
         Intent intent = new Intent(this, PackageMapActivity.class);
@@ -473,6 +502,7 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     private void navigateToMapSearch(int req)
     {
+        Log.e("req",req+"__");
         Intent intent = new Intent(this, MapSearchActivity.class);
         startActivityForResult(intent, req);
     }
@@ -480,21 +510,33 @@ public class AddOrderActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null)
+        {
             NearbyModel.Result result = (NearbyModel.Result) data.getSerializableExtra("data");
             updateSelectedShopUI(result);
 
         } else if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
+
             FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
             ChatBotModel chatBotModel1 = chatBotModelList.get(drop_off_pos);
             chatBotModel1.setEnabled(false);
             chatBotModelList.set(drop_off_pos, chatBotModel1);
             adapter.notifyItemChanged(drop_off_pos);
 
-            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.drop_location_details);
-            chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
-            chatBotModel2.setFrom_lat(favoriteLocationModel.getLat());
-            chatBotModel2.setFrom_lng(favoriteLocationModel.getLng());
+            ChatBotModel chatBotModel2;
+            if (mapLocation){
+                chatBotModel2 = createInstance(ChatBotAdapter.drop_location_details);
+                chatBotModel2.setTo_address(favoriteLocationModel.getAddress());
+                chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
+                chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
+            }else {
+                chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
+                chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
+                chatBotModel2.setFrom_lat(favoriteLocationModel.getLat());
+                chatBotModel2.setFrom_lng(favoriteLocationModel.getLng());
+            }
+
+
             chatBotModelList.add(chatBotModel2);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
 
@@ -550,7 +592,7 @@ public class AddOrderActivity extends AppCompatActivity {
             chatBotModelList.set(share_location_pos, chatBotModel1);
             adapter.notifyItemChanged(share_location_pos);
 
-            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.drop_off_location_package_details);
+            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.share_location_details);
             chatBotModel2.setFrom_address(fromLocation.getAddress());
             chatBotModel2.setFrom_lat(fromLocation.getLat());
             chatBotModel2.setFrom_lng(fromLocation.getLng());
@@ -584,6 +626,41 @@ public class AddOrderActivity extends AppCompatActivity {
                     }, 1000);
         }else if (requestCode == 400 && resultCode == RESULT_OK && data != null) {
            updateCouponAction("تم حصولك على خصم 10%");
+        }else if (requestCode==500 && resultCode==RESULT_OK && data!=null){
+            mapLocation = true;
+            FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
+            ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
+            chatBotModel1.setEnabled(false);
+            chatBotModelList.set(shopListPos, chatBotModel1);
+            adapter.notifyItemChanged(shopListPos);
+
+            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
+            chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
+            chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
+            chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
+            chatBotModelList.add(chatBotModel2);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+
+
+            chatBotModelList.add(null);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+            new Handler()
+                    .postDelayed(() -> {
+                        chatBotModelList.remove(chatBotModelList.size() - 1);
+                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+
+                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.needs);
+
+                        chatBotModelList.add(chatBotModel3);
+                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+
+                    }, 1000);
         }
     }
     private void updateSelectedShopUI(NearbyModel.Result result)
