@@ -90,7 +90,7 @@ public class IntroSliderActivity extends AppCompatActivity {
             binding.tvTitle.setText("");
             binding.tvContent.setText(Html.fromHtml(getString(R.string.get_all_service)));
             binding.tvContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP,18.0f);
-            binding.tvContent.setTextColor(ContextCompat.getColor(this,R.color.gray11r I));
+            binding.tvContent.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         }
 
 
