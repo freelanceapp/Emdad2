@@ -125,6 +125,8 @@ public class FilterActivity extends AppCompatActivity implements Listeners.BackL
         keywordList.add(new KeywordModel("cafe",getString(R.string.cafe)));
         keywordList.add(new KeywordModel("florist",getString(R.string.florist)));
         keywordList.add(new KeywordModel("library",getString(R.string.library)));
+        keywordList.add(new KeywordModel("pharmacy",getString(R.string.pharmacy)));
+
 
 
     }

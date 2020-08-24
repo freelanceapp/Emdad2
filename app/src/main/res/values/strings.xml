@@ -197,6 +197,9 @@
     <string name="work_hour_not_aval">Working Hours Not Available</string>
     <string name="order_canceled">Order canceled</string>
     <string name="invalid_url">Invalid URL</string>
+    <string name="popular_around_you">Popular around you</string>
+    <string name="most_wanted_service">Most wanted service</string>
+    <string name="pharmacy">Pharmacy</string>
 
 
 </resources>

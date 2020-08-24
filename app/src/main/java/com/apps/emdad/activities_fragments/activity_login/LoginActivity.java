@@ -15,6 +15,7 @@ import android.transition.AutoTransition;
 import android.transition.ChangeTransform;
 import android.transition.Explode;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
         binding.setLoginModel(loginModel);
         binding.setListener(this);
         Paper.init(this);
-        lang = Paper.book().read("Lang","ar");
+        lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
         Animation animation = AnimationUtils.loadAnimation(this,R.anim.lanuch);
         binding.cons.startAnimation(animation);

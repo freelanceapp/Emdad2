@@ -199,5 +199,8 @@
     <string name="work_hour_not_aval">ساعات العمل غير متاحة</string>
     <string name="order_canceled">إلغاء الطلب</string>
     <string name="invalid_url">الرابط غير صحيح</string>
+    <string name="popular_around_you">Popular around you</string>
+    <string name="most_wanted_service">Most wanted service</string>
+    <string name="pharmacy">صيدليات</string>
 
 </resources>
