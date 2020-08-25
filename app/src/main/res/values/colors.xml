@@ -32,6 +32,7 @@
 
     <color name="gray1_trans">#ddf5f5f5</color>
     <color name="rate_color">#FFD800</color>
+    <color name="yellow">#FBC02D</color>
     <color name="primary_trans">#111db198</color>
 
     <array name="dots">

@@ -200,6 +200,7 @@
     <string name="popular_around_you">Popular around you</string>
     <string name="most_wanted_service">Most wanted service</string>
     <string name="pharmacy">Pharmacy</string>
+    <string name="no_courier_available_for_this_branch">No Courier available for this branch</string>
 
 
 </resources>

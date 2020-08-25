@@ -365,10 +365,16 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
 
-        Log.e("size",resultList.size()+"__");
 
-        nearbyAdapter = new NearbyAdapter2(resultList,context,fragment_main);
-        binding.recViewPopular.setAdapter(nearbyAdapter);
+
+        if (resultList.size()>0){
+            binding.tv.setVisibility(View.VISIBLE);
+            nearbyAdapter = new NearbyAdapter2(resultList,context,fragment_main);
+            binding.recViewPopular.setAdapter(nearbyAdapter);
+        }else {
+            binding.tv.setVisibility(View.GONE);
+        }
+
 
 
 
@@ -404,7 +410,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return SphericalUtil.computeDistanceBetween(latLng1, latLng2) / 1000;
     }
 
-
     private void getCategory() {
         CategoryModel model1 = new CategoryModel("1",R.drawable.rest,context.getString(R.string.restaurants));
         CategoryModel model2 = new CategoryModel("2",R.drawable.sup,context.getString(R.string.supermarket));
@@ -428,9 +433,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     }
-
-
-
 
     private  class Task extends TimerTask{
         private MainSliderRowBinding binding;

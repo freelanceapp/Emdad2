@@ -170,7 +170,13 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         updateMainUi();
 
         if (fragment_main ==null){
-            fragment_main = Fragment_Main.newInstance(location.getLatitude(),location.getLatitude());
+            if (location!=null){
+                fragment_main = Fragment_Main.newInstance(location.getLatitude(),location.getLatitude());
+
+            }else {
+                fragment_main = Fragment_Main.newInstance(0.0,0.0);
+
+            }
         }
 
         if (fragment_order!=null&&fragment_order.isAdded()){

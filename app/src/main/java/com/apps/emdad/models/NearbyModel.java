@@ -84,6 +84,8 @@ public class NearbyModel implements Serializable {
             isOpen = open;
         }
 
+
+
         public PlaceDetailsModel.Opening_Hours getWork_hours() {
             return work_hours;
         }

@@ -61,7 +61,7 @@ public class NearbyAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder
             myHolder.binding.setModel(placeModel);
             holder.itemView.setOnClickListener(v -> {
                 NearbyModel.Result placeModel1 = placeModelList.get(myHolder.getAdapterPosition());
-
+                fragment_main.placeItemData(placeModel1);
             });
         }else if (holder instanceof LoadMoreHolder){
             LoadMoreHolder loadMoreHolder = (LoadMoreHolder) holder;

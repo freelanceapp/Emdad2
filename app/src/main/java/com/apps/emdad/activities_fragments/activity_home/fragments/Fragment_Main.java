@@ -14,10 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.MainAdapter;
 import com.apps.emdad.databinding.FragmentMainBinding;
 import com.apps.emdad.models.MainItemData;
+import com.apps.emdad.models.NearbyModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,5 +103,9 @@ public class Fragment_Main extends Fragment {
     }
 
 
-
+    public void placeItemData(NearbyModel.Result placeModel) {
+        Intent intent = new Intent(activity, ShopMapActivity.class);
+        intent.putExtra("data",placeModel);
+        startActivity(intent);
+    }
 }
