@@ -71,6 +71,7 @@ dependencies {
     implementation 'io.supercharge:shimmerlayout:2.1.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
 
 

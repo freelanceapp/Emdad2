@@ -152,7 +152,7 @@
                            android:layout_height="15dp"
 
                            android:src="@{model.open?@drawable/ic_clock2:@drawable/ic_clock3}"
-
+                           android:visibility="gone"
                            android:layout_gravity="center"
                            />
 
@@ -170,6 +170,7 @@
                        android:layout_marginStart="5dp"
                        android:layout_marginEnd="5dp"
                        android:text="@{model.open?@string/open_now:@string/closed}"
+                       android:visibility="gone"
                        />
 
 

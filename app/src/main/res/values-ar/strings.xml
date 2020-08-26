@@ -203,5 +203,10 @@
     <string name="most_wanted_service">Most wanted service</string>
     <string name="pharmacy">صيدليات</string>
     <string name="no_courier_available_for_this_branch">No Courier available for this branch</string>
+    <string name="home3">موقعي</string>
+    <string name="order_instruction">Order Instruction</string>
+    <string name="order_here">Order here</string>
+    <string name="attach_photo_from">Attach photo from</string>
+    <string name="add_more">Add more</string>
 
 </resources>

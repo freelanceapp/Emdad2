@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+    <data>
+        <variable
+            name="lang"
+            type="String" />
+        <variable
+            name="actions"
+            type="com.apps.emdad.interfaces.Listeners.SettingAction" />
+        <variable
+            name="model"
+            type="com.apps.emdad.models.NearbyModel.Result" />
+
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/gray10"
+
+        >
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/gray0"
+
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                >
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top"
+
+                    >
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@color/gray1_trans"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:id="@+id/close"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_next"
+                        android:padding="8dp"
+                        android:tint="@color/color4"
+                        android:layout_gravity="center"
+                        android:rotation='@{lang.equals("ar")?180:0}'
+
+
+                        />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray9"
+                        android:text="@string/new_order"
+                        android:textAllCaps="false"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:text="@{model.name}"
+                        android:textAllCaps="false"
+                        android:lines="1"
+                        android:ellipsize="end"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+
+        </androidx.appcompat.widget.Toolbar>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fitsSystemWindows="true"
+            android:fillViewport="true"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="@string/order_instruction"
+                    android:layout_marginTop="20dp"
+                    android:textAllCaps="true"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/rounded_gray"
+                    android:padding="10dp"
+                    >
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fillViewport="true"
+                        android:fitsSystemWindows="true"
+
+                        >
+                        <EditText
+                            android:id="@+id/edtOrder"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:background="@color/transparent"
+                            android:textColorHint="@color/gray8"
+                            android:textColor="@color/gray11"
+                            android:hint="@string/order_here"
+                            android:gravity="top"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:inputType="textMultiLine"
+                            />
+                    </androidx.core.widget.NestedScrollView>
+                    <ImageView
+                        android:id="@+id/imageCamera"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_camera"
+                        android:padding="8dp"
+                        android:tint="@color/gray6"
+                        />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recViewImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recViewPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    >
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/gray11"
+                        android:textSize="14sp"
+                        android:text="@string/coupons"
+                        />
+                    <TextView
+                        android:id="@+id/tvAddCoupon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:text="@string/add_coupon"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_plus"
+                        android:padding="3dp"
+                        android:tint="@color/colorPrimary"
+
+                        />
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/tvCoupon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/gray11"
+                    android:textSize="14sp"
+                    />
+            </LinearLayout>
+        </ScrollView>
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray8"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/next"
+            />
+    </LinearLayout>
+</layout>

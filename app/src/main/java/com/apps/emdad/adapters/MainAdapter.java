@@ -134,7 +134,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .frozen(false)
                     .duration(1000)
                     .shimmer(true)
-                    .count(2)
+                    .count(20)
                     .load(R.layout.shop_row)
                     .show();
 

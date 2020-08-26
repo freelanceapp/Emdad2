@@ -1,19 +1,29 @@
 package com.apps.emdad.activities_fragments.activity_shop_map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.adapters.HoursAdapter;
 import com.apps.emdad.adapters.ImagePagerAdapter;
@@ -37,6 +48,18 @@ import com.apps.emdad.models.PhotosModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,27 +67,37 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.ui.IconGenerator;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,GoogleApiClient.ConnectionCallbacks, LocationListener {
     private ActivityShopMapBinding binding;
     private NearbyModel.Result placeModel;
     private String lang;
     private List<HourModel> hourModelList;
     private HoursAdapter adapter;
     private GoogleMap mMap;
-    private Bitmap bitmap = null;
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    private final String gps_perm = Manifest.permission.ACCESS_FINE_LOCATION;
+    private final int loc_req = 22;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -120,7 +153,6 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
             startActivity(Intent.createChooser(intent,"Share"));
         });
         updateUI();
-        getPlaceDetails();
     }
 
     private void getPlaceDetails() {
@@ -201,14 +233,19 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
             {
                 String url = Tags.IMAGE_Places_URL+placeModel.getPhotos().get(0).getPhoto_reference()+"&key="+getString(R.string.map_api_key);
                 Picasso.get().load(Uri.parse(url)).fit().into(binding.image);
+                addMarker(url);
 
             }else
             {
+
+                addMarker(placeModel.getIcon());
+
                 Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(binding.image);
 
             }
         }
         else {
+            addMarker(placeModel.getIcon());
             Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(binding.image);
 
         }
@@ -220,9 +257,12 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         binding.setDistance(String.format(Locale.ENGLISH,"%.2f",placeModel.getDistance()));
         binding.setModel(placeModel);
+
         binding.progBar.setVisibility(View.GONE);
         binding.tvShow.setVisibility(View.VISIBLE);
         binding.arrow2.setVisibility(View.VISIBLE);
+        binding.tvStatus.setVisibility(View.VISIBLE);
+        binding.icon.setVisibility(View.VISIBLE);
     }
 
     private List<HourModel> getHours() {
@@ -260,132 +300,193 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
             mMap.setTrafficEnabled(false);
             mMap.setBuildingsEnabled(false);
             mMap.setIndoorEnabled(true);
-            getBitmapImage(new LatLng(placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng()));
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            CheckPermission();
+            getPlaceDetails();
+
 
         }
     }
 
-    private void addMarker(Bitmap bitmap,LatLng latLng){
+    private void addMarker(String url) {
+        View view = LayoutInflater.from(this).inflate(R.layout.marker_shop,null);
+        CircleImageView imageView = view.findViewById(R.id.image);
+        TextView tvDistance = view.findViewById(R.id.tvDistance);
+        TextView tvName = view.findViewById(R.id.tvName);
 
-        mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker()));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,18.0f));
 
 
 
 
+
+        Picasso.get().load(Uri.parse(url)).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                tvDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",placeModel.getDistance(),getString(R.string.km)));
+                tvName.setText(placeModel.getName());
+                imageView.setImageBitmap(bitmap);
+                IconGenerator iconGenerator = new IconGenerator(ShopMapActivity.this);
+                iconGenerator.setContentPadding(2,2,2,2);
+                iconGenerator.setContentView(view);
+
+
+                mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).position(new LatLng(placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng())));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng()),20.0f));
+
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        });
+
+
+    }
+
+    private void addMarkerHome(double lat ,double lng) {
+        View view = LayoutInflater.from(this).inflate(R.layout.marker_my_location,null);
+        IconGenerator iconGenerator = new IconGenerator(ShopMapActivity.this);
+        iconGenerator.setContentPadding(2,2,2,2);
+        iconGenerator.setContentView(view);
+
+
+        mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).position(new LatLng(lat,lng)));
 
 
     }
 
 
-    private void getBitmapImage(LatLng latLng){
 
-        View view = LayoutInflater.from(this).inflate(R.layout.marker_shop,null);
-        TextView tvAddress = view.findViewById(R.id.tvAddress);
-        TextView tvDistance = view.findViewById(R.id.tvDistance);
-        ImageView imageView = view.findViewById(R.id.image);
+    private void initGoogleApiClient()
+    {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+        googleApiClient.connect();
+    }
+    private void CheckPermission()
+    {
+        if (ActivityCompat.checkSelfPermission(this, gps_perm) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{gps_perm}, loc_req);
+        } else {
+            mMap.setMyLocationEnabled(true);
+            initGoogleApiClient();
 
-        tvAddress.setText(placeModel.getVicinity());
-        tvDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",placeModel.getDistance(),getString(R.string.km)));
-        if (placeModel.getPhotos()!=null){
-            Log.e("iii","iii");
-            if (placeModel.getPhotos().size()>0)
+        }
+    }
+
+    private void initLocationRequest()
+    {
+        locationRequest = LocationRequest.create();
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(60000);
+        LocationSettingsRequest.Builder request = new LocationSettingsRequest.Builder();
+        request.addLocationRequest(locationRequest);
+        request.setAlwaysShow(false);
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, request.build());
+
+        result.setResultCallback(result1 -> {
+
+            Status status = result1.getStatus();
+            switch (status.getStatusCode())
             {
-                addMarker(bitmap,latLng);
-
-                Log.e("nnn","uuu");
-                String url = Tags.IMAGE_Places_URL+placeModel.getPhotos().get(0).getPhoto_reference()+"&key="+getString(R.string.map_api_key);
-                Picasso.get().load(Uri.parse(url)).fit().into(imageView, new com.squareup.picasso.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        //DisplayMetrics displayMetrics = new DisplayMetrics();
-                        //getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                        //view.setLayoutParams(new ViewGroup.LayoutParams(180, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        view.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
-                        view.layout(0,0,view.getMeasuredWidth(),view.getMeasuredHeight());
-                        view.buildDrawingCache();
-                        bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),view.getMeasuredHeight(),Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(bitmap);
-                        Drawable drawable = view.getBackground();
-                        if (drawable!=null){
-                            drawable.draw(canvas);
-                        }
-                        view.draw(canvas);
-                        addMarker(bitmap,latLng);
-                        Log.e("1","1");
+                case LocationSettingsStatusCodes.SUCCESS:
+                    startLocationUpdate();
+                    break;
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    try {
+                        status.startResolutionForResult(ShopMapActivity.this,1255);
+                    }catch (Exception e)
+                    {
                     }
+                    break;
+                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    Log.e("not available","not available");
+                    break;
+            }
+        });
 
-                    @Override
-                    public void onError(Exception e) {
-                        Log.e("error1",e.getMessage()+"__");
-                    }
-                });
+    }
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdate()
+    {
+        locationCallback = new LocationCallback()
+        {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                onLocationChanged(locationResult.getLastLocation());
+            }
+        };
+        LocationServices.getFusedLocationProviderClient(this)
+                .requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        initLocationRequest();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        if (googleApiClient!=null){
+            googleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        addMarkerHome(location.getLatitude(),location.getLongitude());
+        if (googleApiClient!=null){
+            googleApiClient.disconnect();
+        }
+        if (locationCallback!=null){
+            LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode==1255&&resultCode==RESULT_OK){
+            startLocationUpdate();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        if (requestCode == loc_req)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                initGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
 
             }else
             {
-                Log.e("yyy","yyy");
-                Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(imageView, new com.squareup.picasso.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        //DisplayMetrics displayMetrics = new DisplayMetrics();
-                        //getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                        //view.setLayoutParams(new ViewGroup.LayoutParams(180, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        view.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
-                        view.layout(0,0,view.getMeasuredWidth(),view.getMeasuredHeight());
-                        view.buildDrawingCache();
-                        bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),view.getMeasuredHeight(),Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(bitmap);
-                        Drawable drawable = view.getBackground();
-                        if (drawable!=null){
-                            drawable.draw(canvas);
-                        }
-                        view.draw(canvas);
-                        addMarker(bitmap,latLng);
-                        Log.e("2","2");
-
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Log.e("error2",e.getMessage()+"__");
-
-                    }
-                });
-
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
-        else {
-            Log.e("ggg","gggg");
-            Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(imageView, new com.squareup.picasso.Callback() {
-                @Override
-                public void onSuccess() {
-                    //DisplayMetrics displayMetrics = new DisplayMetrics();
-                    //getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                    //view.setLayoutParams(new ViewGroup.LayoutParams(180, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    view.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
-                    view.layout(0,0,view.getMeasuredWidth(),view.getMeasuredHeight());
-                    view.buildDrawingCache();
-                    bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),view.getMeasuredHeight(),Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    Drawable drawable = view.getBackground();
-                    if (drawable!=null){
-                        drawable.draw(canvas);
-                    }
-                    view.draw(canvas);
-                    addMarker(bitmap,latLng);
-                    Log.e("3","3");
-
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.e("error3",e.getMessage()+"__");
-
-                }
-            });
-
-        }
-
-
     }
+
+
+
 }
