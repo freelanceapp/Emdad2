@@ -19,14 +19,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities_fragments.activity_add_order_text.AddOrderTextActivity"
+        <activity android:name=".activities_fragments.activity_shop_query.ShopsQueryActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             />
-        <activity android:name=".activities_fragments.activity_shop_map.ShopMapActivity"
+        <activity
+            android:name=".activities_fragments.activity_add_order_text.AddOrderTextActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_shop_map.ShopMapActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_shop_details.ShopDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -84,11 +88,9 @@
             android:name=".activities_fragments.activity_login.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-             />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".activities_fragments.activity_intro_slider.IntroSliderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

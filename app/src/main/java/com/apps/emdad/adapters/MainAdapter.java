@@ -99,7 +99,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder instanceof MyHolder){
             MyHolder myHolder = (MyHolder) holder;
             myHolder.binding.recView.setLayoutManager(new GridLayoutManager(context,2));
-            categoryAdapter = new CategoryAdapter(categoryModelList,context);
+            categoryAdapter = new CategoryAdapter(categoryModelList,context,fragment_main);
             myHolder.binding.recView.setAdapter(categoryAdapter);
             getCategory();
 

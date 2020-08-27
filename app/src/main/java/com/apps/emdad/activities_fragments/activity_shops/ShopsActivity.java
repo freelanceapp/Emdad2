@@ -69,6 +69,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     private Preferences preferences;
     private boolean normalSearch = true;
     private boolean type = false;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);

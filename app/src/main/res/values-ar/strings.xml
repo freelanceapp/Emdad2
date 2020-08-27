@@ -209,6 +209,7 @@
     <string name="attach_photo_from">إرفاق صورة</string>
     <string name="add_more">إضافة المزيد</string>
     <string name="payment_type">طريقة الدفع</string>
-    <string name="sorry_this_branch_is_out_of_service">Sorry, This branch is out of service</string>
+    <string name="sorry_this_branch_is_out_of_service">نأسف هذا الفرع خارج الخدمة</string>
+    <string name="menu">قائمة</string>
 
 </resources>

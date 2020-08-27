@@ -208,6 +208,7 @@
     <string name="add_more">Add more</string>
     <string name="payment_type">Payment Type</string>
     <string name="sorry_this_branch_is_out_of_service">Sorry, This branch is out of service</string>
+    <string name="menu">Menu</string>
 
 
 </resources>

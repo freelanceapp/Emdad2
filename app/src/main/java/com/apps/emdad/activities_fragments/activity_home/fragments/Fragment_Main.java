@@ -17,9 +17,11 @@ import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextA
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
+import com.apps.emdad.activities_fragments.activity_shop_query.ShopsQueryActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.MainAdapter;
 import com.apps.emdad.databinding.FragmentMainBinding;
+import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.MainItemData;
 import com.apps.emdad.models.NearbyModel;
 
@@ -106,24 +108,12 @@ public class Fragment_Main extends Fragment {
 
 
     public void placeItemData(NearbyModel.Result placeModel) {
-        int type = 2;
 
 
         if (isRestaurant(placeModel)){
-            if (type==1){
-                //no menu
-                Intent intent = new Intent(activity, ShopDetailsActivity.class);
-                intent.putExtra("data",placeModel);
-                startActivity(intent);
-
-            }else if (type==2){
-                // menu image only
-                Intent intent = new Intent(activity, ShopDetailsActivity.class);
-                intent.putExtra("data",placeModel);
-                startActivity(intent);
-            }else if (type==3){
-                // menu products
-            }
+            Intent intent = new Intent(activity, ShopDetailsActivity.class);
+            intent.putExtra("data",placeModel);
+            startActivity(intent);
         }else {
             Intent intent = new Intent(activity, ShopMapActivity.class);
             intent.putExtra("data",placeModel);
@@ -144,4 +134,12 @@ public class Fragment_Main extends Fragment {
         return false;
     }
 
+    public void setCategoryData(CategoryModel categoryModel) {
+        Intent intent = new Intent(activity, ShopsQueryActivity.class);
+        intent.putExtra("lat",user_lat);
+        intent.putExtra("lng",user_lng);
+        intent.putExtra("query",categoryModel.getTitle());
+        startActivity(intent);
+
+    }
 }

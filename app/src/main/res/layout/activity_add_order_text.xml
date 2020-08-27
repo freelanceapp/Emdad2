@@ -9,9 +9,6 @@
             name="lang"
             type="String" />
         <variable
-            name="actions"
-            type="com.apps.emdad.interfaces.Listeners.SettingAction" />
-        <variable
             name="model"
             type="com.apps.emdad.models.NearbyModel.Result" />
 

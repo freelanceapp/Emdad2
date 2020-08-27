@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.databinding.CategoryRowBinding;
 import com.apps.emdad.databinding.RecentSearchRowBinding;
@@ -22,11 +23,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<CategoryModel> list;
     private Context context;
     private LayoutInflater inflater;
+    private Fragment_Main fragment_main;
 
-    public CategoryAdapter(List<CategoryModel> list, Context context) {
+    public CategoryAdapter(List<CategoryModel> list, Context context,Fragment_Main fragment_main) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
+        this.fragment_main = fragment_main;
 
 
     }
@@ -49,7 +52,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         CategoryModel categoryModel = list.get(position);
         myHolder.binding.setModel(categoryModel);
         Picasso.get().load(categoryModel.getImage()).fit().into(myHolder.binding.image);
+        myHolder.itemView.setOnClickListener(v -> {
+            CategoryModel categoryModel2 = list.get(holder.getAdapterPosition());
 
+            fragment_main.setCategoryData(categoryModel2);
+        });
 
 
 
