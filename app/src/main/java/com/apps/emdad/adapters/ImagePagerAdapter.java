@@ -46,7 +46,7 @@ public class ImagePagerAdapter extends PagerAdapter {
         View view = inflater.inflate(R.layout.restaurant_image_row,container,false);
         RoundedImageView imageView = view.findViewById(R.id.image);
         String url = Tags.IMAGE_Places_URL+list.get(position).getPhoto_reference()+"&key="+view.getContext().getString(R.string.map_api_key);
-        Picasso.get().load(Uri.parse(url)).fit().into(imageView);
+        Picasso.get().load(Uri.parse(url)).into(imageView);
         container.addView(view);
         return view;
     }

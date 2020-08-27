@@ -261,6 +261,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         } else {
 
                             skeletonPopular.hide();
+                            binding.llPopular.setVisibility(View.GONE);
 
                             try {
                                 Log.e("error_code", response.errorBody().string());
@@ -277,6 +278,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         try {
                             Log.e("Error", t.getMessage());
                             skeletonPopular.hide();
+                            binding.llPopular.setVisibility(View.GONE);
+
                             Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
                         } catch (Exception e) {
 

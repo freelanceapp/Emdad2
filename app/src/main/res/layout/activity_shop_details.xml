@@ -85,6 +85,8 @@
                     android:textSize="13sp"
                     android:text="@{model.name}"
                     android:singleLine="true"
+                    app:layout_constraintWidth_default="wrap"
+                    app:layout_constraintHorizontal_bias="0"
                     />
 
                 <TextView

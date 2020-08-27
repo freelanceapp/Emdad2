@@ -27,20 +27,24 @@
                app:layout_constraintStart_toStartOf="parent"
                >
 
+
                <androidx.cardview.widget.CardView
-                   android:layout_width="50dp"
-                   android:layout_height="50dp"
+                   android:layout_width="60dp"
+                   android:layout_height="60dp"
                    app:cardBackgroundColor="@color/white"
-                   app:cardElevation="5dp"
+                   app:cardElevation="1dp"
                    android:layout_margin="5dp"
                    android:layout_gravity="center"
-                   app:cardCornerRadius="25dp"
+                   app:cardCornerRadius="30dp"
                    >
+
+
                    <ImageView
                        android:layout_width="match_parent"
                        android:layout_height="match_parent"
                        placeStoreImage="@{model}"
                        android:layout_gravity="center"
+                       android:background="@drawable/circle_white_stroke"
                        />
                </androidx.cardview.widget.CardView>
 
@@ -55,11 +59,14 @@
                app:layout_constraintTop_toTopOf="parent"
                app:layout_constraintBottom_toTopOf="@id/icon"
                android:layout_marginBottom="10dp"
-               android:textColor="@color/color4"
-               android:textSize="14sp"
+               android:textColor="@color/black"
+               android:textSize="16sp"
                android:layout_marginStart="10dp"
                android:layout_marginEnd="10dp"
                android:text="@{model.name}"
+               app:layout_constraintWidth_default="wrap"
+               app:layout_constraintHorizontal_bias="0"
+               android:textStyle="bold"
                />
            <ImageView
                android:id="@+id/icon"
@@ -68,7 +75,7 @@
                app:layout_constraintStart_toStartOf="@id/tvName"
                app:layout_constraintBottom_toBottomOf="parent"
                android:src="@drawable/ic_marker"
-               android:tint="@color/color4"
+               android:tint="@color/gray9"
                android:padding="2dp"
 
 
@@ -83,7 +90,7 @@
                app:layout_constraintStart_toEndOf="@id/icon"
                android:layout_marginStart="10dp"
                android:layout_marginEnd="10dp"
-               android:textColor="@color/color4"
+               android:textColor="@color/gray9"
                android:textSize="12sp"
                distance="@{model.distance}"
                />
@@ -102,7 +109,7 @@
            <View
                android:layout_width="match_parent"
                android:layout_height="1px"
-               android:background="@color/gray2"
+               android:background="@color/gray3"
                />
        </LinearLayout>
 
