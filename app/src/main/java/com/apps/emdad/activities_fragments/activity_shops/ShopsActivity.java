@@ -67,8 +67,8 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     private ResentSearchAdapter resentSearchAdapter;
     private List<String> recentSearchList;
     private Preferences preferences;
-    private boolean normalSearch = true;
     private boolean type = false;
+    private boolean closeRecentSearch = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -142,7 +142,6 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
             if (actionId== EditorInfo.IME_ACTION_SEARCH){
                 query = binding.edtSearch.getText().toString().trim();
                 if (!query.isEmpty()){
-                    normalSearch = true;
                     addQuery(query);
                     search(query,distance,rate);
                 }
@@ -169,15 +168,28 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                         binding.expandLayout.collapse(true);
 
                     }
-                    if (normalSearch){
-                        clear();
-                    }
-                }else {
-                    if (recentSearchList.size()>0){
 
-                        binding.expandLayout.expand(true);
+                    clear();
+
+                }else {
+
+
+                    Log.e("close",closeRecentSearch+"__");
+                    if (!closeRecentSearch){
+                        if (recentSearchList.size()>0){
+
+                            binding.expandLayout.expand(true);
+                        }
+                        binding.tvCancel.setVisibility(View.VISIBLE);
+                    }else {
+                        search(s.toString().trim(),distance,rate);
                     }
-                    binding.tvCancel.setVisibility(View.VISIBLE);
+
+
+
+
+
+
                 }
 
 
@@ -186,7 +198,6 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
         });
 
         binding.tvCancel.setOnClickListener(v -> {
-            clear();
             binding.edtSearch.setText(null);
         });
 
@@ -217,7 +228,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     }
 
     private void clear() {
-        normalSearch = true;
+        closeRecentSearch = false;
         rate = 5.0;
         distance = 60000;
         next_page="";
@@ -372,6 +383,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     }
 
     private void search(String query,int distance,double rate) {
+
         Common.CloseKeyBoard(this,binding.edtSearch);
         binding.setCount(0);
         binding.expandLayout.collapse(true);
@@ -379,10 +391,12 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
         resultList.clear();
         adapter.notifyDataSetChanged();
         skeletonScreen.show();
+        closeRecentSearch = false;
         if (query.equals("restaurant|food|supermarket|bakery")){
             binding.setQuery("");
 
         }else {
+
             binding.setQuery(query);
 
         }
@@ -400,7 +414,6 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                                 if (response.body().getNext_page_token()!=null){
                                     hasManyPages = true;
                                     next_page = response.body().getNext_page_token();
-                                    Log.e("ttt",next_page);
                                 }else {
                                     hasManyPages = false;
                                     next_page = "";
@@ -664,7 +677,9 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
     public void setRecentSearchItem(String query) {
         binding.expandLayout.collapse(true);
-        search(query,distance,rate);
+        closeRecentSearch = true;
+        binding.edtSearch.setText(query);
+        //search(query,distance,rate);
     }
 
     private void addQuery(String query)
@@ -726,9 +741,12 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==100&&resultCode==RESULT_OK&&data!=null){
             FilterModel filterModel = (FilterModel) data.getSerializableExtra("data");
-            normalSearch = false;
-            binding.edtSearch.setText(null);
-
+            rate  = filterModel.getRate();
+            distance =  filterModel.getDistance()*1000;
+            next_page ="";
+            isLoading = false;
+            hasManyPages = false;
+            closeRecentSearch = true;
             if (!filterModel.getKeyword().isEmpty()){
                 query = filterModel.getKeyword();
                 binding.tvRecentSearch.setText(query);
@@ -737,25 +755,28 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                 binding.tvRecentSearch.setText(null);
 
             }
-            rate  = filterModel.getRate();
-            distance =  filterModel.getDistance()*1000;
-            next_page ="";
-            isLoading = false;
-            hasManyPages = false;
-            search(query,distance,rate);
+
+            //search(query,distance,rate);
 
         }else if (requestCode ==200&&resultCode==RESULT_OK&&data!=null){
-            normalSearch = false;
-            binding.edtSearch.setText(null);
+
             FavoriteLocationModel model = (FavoriteLocationModel) data.getSerializableExtra("data");
             user_lat = model.getLat();
             user_lng = model.getLng();
             binding.tvLocation.setText(model.getAddress());
-            query="restaurant|food|supermarket|bakery";
+            closeRecentSearch = true;
+
+            if (binding.edtSearch.getText().toString().trim().isEmpty()){
+                query="restaurant|food|supermarket|bakery";
+
+            }else {
+                query=binding.edtSearch.getText().toString().trim();
+
+            }
             next_page = "";
             hasManyPages = false;
-            rate = 5.0;
-            distance = 60000;
+            /*rate = 5.0;
+            distance = 60000;*/
             binding.setCount(0);
             getShops(query);
         }
