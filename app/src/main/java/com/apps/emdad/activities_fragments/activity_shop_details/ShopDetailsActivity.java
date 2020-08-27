@@ -1,5 +1,6 @@
 package com.apps.emdad.activities_fragments.activity_shop_details;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.adapters.HoursAdapter;
 import com.apps.emdad.adapters.ImagePagerAdapter;
 import com.apps.emdad.databinding.ActivityShopDetailsBinding;
@@ -51,6 +53,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
     private NearbyModel.Result placeModel;
     private String lang;
     private List<HourModel> hourModelList;
+    private boolean canSend = false;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -65,13 +68,14 @@ public class ShopDetailsActivity extends AppCompatActivity {
         initView();
     }
 
-    private void getDataFromIntent() {
+    private void getDataFromIntent()
+    {
         Intent intent = getIntent();
         placeModel = (NearbyModel.Result) intent.getSerializableExtra("data");
 
     }
-
-    private void initView() {
+    private void initView()
+    {
         hourModelList = new ArrayList<>();
         photosModelList = new ArrayList<>();
         Paper.init(this);
@@ -98,10 +102,22 @@ public class ShopDetailsActivity extends AppCompatActivity {
             intent.putExtra(Intent.EXTRA_TEXT,url);
             startActivity(Intent.createChooser(intent,"Share"));
         });
+
+        binding.btnNext.setOnClickListener(v -> {
+            canSend = true;
+            if (canSend){
+                Intent intent = new Intent(this, AddOrderTextActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivityForResult(intent,100);
+
+            }
+        });
+        binding.flBack.setOnClickListener(v -> {super.onBackPressed();});
+
         getPlaceDetails();
     }
-
-    private void getPlaceDetails() {
+    private void getPlaceDetails()
+    {
 
         String fields = "opening_hours,photos,reviews";
 
@@ -136,8 +152,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void updateHoursUI(PlaceDetailsModel body) {
+    private void updateHoursUI(PlaceDetailsModel body)
+    {
 
         if (body.getResult().getReviews()!=null&&body.getResult().getReviews().size()>0){
             placeModel.setReviews(body.getResult().getReviews());
@@ -168,9 +184,9 @@ public class ShopDetailsActivity extends AppCompatActivity {
             placeModel.setOpen(body.getResult().getOpening_hours().isOpen_now());
             if (body.getResult().getOpening_hours().getWeekday_text()!=null&&body.getResult().getOpening_hours().getWeekday_text().size()>0){
                 placeModel.setWork_hours(body.getResult().getOpening_hours());
-
+                binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+                binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.gray11));
                 placeModel.setOpen(true);
-
                 hourModelList.clear();
                 hourModelList.addAll(getHours());
                 if (hourModelList.size()>0){
@@ -179,12 +195,19 @@ public class ShopDetailsActivity extends AppCompatActivity {
                 }
 
             }else {
+                binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.color_rose));
+                binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.color_rose));
+
                 placeModel.setOpen(false);
 
             }
 
 
         } else {
+            binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.color_rose));
+            binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.color_rose));
+
+
             placeModel.setOpen(false);
 
         }
@@ -214,8 +237,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
         binding.ll.setVisibility(View.VISIBLE);
         binding.imageShare.setVisibility(View.VISIBLE);
     }
-
-    private List<HourModel> getHours() {
+    private List<HourModel> getHours()
+    {
         List<HourModel> list = new ArrayList<>();
 
         for (String time: placeModel.getWork_hours().getWeekday_text()){
@@ -232,9 +255,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
         return list;
     }
-
-
-    private void createDialogAlert() {
+    private void createDialogAlert()
+    {
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .create();
 
@@ -250,5 +272,13 @@ public class ShopDetailsActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setView(binding.getRoot());
         dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==100&&resultCode==RESULT_OK){
+
+        }
     }
 }

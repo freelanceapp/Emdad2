@@ -134,6 +134,8 @@ public class AddOrderTextActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddCouponActivity.class);
             startActivityForResult(intent,100);
         });
+        binding.close.setOnClickListener(v -> {super.onBackPressed();});
+
     }
 
     private void updateBtnUI() {

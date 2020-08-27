@@ -301,7 +301,7 @@
 
        </androidx.constraintlayout.widget.ConstraintLayout>
        <Button
-           android:id="@+id/btnSend"
+           android:id="@+id/btnNext"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:textColor="@color/white"

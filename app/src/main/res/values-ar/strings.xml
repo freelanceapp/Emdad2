@@ -199,14 +199,16 @@
     <string name="work_hour_not_aval">ساعات العمل غير متاحة</string>
     <string name="order_canceled">إلغاء الطلب</string>
     <string name="invalid_url">الرابط غير صحيح</string>
-    <string name="popular_around_you">Popular around you</string>
-    <string name="most_wanted_service">Most wanted service</string>
+    <string name="popular_around_you">اشهر المواقع حولك</string>
+    <string name="most_wanted_service">الخدمات الاكثر طلبا</string>
     <string name="pharmacy">صيدليات</string>
-    <string name="no_courier_available_for_this_branch">No Courier available for this branch</string>
+    <string name="no_courier_available_for_this_branch">لا يوجد مناديب لهذا الفرع</string>
     <string name="home3">موقعي</string>
-    <string name="order_instruction">Order Instruction</string>
-    <string name="order_here">Order here</string>
-    <string name="attach_photo_from">Attach photo from</string>
-    <string name="add_more">Add more</string>
+    <string name="order_instruction">تعليمات الطلب</string>
+    <string name="order_here">اطلب هنا</string>
+    <string name="attach_photo_from">إرفاق صورة</string>
+    <string name="add_more">إضافة المزيد</string>
+    <string name="payment_type">طريقة الدفع</string>
+    <string name="sorry_this_branch_is_out_of_service">Sorry, This branch is out of service</string>
 
 </resources>

@@ -21,6 +21,7 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_filter.FilterActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
+import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
 import com.apps.emdad.adapters.NearbyAdapter;
 import com.apps.emdad.adapters.ResentSearchAdapter;
 import com.apps.emdad.databinding.ActivityShopsBinding;
@@ -638,11 +639,17 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
         if (type){
             //from main fragment
             if (isRestaurant(placeModel)){
+                //if has menu image or products
+
                 Intent intent = new Intent(this, ShopDetailsActivity.class);
                 intent.putExtra("data",placeModel);
                 startActivity(intent);
-            }else {
 
+
+            }else {
+                Intent intent = new Intent(this, ShopMapActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivity(intent);
             }
 
         }else {

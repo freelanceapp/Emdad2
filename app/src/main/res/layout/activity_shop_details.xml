@@ -254,7 +254,6 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 android:src="@{model.open?@drawable/ic_clock2:@drawable/ic_clock3}"
-                                android:tint="@color/gray11"
                                 />
                             <TextView
                                 android:id="@+id/tvStatus"
@@ -264,7 +263,6 @@
                                 app:layout_constraintBottom_toBottomOf="@id/icon"
                                 app:layout_constraintStart_toEndOf="@+id/icon"
                                 android:textSize="13sp"
-                                android:textColor="@color/gray11"
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:text="@{model.open?@string/open_now:@string/closed}"
@@ -320,7 +318,16 @@
                             />
                     </LinearLayout>
                 </ScrollView>
-
+                <Button
+                    android:id="@+id/btnNext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/color_rose"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:text="@string/sorry_this_branch_is_out_of_service"
+                    android:textAllCaps="false"
+                    />
             </LinearLayout>
             <ProgressBar
                 android:id="@+id/progBar"

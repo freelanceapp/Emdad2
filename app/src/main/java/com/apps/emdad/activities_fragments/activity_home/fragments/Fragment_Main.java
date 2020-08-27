@@ -13,7 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.MainAdapter;
@@ -104,8 +106,42 @@ public class Fragment_Main extends Fragment {
 
 
     public void placeItemData(NearbyModel.Result placeModel) {
-        Intent intent = new Intent(activity, ShopMapActivity.class);
-        intent.putExtra("data",placeModel);
-        startActivity(intent);
+        int type = 2;
+
+
+        if (isRestaurant(placeModel)){
+            if (type==1){
+                //no menu
+                Intent intent = new Intent(activity, ShopDetailsActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivity(intent);
+
+            }else if (type==2){
+                // menu image only
+                Intent intent = new Intent(activity, ShopDetailsActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivity(intent);
+            }else if (type==3){
+                // menu products
+            }
+        }else {
+            Intent intent = new Intent(activity, ShopMapActivity.class);
+            intent.putExtra("data",placeModel);
+            startActivity(intent);
+        }
+
+
     }
+
+    private boolean isRestaurant(NearbyModel.Result result){
+
+        for (String type :result.getTypes()){
+            if (type.equals("restaurant")){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.adapters.HoursAdapter;
@@ -97,6 +98,8 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
     private LocationCallback locationCallback;
     private final String gps_perm = Manifest.permission.ACCESS_FINE_LOCATION;
     private final int loc_req = 22;
+    private boolean canSend = false;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -152,6 +155,17 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
             intent.putExtra(Intent.EXTRA_TEXT,url);
             startActivity(Intent.createChooser(intent,"Share"));
         });
+
+        binding.btnNext.setOnClickListener(v -> {
+            canSend = true;
+            if (canSend){
+                Intent intent = new Intent(this, AddOrderTextActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivityForResult(intent,100);
+
+            }
+        });
+        binding.flBack.setOnClickListener(v -> {super.onBackPressed();});
         updateUI();
     }
 
@@ -215,16 +229,16 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
 
             }else {
                 placeModel.setOpen(false);
-                binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.color_red));
-                binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.color_red));
+                binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.color_rose));
+                binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.color_rose));
 
             }
 
 
         } else {
             placeModel.setOpen(false);
-            binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.color_red));
-            binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.color_red));
+            binding.tvStatus.setTextColor(ContextCompat.getColor(this,R.color.color_rose));
+            binding.icon.setColorFilter(ContextCompat.getColor(this,R.color.color_rose));
 
 
         }
@@ -464,6 +478,8 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         if (requestCode==1255&&resultCode==RESULT_OK){
             startLocationUpdate();
+        }else if (requestCode==100&&resultCode==RESULT_OK){
+
         }
     }
 
