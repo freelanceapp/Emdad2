@@ -318,7 +318,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
-        binding.iconOrder.setImageResource(R.drawable.truck1);
+        binding.iconOrder.setImageResource(R.drawable.truck2);
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
