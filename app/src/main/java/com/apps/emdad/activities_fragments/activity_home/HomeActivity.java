@@ -92,16 +92,15 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private final int loc_req = 22;
     public Location location;
 
-
-
     @Override
-    protected void attachBaseContext(Context newBase) {
+    protected void attachBaseContext(Context newBase)
+    {
         Paper.init(newBase);
         super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         fragmentManager = getSupportFragmentManager();
 
@@ -117,8 +116,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             CheckPermission();
         }
     }
-
-    private void initView() {
+    private void initView()
+    {
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         binding.fab.setColorFilter(ContextCompat.getColor(this,R.color.white), PorterDuff.Mode.SRC_IN);
@@ -164,7 +163,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     }
-
     public void displayFragmentMain()
     {
         updateMainUi();
@@ -358,7 +356,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         List<Fragment> fragments = fragmentManager.getFragments();
@@ -377,7 +376,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         }
     }
-
     private void initLocationRequest()
     {
         locationRequest = LocationRequest.create();
@@ -424,26 +422,25 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         LocationServices.getFusedLocationProviderClient(this)
                 .requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
     }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         initLocationRequest();
     }
-
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(int i)
+    {
         if (googleApiClient!=null){
             googleApiClient.connect();
         }
     }
-
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+    {
 
     }
-
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location)
+    {
         this.location = location;
         binding.flLoading.setVisibility(View.GONE);
         displayFragmentMain();
@@ -455,9 +452,9 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
         }
     }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         List<Fragment> fragments = fragmentManager.getFragments();
         for (Fragment fragment :fragments){
@@ -467,21 +464,22 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             startLocationUpdate();
         }
     }
-
-    private void navigateToLoginActivity() {
+    private void navigateToLoginActivity()
+    {
 
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
-
-    public void refreshActivity(){
+    public void refreshActivity()
+    {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
     }
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         if (fragment_main!=null&&fragment_main.isAdded()&&fragment_main.isVisible()){
             if (userModel==null){
                 navigateToLoginActivity();
@@ -492,10 +490,9 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             displayFragmentMain();
         }
     }
-
-
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
         super.onDestroy();
         if (locationCallback!=null)
         {
