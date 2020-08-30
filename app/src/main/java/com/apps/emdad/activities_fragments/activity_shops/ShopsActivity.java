@@ -756,7 +756,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
             }
 
-            //search(query,distance,rate);
+            search(query,distance,rate);
 
         }else if (requestCode ==200&&resultCode==RESULT_OK&&data!=null){
 

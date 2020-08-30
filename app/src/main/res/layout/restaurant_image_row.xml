@@ -11,6 +11,5 @@
         app:riv_border_width="0dp"
         app:riv_corner_radius="15dp"
         android:scaleType="centerCrop"
-
         />
 </FrameLayout>
