@@ -1,6 +1,9 @@
 package com.apps.emdad.activities_fragments.activity_home.fragments;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,16 +27,30 @@ import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.databinding.FragmentNotificationBinding;
 import com.apps.emdad.databinding.FragmentProfileBinding;
 import com.apps.emdad.interfaces.Listeners;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.remote.Api;
+import com.apps.emdad.share.Common;
+import com.apps.emdad.tags.Tags;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.Currency;
 import java.util.Locale;
 
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Fragment_Profile extends Fragment implements Listeners.ProfileAction {
     private FragmentProfileBinding binding;
     private HomeActivity activity;
     private String lang;
+    private UserModel userModel;
+    private Preferences preferences;
 
     public static Fragment_Profile newInstance(){
         return new Fragment_Profile();
@@ -49,11 +67,25 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     private void initView() {
         activity = (HomeActivity) getActivity();
+
+        preferences = Preferences.getInstance();
+        userModel =preferences.getUserData(activity);
+
         Paper.init(activity);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
         binding.setActions(this);
-        Currency currency = Currency.getInstance("sar");
+        binding.setModel(userModel);
+
+        if (userModel!=null){
+            if (userModel.getUser().getLogo() != null) {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.image);
+            } else {
+                Picasso.get().load(R.drawable.image_avatar).into(binding.image);
+
+            }
+        }
 
     }
 
@@ -103,6 +135,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
     @Override
     public void logout() {
 
+        activity.logout();
     }
 
     @Override

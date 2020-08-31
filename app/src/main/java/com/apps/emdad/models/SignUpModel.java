@@ -21,6 +21,7 @@ public class SignUpModel extends BaseObservable {
     private String gender;
     private String phone_code;
     private String phone;
+    private String country_id;
     
     public ObservableField<String> error_name = new ObservableField<>();
     public ObservableField<String> error_email = new ObservableField<>();
@@ -144,6 +145,14 @@ public class SignUpModel extends BaseObservable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCountry_id() {
+        return country_id;
+    }
+
+    public void setCountry_id(String country_id) {
+        this.country_id = country_id;
     }
 }
 

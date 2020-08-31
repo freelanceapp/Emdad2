@@ -1,7 +1,7 @@
 package com.apps.emdad.activities_fragments.activity_verification_code;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
@@ -9,37 +9,52 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_confrim_code_success.ConfirmCodeSuccessActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
 import com.apps.emdad.databinding.ActivityVerificationCodeBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.share.Common;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.Locale;
-import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 import io.paperdb.Paper;
 
 public class VerificationCodeActivity extends AppCompatActivity {
     private ActivityVerificationCodeBinding binding;
-    private String phone_code;
-    private String phone;
+    private String lang;
+    private String phone_code = "";
+    private String phone = "";
+    private String country_id = "";
     private boolean canSend = false;
-    private  CountDownTimer countDownTimer;
+    private CountDownTimer countDownTimer;
+    private FirebaseAuth mAuth;
+    private String verificationId;
+
+    private String smsCode = "";
 
 
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
-        super.attachBaseContext(Language.updateResources(newBase,Paper.book().read("lang","ar")));
+        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_verification_code);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_verification_code);
         getDataFromIntent();
         initView();
 
@@ -47,33 +62,117 @@ public class VerificationCodeActivity extends AppCompatActivity {
 
     private void getDataFromIntent() {
         Intent intent = getIntent();
-        if (intent!=null){
+        if (intent != null) {
             phone_code = intent.getStringExtra("phone_code");
             phone = intent.getStringExtra("phone");
+            country_id = intent.getStringExtra("country_id");
 
         }
     }
 
     private void initView() {
-        String mPhone= phone_code+phone;
+        mAuth = FirebaseAuth.getInstance();
+        Paper.init(this);
+        lang = Paper.book().read("lang", "ar");
+        String mPhone = phone_code + phone;
         binding.setPhone(mPhone);
-        startCounter();
         binding.btnResendCode.setOnClickListener(v -> {
-            if (canSend){
+            if (canSend) {
                 resendCode();
             }
         });
+
+        binding.btnConfirm.setOnClickListener(v -> {
+            String sms = binding.edtCode.getText().toString().trim();
+            if (!sms.isEmpty()) {
+                checkValidCode(sms);
+            } else {
+                binding.edtCode.setError(getString(R.string.inv_code));
+            }
+        });
+        sendSmsCode();
     }
 
 
+    private void sendSmsCode() {
+        startCounter();
+        mAuth.setLanguageCode(lang);
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                smsCode = phoneAuthCredential.getSmsCode();
+                binding.edtCode.setText(smsCode);
+                checkValidCode(smsCode);
+            }
+
+            @Override
+            public void onCodeSent(@NonNull String verification_id, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                super.onCodeSent(verification_id, forceResendingToken);
+                VerificationCodeActivity.this.verificationId = verification_id;
+                Log.e("verification_id", verification_id);
+            }
+
+
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+
+                if (e.getMessage() != null) {
+                    Common.CreateDialogAlert(VerificationCodeActivity.this, e.getMessage());
+                } else {
+                    Common.CreateDialogAlert(VerificationCodeActivity.this, getString(R.string.failed));
+
+                }
+            }
+        };
+        PhoneAuthProvider.getInstance()
+                .verifyPhoneNumber(
+                        phone_code + phone,
+                        120,
+                        TimeUnit.SECONDS,
+                        this,
+                        mCallBack
+
+                );
+    }
+
+
+    private void checkValidCode(String code) {
+
+        if (verificationId != null) {
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+            mAuth.signInWithCredential(credential)
+                    .addOnSuccessListener(authResult -> {
+                        navigateToActivityConfirmSuccess();
+                    }).addOnFailureListener(e -> {
+                if (e.getMessage() != null) {
+                    Common.CreateDialogAlert(this, e.getMessage());
+                } else {
+                    Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
+
+    private void navigateToActivityConfirmSuccess() {
+        Intent intent = new Intent(this, ConfirmCodeSuccessActivity.class);
+        intent.putExtra("phone_code", phone_code);
+        intent.putExtra("phone", phone);
+        intent.putExtra("country_id", country_id);
+        startActivity(intent);
+        finish();
+
+    }
+
 
     private void startCounter() {
-        countDownTimer = new CountDownTimer(10000, 1000) {
+        countDownTimer = new CountDownTimer(120000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                int minutes = (int) ((millisUntilFinished/1000) / 60);
-                int seconds = (int) ((millisUntilFinished/1000) % 60);
+                int minutes = (int) ((millisUntilFinished / 1000) / 60);
+                int seconds = (int) ((millisUntilFinished / 1000) % 60);
 
                 String time = String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds);
                 binding.btnResendCode.setText(String.format(Locale.ENGLISH, "%s %s", getString(R.string.resend_in), time));
@@ -89,10 +188,6 @@ public class VerificationCodeActivity extends AppCompatActivity {
                 binding.btnResendCode.setTextColor(ContextCompat.getColor(VerificationCodeActivity.this, R.color.colorPrimary));
                 binding.btnResendCode.setBackgroundResource(R.color.white);
 
-                Intent intent = new Intent(VerificationCodeActivity.this, SignUpActivity.class);
-                startActivity(intent);
-                finish();
-                stopTimer();
 
             }
         };
@@ -101,22 +196,22 @@ public class VerificationCodeActivity extends AppCompatActivity {
     }
 
     private void resendCode() {
-        if (countDownTimer!=null){
+        if (countDownTimer != null) {
             countDownTimer.start();
         }
+        sendSmsCode();
     }
 
     private void stopTimer() {
-        if (countDownTimer!=null){
+        if (countDownTimer != null) {
             countDownTimer.cancel();
         }
     }
 
+
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    protected void onDestroy() {
+        super.onDestroy();
         stopTimer();
     }
-
-
 }

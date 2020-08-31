@@ -209,6 +209,12 @@
     <string name="payment_type">Payment Type</string>
     <string name="sorry_this_branch_is_out_of_service">Sorry, This branch is out of service</string>
     <string name="menu">Menu</string>
+    <string name="inv_code">invalid code</string>
+    <string name="phone_verification">Phone Verification</string>
+    <string name="confirming_code">Confirming code...</string>
+    <string name="confirmed">Confirmed</string>
+    <string name="phone_exist">Phone number exists</string>
+    <string name="email_exist">Email exists</string>
 
 
 </resources>

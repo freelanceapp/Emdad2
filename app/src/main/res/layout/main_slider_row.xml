@@ -6,13 +6,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.apps.emdad.activities_fragments.activity_home.MyViewPager
-            android:id="@+id/pager"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:clipToPadding="false" />
+            android:layout_height="wrap_content"
+            >
+            <com.apps.emdad.activities_fragments.activity_home.MyViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:clipToPadding="false"
+                />
+            <ProgressBar
+                android:id="@+id/progBar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                />
+        </FrameLayout>
+
 
         <LinearLayout
             android:id="@+id/llPopular"

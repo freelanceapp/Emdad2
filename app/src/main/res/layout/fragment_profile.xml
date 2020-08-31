@@ -10,6 +10,9 @@
         <variable
             name="actions"
             type="com.apps.emdad.interfaces.Listeners.ProfileAction" />
+        <variable
+            name="model"
+            type="com.apps.emdad.models.UserModel" />
 
     </data>
     <ScrollView
@@ -40,7 +43,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
-                    android:src="@drawable/image_avatar"
+                    image="@{model.user.logo}"
                     />
                 <TextView
                     android:id="@+id/tvName"
@@ -56,6 +59,7 @@
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    android:text="@{model.user.name}"
                     />
                 <com.iarcuschin.simpleratingbar.SimpleRatingBar
                     android:layout_width="wrap_content"
@@ -72,6 +76,7 @@
                     android:layout_marginTop="5dp"
                     app:srb_borderColor="@color/gray3"
                     app:srb_fillColor="@color/rate_color"
+                    rate="@{model!=null?(Double.parseDouble(model.user.rate)):0}"
                     />
 
                 <ImageView
@@ -140,7 +145,7 @@
                         android:textSize="16sp"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold"
-                        android:text="0 EGP"
+                        android:text=""
                         />
                 </LinearLayout>
                 <View

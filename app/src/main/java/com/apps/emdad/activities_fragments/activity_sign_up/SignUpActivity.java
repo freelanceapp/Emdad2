@@ -96,9 +96,12 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         if (intent != null) {
             String phone_code = intent.getStringExtra("phone_code");
             String phone = intent.getStringExtra("phone");
+            String country_id = intent.getStringExtra("country_id");
 
             signUpModel.setPhone_code(phone_code);
             signUpModel.setPhone(phone);
+            signUpModel.setCountry_id(country_id);
+
         }
     }
 
@@ -317,15 +320,14 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         } else {
             signUpWithImage();
         }
-        navigateToHomeActivity();
     }
 
     private void signUpWithoutImage() {
-        /*ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
         Api.getService(Tags.base_url)
-                .signUpWithoutImage(signUpModel.getName(),signUpModel.getPhone_code(),signUpModel.getPhone(),signUpModel.getEmail(),signUpModel.getPassword(),Tags.type)
+                .signUpWithoutImage(signUpModel.getName(),signUpModel.getEmail(),signUpModel.getPhone_code(),signUpModel.getPhone(),signUpModel.getGender(),signUpModel.getYear(),signUpModel.getCountry_id(),"android")
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
@@ -336,28 +338,17 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                             navigateToHomeActivity();
                         }else
                         {
-                            Log.e("nnnnnnnnnnnn",response.code()+"");
-                            Log.e("555555",response.message());
                             if (response.code()==500)
                             {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==422)
-                            {
-                                Log.e("2222222",response.errorBody()+"");
-
-                                Toast.makeText(SignUpActivity.this, response.errorBody()+"", Toast.LENGTH_SHORT).show();
                             }else if (response.code()==409)
                             {
-
-                                Log.e("99999999",response.message()+"");
-
-                                Toast.makeText(SignUpActivity.this, response.errorBody()+"", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
                             }else if (response.code()==406)
                             {
+                                Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
 
-                                Log.e("6666666",response.message()+"");
 
-                                Toast.makeText(SignUpActivity.this, response.errorBody()+"", Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
@@ -390,27 +381,29 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                             Log.e("Error",e.getMessage()+"__");
                         }
                     }
-                });*/
+                });
     }
 
     private void signUpWithImage() {
 
-       /* ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
         RequestBody name_part = Common.getRequestBodyText(signUpModel.getName());
         RequestBody phone_code_part = Common.getRequestBodyText(signUpModel.getPhone_code());
         RequestBody phone_part = Common.getRequestBodyText(signUpModel.getPhone());
         RequestBody email_part = Common.getRequestBodyText(signUpModel.getEmail());
-        RequestBody password_part = Common.getRequestBodyText(signUpModel.getPassword());
+        RequestBody gender_part = Common.getRequestBodyText(signUpModel.getGender());
+        RequestBody year_part = Common.getRequestBodyText(signUpModel.getYear());
+        RequestBody country_id_part = Common.getRequestBodyText(signUpModel.getCountry_id());
+        RequestBody software_part = Common.getRequestBodyText("android");
 
-        RequestBody type_part = Common.getRequestBodyText(Tags.type);
 
-        MultipartBody.Part image = Common.getMultiPart(this,uri,"image");
+        MultipartBody.Part image = Common.getMultiPart(this,uri,"logo");
 
 
         Api.getService(Tags.base_url)
-                .signUpWithImage(name_part,phone_code_part,phone_part,email_part,password_part,type_part,image)
+                .signUpWithImage(name_part,email_part,phone_code_part,phone_part,gender_part,year_part,country_id_part,software_part,image)
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
@@ -418,15 +411,19 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             preferences.create_update_userdata(SignUpActivity.this,response.body());
-                            navigateToHomeActivity();
+                            //navigateToHomeActivity();
                         }else
                         {
                             if (response.code()==500)
                             {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==422)
+                            }else if (response.code()==409)
                             {
-                                Toast.makeText(SignUpActivity.this, R.string.user_found, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
+                            }else if (response.code()==406)
+                            {
+                                Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
+
 
                             }else
                             {
@@ -453,7 +450,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                             Log.e("Error",e.getMessage()+"__");
                         }
                     }
-                });*/
+                });
 
     }
 

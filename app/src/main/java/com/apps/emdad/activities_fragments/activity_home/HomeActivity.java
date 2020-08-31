@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,7 +60,9 @@ import com.apps.emdad.models.CountryModel;
 import com.apps.emdad.models.LoginModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
+import com.apps.emdad.tags.Tags;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -70,11 +75,17 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,GoogleApiClient.ConnectionCallbacks, LocationListener {
     private ActivityHomeBinding binding;
@@ -161,6 +172,15 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
 
+        if (userModel!=null){
+            if (userModel.getUser().getLogo() != null) {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.imageProfile);
+            } else {
+                Picasso.get().load(R.drawable.image_avatar).into(binding.imageProfile);
+
+            }
+        }
 
     }
     public void displayFragmentMain()
@@ -477,6 +497,65 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         finish();
         startActivity(intent);
     }
+    public void logout() {
+        if (userModel != null) {
+
+
+            ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+            dialog.show();
+
+            Api.getService(Tags.base_url)
+                    .logout(userModel.getUser().getToken(), userModel.getUser().getFireBaseToken())
+                    .enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            dialog.dismiss();
+                            if (response.isSuccessful()) {
+                                preferences.clear(HomeActivity.this);
+                                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                if (manager != null) {
+                                    manager.cancel(Tags.not_tag, Tags.not_id);
+                                }
+                                navigateToLoginActivity();
+
+
+                            } else {
+                                dialog.dismiss();
+                                try {
+                                    Log.e("error", response.code() + "__" + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (response.code() == 500) {
+                                    Toast.makeText(HomeActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            try {
+                                dialog.dismiss();
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage() + "__");
+
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(HomeActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.e("Error", e.getMessage() + "__");
+                            }
+                        }
+                    });
+        }
+
+    }
     @Override
     public void onBackPressed()
     {
@@ -505,5 +584,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
     }
+
 
 }

@@ -21,16 +21,13 @@ public class Api {
     private static Retrofit getRetrofit(String baseUrl)
     {
 
-        Interceptor interceptor   = new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
+        Interceptor interceptor   = chain -> {
+            Request request = chain.request();
 
-                Request accept = request.newBuilder()
-                        .addHeader("ACCEPT", "application/json")
-                        .build();
-                return chain.proceed(accept);
-            }
+            Request accept = request.newBuilder()
+                    .addHeader("ACCEPT", "application/json")
+                    .build();
+            return chain.proceed(accept);
         };
 
         OkHttpClient client = new OkHttpClient.Builder()

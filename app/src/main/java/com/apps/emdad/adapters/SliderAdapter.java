@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SliderAdapter extends PagerAdapter {
-    private List<Integer> list;
+    private List<SliderModel.Data> list;
     private Context context;
     private LayoutInflater inflater;
 
 
-    public SliderAdapter(List<Integer> list, Context context) {
+    public SliderAdapter(List<SliderModel.Data> list, Context context) {
         this.list = list;
 
 
@@ -51,7 +51,7 @@ public class SliderAdapter extends PagerAdapter {
 
         View view = inflater.inflate(R.layout.slider_row,container,false);
         ImageView imageView = view.findViewById(R.id.image);
-        Picasso.get().load(list.get(position)).fit().into(imageView);
+        Picasso.get().load(Uri.parse(Tags.IMAGE_URL+list.get(position).getImage())).fit().into(imageView);
         container.addView(view);
         return view;
     }

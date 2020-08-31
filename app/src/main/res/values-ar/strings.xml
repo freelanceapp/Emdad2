@@ -211,5 +211,11 @@
     <string name="payment_type">طريقة الدفع</string>
     <string name="sorry_this_branch_is_out_of_service">نأسف هذا الفرع خارج الخدمة</string>
     <string name="menu">قائمة</string>
+    <string name="inv_code">الكود غير صحيح</string>
+    <string name="phone_verification">التحقق من رقم الجوال</string>
+    <string name="confirming_code">جار التحقق...</string>
+    <string name="confirmed">تم التحقق</string>
+    <string name="phone_exist">رقم ا لجوال موجود من قبل</string>
+    <string name="email_exist">البريد الالكتروني موجود من قبل</string>
 
 </resources>

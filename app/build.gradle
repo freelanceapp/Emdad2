@@ -63,7 +63,7 @@ dependencies {
     implementation 'com.wdullaer:materialdatetimepicker:3.6.4'
     implementation 'com.google.firebase:firebase-auth:19.3.2'
 
-    implementation 'com.google.firebase:firebase-core:17.4.4'
+    implementation 'com.google.firebase:firebase-core:17.5.0'
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
     implementation 'com.chaos.view:pinview:1.4.3'
     implementation 'com.github.bhargavms:DotLoader:1.1.1'
@@ -76,3 +76,4 @@ dependencies {
 
 
 }
+apply plugin: 'com.google.gms.google-services'

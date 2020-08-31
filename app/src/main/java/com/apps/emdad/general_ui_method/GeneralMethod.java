@@ -15,6 +15,7 @@ import com.apps.emdad.tags.Tags;
 import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
+import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -147,9 +148,9 @@ public class GeneralMethod {
             CircleImageView imageView = (CircleImageView) view;
             if (endPoint != null) {
 
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.ic_avatar).into(imageView);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.image_avatar).into(imageView);
             } else {
-                Picasso.get().load(R.drawable.ic_avatar).into(imageView);
+                Picasso.get().load(R.drawable.image_avatar).into(imageView);
 
             }
         } else if (view instanceof RoundedImageView) {
@@ -157,9 +158,9 @@ public class GeneralMethod {
 
             if (endPoint != null) {
 
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.ic_avatar).fit().into(imageView);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.image_avatar).into(imageView);
             } else {
-                Picasso.get().load(R.drawable.ic_avatar).into(imageView);
+                Picasso.get().load(R.drawable.image_avatar).into(imageView);
 
             }
         } else if (view instanceof ImageView) {
@@ -167,15 +168,22 @@ public class GeneralMethod {
 
             if (endPoint != null) {
 
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.ic_avatar).fit().into(imageView);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.image_avatar).into(imageView);
             } else {
-                Picasso.get().load(R.drawable.ic_avatar).into(imageView);
+                Picasso.get().load(R.drawable.image_avatar).into(imageView);
 
             }
         }
 
     }
 
+    @BindingAdapter("rate")
+    public static void rate(SimpleRatingBar ratingBar,double rate) {
+        ratingBar.getAnimationBuilder()
+                .setRatingTarget((float) rate)
+                .start();
+
+    }
 
 }
 

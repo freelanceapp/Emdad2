@@ -21,7 +21,9 @@ import com.apps.emdad.databinding.MainSliderRowBinding;
 import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.MainItemData;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.SliderModel;
 import com.apps.emdad.remote.Api;
+import com.apps.emdad.tags.Tags;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
 import com.google.android.gms.maps.model.LatLng;
@@ -51,7 +53,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private boolean isLoading = false;
     private String query = "food|restaurant|supermarket|bakery";
     private String next_page = "";
-    private List<Integer> sliderList;
+    private List<SliderModel.Data> sliderList;
     private SliderAdapter sliderAdapter;
     private SkeletonScreen skeletonPopular;
     private double user_lat=0.0,user_lng=0.0;
@@ -106,11 +108,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }else if (holder instanceof SliderHolder){
             SliderHolder sliderHolder = (SliderHolder) holder;
 
-            sliderAdapter = new SliderAdapter(sliderList, context);
-            sliderHolder.binding.pager.setAdapter(sliderAdapter);
-
             sliderHolder.binding.recViewPopular.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
-
             sliderHolder.binding.recViewPopular.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -203,16 +201,63 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private void addSliderImages(MainSliderRowBinding binding) {
-        sliderList.add(R.drawable.img1);
-        sliderList.add(R.drawable.img2);
-        sliderList.add(R.drawable.img1);
-        sliderList.add(R.drawable.img2);
-        sliderAdapter.notifyDataSetChanged();
-        updateSliderUi(binding);
+       ////////////////////////////////
+
+        Api.getService(Tags.base_url)
+                .getSlider()
+                .enqueue(new Callback<SliderModel>() {
+                    @Override
+                    public void onResponse(Call<SliderModel> call, Response<SliderModel> response) {
+                        binding.progBar.setVisibility(View.GONE);
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            sliderList.clear();
+                            sliderList.addAll(response.body().getData());
+                            if (sliderList.size()>0){
+                                binding.pager.setVisibility(View.VISIBLE);
+                                updateSliderUi(binding);
+
+                            }else {
+                                binding.pager.setVisibility(View.GONE);
+
+                            }
+
+                        } else {
+
+                            binding.pager.setVisibility(View.GONE);
+                            binding.progBar.setVisibility(View.GONE);
+
+                            try {
+                                Log.e("error_code", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SliderModel> call, Throwable t) {
+                        try {
+                            Log.e("Error", t.getMessage());
+                            binding.progBar.setVisibility(View.GONE);
+
+                            Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
     }
 
     private void updateSliderUi(MainSliderRowBinding binding) {
         if (sliderList.size() > 0) {
+
+            sliderAdapter = new SliderAdapter(sliderList, context);
+            binding.pager.setAdapter(sliderAdapter);
+
             int margin = (int) (context.getResources().getDisplayMetrics().density * 10);
             int padding = (int) (context.getResources().getDisplayMetrics().density * 40);
             binding.pager.setPageMargin(margin);

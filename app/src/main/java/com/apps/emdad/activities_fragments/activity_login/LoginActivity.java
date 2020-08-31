@@ -17,36 +17,48 @@ import android.transition.Explode;
 import android.transition.TransitionSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_verification_code.VerificationCodeActivity;
 import com.apps.emdad.adapters.CountriesAdapter;
 import com.apps.emdad.databinding.ActivityLoginBinding;
 import com.apps.emdad.databinding.DialogCountriesBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.CountryModel;
 import com.apps.emdad.models.LoginModel;
+import com.apps.emdad.models.PlaceDetailsModel;
+import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
+import com.apps.emdad.tags.Tags;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import io.paperdb.Paper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements Listeners.LoginListener {
     private ActivityLoginBinding binding;
     private LoginModel loginModel;
-    private List<CountryModel> countryModelList = new ArrayList<>();
+    private List<CountryModel> countryModelList;
     private CountriesAdapter countriesAdapter;
     private AlertDialog dialog;
     private String lang;
     private String phone_code = "+966";
+    private String country_id="";
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -69,6 +81,8 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
     }
 
     private void initView() {
+        countryModelList = new ArrayList<>();
+
         loginModel = new LoginModel();
         binding.setLoginModel(loginModel);
         binding.setListener(this);
@@ -106,18 +120,50 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
 
 
     private void getPhoneCodes() {
+        Api.getService(Tags.base_url)
+                .getCountries(lang)
+                .enqueue(new Callback<CountryDataModel>() {
+                    @Override
+                    public void onResponse(Call<CountryDataModel> call, Response<CountryDataModel> response) {
+                        binding.progBar.setVisibility(View.GONE);
 
-        countryModelList.add(new CountryModel("+966","1"));
-        countryModelList.add(new CountryModel("+20","2"));
-        runOnUiThread(() -> countriesAdapter.notifyDataSetChanged());
-        if (countryModelList.size()>0){
-            binding.tvCode.setText(countryModelList.get(0).getCode());
+                        if (response.isSuccessful() && response.body() != null) {
+                            countryModelList.clear();
+                            countryModelList.addAll(response.body().getData());
+                            countriesAdapter.notifyDataSetChanged();
 
-        }else {
+                            if (countryModelList.size()>0){
+                                binding.arrow.setVisibility(View.VISIBLE);
+                            }else {
+                                binding.arrow.setVisibility(View.GONE);
 
-            binding.tvCode.setText(phone_code);
+                            }
 
-        }
+                        } else {
+                            binding.progBar.setVisibility(View.GONE);
+
+                            try {
+                                Log.e("error_code",response.code()+"_"+response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CountryDataModel> call, Throwable t) {
+                        try {
+                            binding.progBar.setVisibility(View.GONE);
+
+                            Log.e("Error", t.getMessage());
+                            Toast.makeText(LoginActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
 
     }
 
@@ -151,7 +197,10 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
 
     @Override
     public void showCountryDialog() {
-        dialog.show();
+        if (countryModelList.size()>0){
+            dialog.show();
+
+        }
     }
 
     private void navigateToVerificationCodeActivity() {
@@ -159,6 +208,8 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
         Intent intent = new Intent(this, VerificationCodeActivity.class);
         intent.putExtra("phone_code",phone_code);
         intent.putExtra("phone",loginModel.getPhone());
+        intent.putExtra("country_id",country_id);
+
         startActivity(intent);
         finish();
 
@@ -172,7 +223,8 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
 
     public void setItemData(CountryModel countryModel) {
         dialog.dismiss();
-        phone_code = countryModel.getCode();
-        binding.tvCode.setText(countryModel.getCode());
+        phone_code = "+"+countryModel.getPhone_code();
+        binding.tvCode.setText(phone_code);
+        country_id = countryModel.getId_country();
     }
 }
