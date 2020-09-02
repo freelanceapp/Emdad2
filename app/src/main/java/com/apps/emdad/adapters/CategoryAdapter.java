@@ -1,6 +1,7 @@
 package com.apps.emdad.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,9 +15,12 @@ import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.databinding.CategoryRowBinding;
 import com.apps.emdad.databinding.RecentSearchRowBinding;
 import com.apps.emdad.models.CategoryModel;
+import com.apps.emdad.tags.Tags;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import io.paperdb.Paper;
 
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -24,12 +28,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context context;
     private LayoutInflater inflater;
     private Fragment_Main fragment_main;
+    private String lang;
 
     public CategoryAdapter(List<CategoryModel> list, Context context,Fragment_Main fragment_main) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.fragment_main = fragment_main;
+        Paper.init(context);
+        lang = Paper.book().read("lang","ar");
 
 
     }
@@ -51,7 +58,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         MyHolder myHolder = (MyHolder) holder;
         CategoryModel categoryModel = list.get(position);
         myHolder.binding.setModel(categoryModel);
-        Picasso.get().load(categoryModel.getImage()).fit().into(myHolder.binding.image);
+        myHolder.binding.setLang(lang);
+        Picasso.get().load(Uri.parse(Tags.IMAGE_URL+categoryModel.getImage())).fit().into(myHolder.binding.image);
         myHolder.itemView.setOnClickListener(v -> {
             CategoryModel categoryModel2 = list.get(holder.getAdapterPosition());
 

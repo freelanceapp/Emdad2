@@ -1,4 +1,4 @@
-package com.apps.emdad.activities_fragments.activity_confrim_code_success;
+package com.apps.emdad.activities_fragments.activity_confirm_code_success;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -9,12 +9,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextWatcher;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,8 +17,6 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
-import com.apps.emdad.activities_fragments.activity_verification_code.VerificationCodeActivity;
-import com.apps.emdad.databinding.ActivityAddCouponBinding;
 import com.apps.emdad.databinding.ActivityConfirmCodeSuccessBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.UserModel;

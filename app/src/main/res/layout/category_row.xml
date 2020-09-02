@@ -5,6 +5,9 @@
         <variable
             name="model"
             type="com.apps.emdad.models.CategoryModel" />
+        <variable
+            name="lang"
+            type="String" />
     </data>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -31,7 +34,7 @@
                 android:src="@color/trans_black"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="10dp"
@@ -40,7 +43,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/white"
                 android:singleLine="true"
-                android:text="@{model.title}"
+                android:text='@{lang.equals("ar")?model.title_ar:model.title_en}'
                 />
         </FrameLayout>
     </androidx.cardview.widget.CardView>

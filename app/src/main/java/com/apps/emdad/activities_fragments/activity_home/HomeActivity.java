@@ -59,6 +59,7 @@ import com.apps.emdad.language.Language;
 import com.apps.emdad.models.CountryModel;
 import com.apps.emdad.models.LoginModel;
 import com.apps.emdad.models.UserModel;
+import com.apps.emdad.notifications.FireBaseMessaging;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
@@ -75,6 +76,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -180,9 +185,63 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                 Picasso.get().load(R.drawable.image_avatar).into(binding.imageProfile);
 
             }
+            updateFirbaseToken();
         }
 
     }
+
+    private void updateFirbaseToken() {
+        FirebaseInstanceId.getInstance()
+                .getInstanceId()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()){
+                        String token = task.getResult().getToken();
+                        try {
+                            Api.getService(Tags.base_url)
+                                    .updatePhoneToken(userModel.getUser().getToken(),token,userModel.getUser().getId(),"android")
+                                    .enqueue(new Callback<ResponseBody>() {
+                                        @Override
+                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                            if (response.isSuccessful() && response.body() != null) {
+                                                userModel.getUser().setFireBaseToken(token);
+                                                preferences.create_update_userdata(HomeActivity.this,userModel);
+
+                                                Log.e("token", "updated successfully");
+                                            } else {
+                                                try {
+
+                                                    Log.e("errorToken", response.code() + "_" + response.errorBody().string());
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                            try {
+
+                                                if (t.getMessage() != null) {
+                                                    Log.e("errorToken2", t.getMessage());
+                                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                                        Toast.makeText(HomeActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Toast.makeText(HomeActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                            } catch (Exception e) {
+                                            }
+                                        }
+                                    });
+                        } catch (Exception e) {
+
+                        }
+                }
+            });
+
+    }
+
     public void displayFragmentMain()
     {
         updateMainUi();
@@ -505,7 +564,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             dialog.show();
 
             Api.getService(Tags.base_url)
-                    .logout(userModel.getUser().getToken(), userModel.getUser().getFireBaseToken())
+                    .logout(userModel.getUser().getToken(), userModel.getUser().getFireBaseToken(),"android")
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

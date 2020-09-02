@@ -1,5 +1,6 @@
 package com.apps.emdad.services;
 
+import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PlaceDetailsModel;
@@ -115,7 +116,8 @@ public interface Service {
     @FormUrlEncoded
     @POST("api/logout")
     Call<ResponseBody> logout(@Header("Authorization") String user_token,
-                              @Field("phone_token") String firebase_token
+                              @Field("phone_token") String firebase_token,
+                              @Field("software_type") String software_type
 
 
     );
@@ -123,4 +125,21 @@ public interface Service {
     @GET("api/slider")
     Call<SliderModel> getSlider();
 
+    @GET("api/get-profile")
+    Call<UserModel> getUserById(@Header("Authorization") String user_token,
+                                @Query(value = "user_id") int user_id);
+
+
+    @FormUrlEncoded
+    @POST("api/update-receive-notifications")
+    Call<UserModel> updateReceiveNotification(@Header("Authorization") String user_token,
+                                              @Field("user_id") int user_id,
+                                              @Field("receive_notifications") String receive_notifications
+
+
+    );
+
+
+    @GET("api/category")
+    Call<CategoryDataModel> getCategory();
 }

@@ -18,6 +18,7 @@ import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
 import com.apps.emdad.databinding.MainCategoryDataRowBinding;
 import com.apps.emdad.databinding.MainSliderRowBinding;
+import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.MainItemData;
 import com.apps.emdad.models.NearbyModel;
@@ -55,7 +56,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String next_page = "";
     private List<SliderModel.Data> sliderList;
     private SliderAdapter sliderAdapter;
-    private SkeletonScreen skeletonPopular;
+    private SkeletonScreen skeletonPopular,skeletonCategory;
     private double user_lat=0.0,user_lng=0.0;
     private NearbyAdapter2 nearbyAdapter;
     private CategoryAdapter categoryAdapter;
@@ -101,9 +102,17 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder instanceof MyHolder){
             MyHolder myHolder = (MyHolder) holder;
             myHolder.binding.recView.setLayoutManager(new GridLayoutManager(context,2));
-            categoryAdapter = new CategoryAdapter(categoryModelList,context,fragment_main);
-            myHolder.binding.recView.setAdapter(categoryAdapter);
-            getCategory();
+
+
+            skeletonCategory = Skeleton.bind(myHolder.binding.recView)
+                    .frozen(false)
+                    .duration(1000)
+                    .shimmer(true)
+                    .count(8)
+                    .load(R.layout.category_row)
+                    .show();
+
+            getCategory(myHolder.binding);
 
         }else if (holder instanceof SliderHolder){
             SliderHolder sliderHolder = (SliderHolder) holder;
@@ -260,8 +269,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             int margin = (int) (context.getResources().getDisplayMetrics().density * 10);
             int padding = (int) (context.getResources().getDisplayMetrics().density * 40);
-            binding.pager.setPageMargin(margin);
-            binding.pager.setPadding(padding, 0, padding, 0);
+            /*binding.pager.setPageMargin(margin);
+            binding.pager.setPadding(padding, 0, padding, 0);*/
 
             if (sliderList.size() > 1) {
                 timer = new Timer();
@@ -458,26 +467,48 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return SphericalUtil.computeDistanceBetween(latLng1, latLng2) / 1000;
     }
 
-    private void getCategory() {
-        CategoryModel model1 = new CategoryModel("1",R.drawable.rest,context.getString(R.string.restaurants));
-        CategoryModel model2 = new CategoryModel("2",R.drawable.sup,context.getString(R.string.supermarket));
-        CategoryModel model3 = new CategoryModel("3",R.drawable.cafe,context.getString(R.string.cafe));
-        CategoryModel model4 = new CategoryModel("4",R.drawable.bakery,context.getString(R.string.bakery));
-        CategoryModel model5 = new CategoryModel("5",R.drawable.store,context.getString(R.string.stores));
-        CategoryModel model6 = new CategoryModel("6",R.drawable.gift,context.getString(R.string.florist));
-        CategoryModel model7 = new CategoryModel("7",R.drawable.lib,context.getString(R.string.library));
-        CategoryModel model8 = new CategoryModel("8",R.drawable.pharm,context.getString(R.string.pharmacy));
+    private void getCategory(MainCategoryDataRowBinding binding) {
 
-        categoryModelList.add(model1);
-        categoryModelList.add(model2);
-        categoryModelList.add(model3);
-        categoryModelList.add(model4);
-        categoryModelList.add(model5);
-        categoryModelList.add(model6);
-        categoryModelList.add(model7);
-        categoryModelList.add(model8);
 
-        categoryAdapter.notifyDataSetChanged();
+        categoryModelList.clear();
+        Api.getService(Tags.base_url)
+                .getCategory()
+                .enqueue(new Callback<CategoryDataModel>() {
+                    @Override
+                    public void onResponse(Call<CategoryDataModel> call, Response<CategoryDataModel> response) {
+                        skeletonCategory.hide();
+                        if (response.isSuccessful() && response.body() != null) {
+                            Log.e("size",response.body().getData().size()+"__");
+                            categoryModelList.addAll(response.body().getData());
+                            categoryAdapter = new CategoryAdapter(categoryModelList,context,fragment_main);
+                            binding.recView.setAdapter(categoryAdapter);
+
+                        } else {
+
+                            skeletonCategory.hide();
+
+                            try {
+                                Log.e("error_code", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CategoryDataModel> call, Throwable t) {
+                        try {
+                            Log.e("Error", t.getMessage());
+                            skeletonCategory.hide();
+
+                            Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
 
 
     }

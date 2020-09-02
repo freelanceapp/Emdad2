@@ -13,12 +13,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
-import com.apps.emdad.activities_fragments.activity_confrim_code_success.ConfirmCodeSuccessActivity;
-import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
-import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
+import com.apps.emdad.activities_fragments.activity_confirm_code_success.ConfirmCodeSuccessActivity;
 import com.apps.emdad.databinding.ActivityVerificationCodeBinding;
 import com.apps.emdad.language.Language;
-import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.share.Common;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;

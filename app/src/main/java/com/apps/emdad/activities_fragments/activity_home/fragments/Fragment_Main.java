@@ -135,11 +135,15 @@ public class Fragment_Main extends Fragment {
     }
 
     public void setCategoryData(CategoryModel categoryModel) {
-        Intent intent = new Intent(activity, ShopsQueryActivity.class);
-        intent.putExtra("lat",user_lat);
-        intent.putExtra("lng",user_lng);
-        intent.putExtra("query",categoryModel.getTitle());
-        startActivity(intent);
+        if (categoryModel.getType().equals("google")){
+            Intent intent = new Intent(activity, ShopsQueryActivity.class);
+            intent.putExtra("lat",user_lat);
+            intent.putExtra("lng",user_lng);
+
+            intent.putExtra("data",categoryModel);
+            startActivity(intent);
+        }
+
 
     }
 }

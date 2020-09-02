@@ -25,6 +25,7 @@ public class UserModel implements Serializable {
         private String address;
         private String user_type;
         private String gender;
+        private String receive_notifications;
         private String date_of_birth;
         private String fireBaseToken;
         private CountryModel country;
@@ -88,6 +89,10 @@ public class UserModel implements Serializable {
 
         public void setFireBaseToken(String fireBaseToken) {
             this.fireBaseToken = fireBaseToken;
+        }
+
+        public String getReceive_notifications() {
+            return receive_notifications;
         }
 
         public String getRate() {

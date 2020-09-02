@@ -4,48 +4,33 @@ import java.io.Serializable;
 
 public class CategoryModel implements Serializable {
     private String id;
-    private int image;
-    private String title;
-    private int type = 0;
-
-    public CategoryModel() {
-    }
-
-    public CategoryModel(String id, int image, String title) {
-        this.id = id;
-        this.image = image;
-        this.title = title;
-    }
+    private String title_ar;
+    private String title_en;
+    private String keyword_google;
+    private String image;
+    private String type;
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getTitle_ar() {
+        return title_ar;
     }
 
-    public int getImage() {
+    public String getTitle_en() {
+        return title_en;
+    }
+
+    public String getKeyword_google() {
+        return keyword_google;
+    }
+
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
-        this.image = image;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getType() {
+    public String getType() {
         return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
     }
 }

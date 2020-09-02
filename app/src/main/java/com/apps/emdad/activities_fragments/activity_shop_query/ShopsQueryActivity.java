@@ -28,6 +28,7 @@ import com.apps.emdad.adapters.ResentSearchAdapter;
 import com.apps.emdad.databinding.ActivityShopsBinding;
 import com.apps.emdad.databinding.ActivityShopsQueryBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.preferences.Preferences;
@@ -59,6 +60,7 @@ public class ShopsQueryActivity extends AppCompatActivity {
     private boolean isLoading = false;
     private String query = "";
     private String next_page="";
+    private CategoryModel categoryModel;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -78,7 +80,13 @@ public class ShopsQueryActivity extends AppCompatActivity {
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
-        binding.setQuery(query);
+        if (lang.equals("ar")){
+            binding.setQuery(categoryModel.getTitle_ar());
+
+        }else {
+            binding.setQuery(categoryModel.getTitle_en());
+
+        }
         resultList = new ArrayList<>();
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new NearbyAdapter3(resultList,this,user_lat,user_lng);
@@ -116,7 +124,9 @@ public class ShopsQueryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         user_lat = intent.getDoubleExtra("lat",0.0);
         user_lng = intent.getDoubleExtra("lng",0.0);
-        query = intent.getStringExtra("query").toLowerCase();
+        categoryModel = (CategoryModel) intent.getSerializableExtra("data");
+
+        query = categoryModel.getKeyword_google();
     }
 
 
