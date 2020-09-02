@@ -77,6 +77,14 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
         binding.setActions(this);
         binding.setModel(userModel);
 
+       updateUi(userModel);
+
+    }
+
+    public void updateUi(UserModel userModel) {
+        this.userModel = userModel;
+        binding.setModel(userModel);
+
         if (userModel!=null){
             if (userModel.getUser().getLogo() != null) {
 
@@ -86,7 +94,6 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
             }
         }
-
     }
 
     @Override

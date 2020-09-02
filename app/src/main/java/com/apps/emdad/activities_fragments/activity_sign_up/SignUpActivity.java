@@ -63,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     private Uri uri = null;
     private SignUpModel signUpModel;
     private Preferences preferences;
+    private boolean fromSplash =true;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -97,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             String phone_code = intent.getStringExtra("phone_code");
             String phone = intent.getStringExtra("phone");
             String country_id = intent.getStringExtra("country_id");
-
+            fromSplash = intent.getBooleanExtra("from",true);
             signUpModel.setPhone_code(phone_code);
             signUpModel.setPhone(phone);
             signUpModel.setCountry_id(country_id);
@@ -335,7 +336,12 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             preferences.create_update_userdata(SignUpActivity.this,response.body());
-                            navigateToHomeActivity();
+                            if (fromSplash){
+                                navigateToHomeActivity();
+
+                            }else {
+                                finish();
+                            }
                         }else
                         {
                             if (response.code()==500)

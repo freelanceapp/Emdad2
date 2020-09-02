@@ -114,9 +114,12 @@ public class SplashActivity extends AppCompatActivity {
             }else {
 
                 if (preferences.getSession(this).equals(Tags.session_login)){
-                    Intent intent = new Intent(this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
+                    new Handler().postDelayed(() -> {
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        startActivity(intent);
+                        finish();
+                    },1500);
+
                 }else {
 
                     new Handler().postDelayed(() -> {

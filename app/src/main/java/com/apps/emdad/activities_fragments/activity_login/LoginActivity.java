@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
     private String lang;
     private String phone_code = "+966";
     private String country_id="";
+    private boolean fromSplash = true;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -77,7 +78,14 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        getDataFromIntent();
         initView();
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        fromSplash = intent.getBooleanExtra("from",true);
+
     }
 
     private void initView() {
@@ -115,6 +123,9 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
         });
         createCountriesDialog();
         getPhoneCodes();
+        if (!fromSplash){
+            binding.tvSkip.setVisibility(View.GONE);
+        }
     }
 
 
@@ -209,6 +220,7 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
         intent.putExtra("phone_code",phone_code);
         intent.putExtra("phone",loginModel.getPhone());
         intent.putExtra("country_id",country_id);
+        intent.putExtra("from",fromSplash);
 
         startActivity(intent);
         finish();

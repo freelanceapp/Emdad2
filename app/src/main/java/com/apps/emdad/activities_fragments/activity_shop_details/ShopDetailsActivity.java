@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
+import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.adapters.HoursAdapter;
 import com.apps.emdad.adapters.ImagePagerAdapter;
 import com.apps.emdad.databinding.ActivityShopDetailsBinding;
@@ -30,6 +31,8 @@ import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PhotosModel;
 import com.apps.emdad.models.PlaceDetailsModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
 import com.ethanhua.skeleton.Skeleton;
@@ -54,6 +57,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
     private String lang;
     private List<HourModel> hourModelList;
     private boolean canSend = false;
+    private UserModel userModel;
+    private Preferences preferences;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -68,6 +73,14 @@ public class ShopDetailsActivity extends AppCompatActivity {
         initView();
     }
 
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        userModel = preferences.getUserData(this);
+
+    }
+
     private void getDataFromIntent()
     {
         Intent intent = getIntent();
@@ -76,6 +89,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
     }
     private void initView()
     {
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         hourModelList = new ArrayList<>();
         photosModelList = new ArrayList<>();
         Paper.init(this);
@@ -109,6 +124,16 @@ public class ShopDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AddOrderTextActivity.class);
                 intent.putExtra("data",placeModel);
                 startActivityForResult(intent,100);
+
+            }
+        });
+
+        binding.consReview.setOnClickListener(v -> {
+            if (userModel==null){
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.putExtra("from",false);
+                startActivity(intent);
+            }else {
 
             }
         });

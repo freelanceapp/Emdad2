@@ -92,7 +92,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class HomeActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
     private ActivityHomeBinding binding;
     private FragmentManager fragmentManager;
     private Fragment_Main fragment_main;
@@ -109,14 +109,34 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     public Location location;
 
     @Override
-    protected void attachBaseContext(Context newBase)
-    {
+    protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
         super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onRestart() {
+        super.onRestart();
+        userModel = preferences.getUserData(this);
+        if (userModel!=null){
+            if (userModel.getUser().getLogo() != null) {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.imageProfile);
+            } else {
+                Picasso.get().load(R.drawable.image_avatar).into(binding.imageProfile);
+
+            }
+            updateFirbaseToken();
+
+            if (fragment_profile!=null&&fragment_profile.isAdded()){
+                fragment_profile.updateUi(userModel);
+            }
+        }
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = getSupportFragmentManager();
 
@@ -128,15 +148,15 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         initView();
-        if (savedInstanceState==null){
+        if (savedInstanceState == null) {
             CheckPermission();
         }
     }
-    private void initView()
-    {
+
+    private void initView() {
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
-        binding.fab.setColorFilter(ContextCompat.getColor(this,R.color.white), PorterDuff.Mode.SRC_IN);
+        binding.fab.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN);
 
 
         binding.llStore.setOnClickListener(v -> {
@@ -144,40 +164,51 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
         binding.llNotification.setOnClickListener(v -> {
-            displayFragmentNotification();
+            if (userModel == null) {
+                navigateToLoginActivity(true);
+            } else {
+                displayFragmentNotification();
+
+            }
         });
 
         binding.llOrder.setOnClickListener(v -> {
-            displayFragmentOrder();
+            if (userModel == null) {
+                navigateToLoginActivity(true);
+            } else {
+                displayFragmentOrder();
+
+            }
         });
 
         binding.llProfile.setOnClickListener(v -> {
-            displayFragmentProfile();
+            if (userModel == null) {
+                navigateToLoginActivity(true);
+            } else {
+                displayFragmentProfile();
+
+            }
         });
 
         binding.fab2.setOnClickListener(v -> {
 
             Intent intent = new Intent(this, AddOrderActivity.class);
-
-            intent.putExtra("lat",location.getLatitude());
-            intent.putExtra("lng",location.getLongitude());
+            intent.putExtra("lat", location.getLatitude());
+            intent.putExtra("lng", location.getLongitude());
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,binding.fab2,binding.fab2.getTransitionName());
-                startActivity(intent,options.toBundle());
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, binding.fab2, binding.fab2.getTransitionName());
+                startActivity(intent, options.toBundle());
 
-            }else {
+            } else {
                 startActivity(intent);
 
             }
 
 
-
-
-
         });
 
 
-        if (userModel!=null){
+        if (userModel != null) {
             if (userModel.getUser().getLogo() != null) {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.imageProfile);
@@ -194,17 +225,17 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         FirebaseInstanceId.getInstance()
                 .getInstanceId()
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         String token = task.getResult().getToken();
                         try {
                             Api.getService(Tags.base_url)
-                                    .updatePhoneToken(userModel.getUser().getToken(),token,userModel.getUser().getId(),"android")
+                                    .updatePhoneToken(userModel.getUser().getToken(), token, userModel.getUser().getId(), "android")
                                     .enqueue(new Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                             if (response.isSuccessful() && response.body() != null) {
                                                 userModel.getUser().setFireBaseToken(token);
-                                                preferences.create_update_userdata(HomeActivity.this,userModel);
+                                                preferences.create_update_userdata(HomeActivity.this, userModel);
 
                                                 Log.e("token", "updated successfully");
                                             } else {
@@ -237,186 +268,185 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                         } catch (Exception e) {
 
                         }
-                }
-            });
+                    }
+                });
 
     }
 
-    public void displayFragmentMain()
-    {
+    public void displayFragmentMain() {
         updateMainUi();
 
-        if (fragment_main ==null){
-            if (location!=null){
-                fragment_main = Fragment_Main.newInstance(location.getLatitude(),location.getLatitude());
+        if (fragment_main == null) {
+            if (location != null) {
+                fragment_main = Fragment_Main.newInstance(location.getLatitude(), location.getLatitude());
 
-            }else {
-                fragment_main = Fragment_Main.newInstance(0.0,0.0);
+            } else {
+                fragment_main = Fragment_Main.newInstance(0.0, 0.0);
 
             }
         }
 
-        if (fragment_order!=null&&fragment_order.isAdded()){
+        if (fragment_order != null && fragment_order.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_order).commit();
         }
 
-        if (fragment_notifications!=null&&fragment_notifications.isAdded()){
+        if (fragment_notifications != null && fragment_notifications.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_notifications).commit();
         }
 
-        if (fragment_profile!=null&&fragment_profile.isAdded()){
+        if (fragment_profile != null && fragment_profile.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_profile).commit();
         }
 
 
-        if (fragment_main.isAdded()){
+        if (fragment_main.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_main).commit();
-        }else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app,fragment_main,"fragment_main").addToBackStack("fragment_main").commit();
+        } else {
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_main, "fragment_main").addToBackStack("fragment_main").commit();
         }
 
 
     }
-    private void displayFragmentNotification()
-    {
+
+    private void displayFragmentNotification() {
         updateNotificationUi();
 
 
-        if (fragment_notifications ==null){
+        if (fragment_notifications == null) {
             fragment_notifications = Fragment_Notifications.newInstance();
         }
 
-        if (fragment_order!=null&&fragment_order.isAdded()){
+        if (fragment_order != null && fragment_order.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_order).commit();
         }
 
-        if (fragment_main!=null&&fragment_main.isAdded()){
+        if (fragment_main != null && fragment_main.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_main).commit();
         }
 
-        if (fragment_profile!=null&&fragment_profile.isAdded()){
+        if (fragment_profile != null && fragment_profile.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_profile).commit();
         }
 
 
-        if (fragment_notifications.isAdded()){
+        if (fragment_notifications.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_notifications).commit();
-        }else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app,fragment_notifications,"fragment_notifications").addToBackStack("fragment_notifications").commit();
+        } else {
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_notifications, "fragment_notifications").addToBackStack("fragment_notifications").commit();
         }
 
     }
-    private void displayFragmentOrder()
-    {
+
+    private void displayFragmentOrder() {
         updateOrderUi();
 
-        if (fragment_order ==null){
+        if (fragment_order == null) {
             fragment_order = Fragment_Order.newInstance();
         }
 
-        if (fragment_main!=null&&fragment_main.isAdded()){
+        if (fragment_main != null && fragment_main.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_main).commit();
         }
 
-        if (fragment_notifications!=null&&fragment_notifications.isAdded()){
+        if (fragment_notifications != null && fragment_notifications.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_notifications).commit();
         }
 
-        if (fragment_profile!=null&&fragment_profile.isAdded()){
+        if (fragment_profile != null && fragment_profile.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_profile).commit();
         }
 
 
-        if (fragment_order.isAdded()){
+        if (fragment_order.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_order).commit();
-        }else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app,fragment_order,"fragment_order").addToBackStack("fragment_order").commit();
+        } else {
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_order, "fragment_order").addToBackStack("fragment_order").commit();
         }
 
     }
-    private void displayFragmentProfile()
-    {
+
+    private void displayFragmentProfile() {
         updateProfileUi();
 
-        if (fragment_profile ==null){
+        if (fragment_profile == null) {
             fragment_profile = Fragment_Profile.newInstance();
         }
 
-        if (fragment_order!=null&&fragment_order.isAdded()){
+        if (fragment_order != null && fragment_order.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_order).commit();
         }
 
-        if (fragment_notifications!=null&&fragment_notifications.isAdded()){
+        if (fragment_notifications != null && fragment_notifications.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_notifications).commit();
         }
 
-        if (fragment_main!=null&&fragment_main.isAdded()){
+        if (fragment_main != null && fragment_main.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_main).commit();
         }
 
 
-        if (fragment_profile.isAdded()){
+        if (fragment_profile.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_profile).commit();
-        }else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app,fragment_profile,"fragment_profile").addToBackStack("fragment_profile").commit();
+        } else {
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_profile, "fragment_profile").addToBackStack("fragment_profile").commit();
         }
 
 
     }
-    private void updateMainUi()
-    {
+
+    private void updateMainUi() {
         binding.iconStore.setImageResource(R.drawable.shop1);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
         binding.iconOrder.setImageResource(R.drawable.truck2);
 
 
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.gray11));
 
     }
-    private void updateNotificationUi()
-    {
+
+    private void updateNotificationUi() {
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone1);
         binding.iconOrder.setImageResource(R.drawable.truck1);
 
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.gray11));
 
     }
-    private void updateOrderUi()
-    {
+
+    private void updateOrderUi() {
 
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
         binding.iconOrder.setImageResource(R.drawable.truck2);
 
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.gray11));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.gray11));
     }
-    private void updateProfileUi()
-    {
+
+    private void updateProfileUi() {
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
         binding.iconOrder.setImageResource(R.drawable.truck2);
 
-        binding.tvStore.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvNotification.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvOrder.setTextColor(ContextCompat.getColor(this,R.color.gray11));
-        binding.tvProfile.setTextColor(ContextCompat.getColor(this,R.color.colorPrimary));
+        binding.tvStore.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvNotification.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvOrder.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+        binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
     }
-    private void initGoogleApiClient()
-    {
+
+    private void initGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addOnConnectionFailedListener(this)
                 .addConnectionCallbacks(this)
@@ -424,8 +454,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
         googleApiClient.connect();
     }
-    private void CheckPermission()
-    {
+
+    private void CheckPermission() {
         if (ActivityCompat.checkSelfPermission(this, gps_perm) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{gps_perm}, loc_req);
         } else {
@@ -434,29 +464,26 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
     }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         List<Fragment> fragments = fragmentManager.getFragments();
-        for (Fragment fragment :fragments){
+        for (Fragment fragment : fragments) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        if (requestCode == loc_req)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
+        if (requestCode == loc_req) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initGoogleApiClient();
-            }else
-            {
+            } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
-    private void initLocationRequest()
-    {
+
+    private void initLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setFastestInterval(1000);
         locationRequest.setInterval(60000);
@@ -469,93 +496,98 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         result.setResultCallback(result1 -> {
 
             Status status = result1.getStatus();
-            switch (status.getStatusCode())
-            {
+            switch (status.getStatusCode()) {
                 case LocationSettingsStatusCodes.SUCCESS:
                     startLocationUpdate();
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     try {
-                        status.startResolutionForResult(HomeActivity.this,1255);
-                    }catch (Exception e)
-                    {
+                        status.startResolutionForResult(HomeActivity.this, 1255);
+                    } catch (Exception e) {
                     }
                     break;
                 case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                    Log.e("not available","not available");
+                    Log.e("not available", "not available");
                     break;
             }
         });
 
     }
+
     @SuppressLint("MissingPermission")
-    private void startLocationUpdate()
-    {
-        locationCallback = new LocationCallback()
-        {
+    private void startLocationUpdate() {
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 onLocationChanged(locationResult.getLastLocation());
             }
         };
         LocationServices.getFusedLocationProviderClient(this)
-                .requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
+                .requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         initLocationRequest();
     }
+
     @Override
-    public void onConnectionSuspended(int i)
-    {
-        if (googleApiClient!=null){
+    public void onConnectionSuspended(int i) {
+        if (googleApiClient != null) {
             googleApiClient.connect();
         }
     }
+
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
-    {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         this.location = location;
         binding.flLoading.setVisibility(View.GONE);
         displayFragmentMain();
 
-        if (googleApiClient!=null){
+        if (googleApiClient != null) {
             googleApiClient.disconnect();
         }
-        if (locationCallback!=null){
+        if (locationCallback != null) {
             LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
         }
     }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         List<Fragment> fragments = fragmentManager.getFragments();
-        for (Fragment fragment :fragments){
+        for (Fragment fragment : fragments) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
-        if (requestCode==1255&&resultCode==RESULT_OK){
+        if (requestCode == 1255 && resultCode == RESULT_OK) {
             startLocationUpdate();
         }
     }
-    private void navigateToLoginActivity()
-    {
+
+    private void navigateToLoginActivity(boolean hasData) {
 
         Intent intent = new Intent(this, LoginActivity.class);
+        if (hasData) {
+            intent.putExtra("from", false);
+        }
         startActivity(intent);
-        finish();
+        if (!hasData) {
+            finish();
+
+        }
     }
-    public void refreshActivity()
-    {
+
+    public void refreshActivity() {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
     }
+
     public void logout() {
         if (userModel != null) {
 
@@ -564,7 +596,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             dialog.show();
 
             Api.getService(Tags.base_url)
-                    .logout(userModel.getUser().getToken(), userModel.getUser().getFireBaseToken(),"android")
+                    .logout(userModel.getUser().getToken(), userModel.getUser().getFireBaseToken(), "android")
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -575,7 +607,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                                 if (manager != null) {
                                     manager.cancel(Tags.not_tag, Tags.not_id);
                                 }
-                                navigateToLoginActivity();
+                                navigateToLoginActivity(false);
 
 
                             } else {
@@ -615,30 +647,28 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
     }
+
     @Override
-    public void onBackPressed()
-    {
-        if (fragment_main!=null&&fragment_main.isAdded()&&fragment_main.isVisible()){
-            if (userModel==null){
-                navigateToLoginActivity();
-            }else {
+    public void onBackPressed() {
+        if (fragment_main != null && fragment_main.isAdded() && fragment_main.isVisible()) {
+            if (userModel == null) {
+                navigateToLoginActivity(false);
+            } else {
                 finish();
             }
-        }else {
+        } else {
             displayFragmentMain();
         }
     }
+
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
-        if (locationCallback!=null)
-        {
+        if (locationCallback != null) {
             LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
 
         }
-        if (googleApiClient!=null)
-        {
+        if (googleApiClient != null) {
             googleApiClient.disconnect();
         }
 

@@ -37,8 +37,8 @@ public class VerificationCodeActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private FirebaseAuth mAuth;
     private String verificationId;
-
     private String smsCode = "";
+    private boolean fromSplash = true;
 
 
     @Override
@@ -63,7 +63,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
             phone_code = intent.getStringExtra("phone_code");
             phone = intent.getStringExtra("phone");
             country_id = intent.getStringExtra("country_id");
-
+            fromSplash = intent.getBooleanExtra("from",true);
         }
     }
 
@@ -157,6 +157,8 @@ public class VerificationCodeActivity extends AppCompatActivity {
         intent.putExtra("phone_code", phone_code);
         intent.putExtra("phone", phone);
         intent.putExtra("country_id", country_id);
+        intent.putExtra("from",fromSplash);
+
         startActivity(intent);
         finish();
 

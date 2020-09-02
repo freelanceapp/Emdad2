@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
     >
+    <data>
+        <variable
+            name="model"
+            type="com.apps.emdad.models.UserModel" />
+        <import type="android.view.View"/>
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +50,15 @@
                     android:textColor="@color/color4"
                     android:hint="@string/i_want_restaurant"
                     android:gravity="center_vertical"
+                    />
+                <ImageView
+                    android:id="@+id/imageDriverOrders"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:tint="@color/colorPrimary"
+                    android:src="@drawable/ic_car_wheel"
+                    android:padding="5dp"
+                    android:visibility='@{model==null?View.GONE:(model.user.user_type.equals("client")?View.GONE:View.VISIBLE),default=gone}'
                     />
 
 

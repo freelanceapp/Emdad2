@@ -36,7 +36,7 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
     private String country_id="";
     private Preferences preferences;
     private String lang;
-
+    private boolean fromSplash = true;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -49,6 +49,7 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
             phone_code = intent.getStringExtra("phone_code");
             phone = intent.getStringExtra("phone");
             country_id = intent.getStringExtra("country_id");
+            fromSplash = intent.getBooleanExtra("from",true);
 
         }
     }
@@ -87,7 +88,12 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
                                         binding.image.setVisibility(View.VISIBLE);
                                         binding.tvStatus.setTextColor(ContextCompat.getColor(ConfirmCodeSuccessActivity.this,R.color.colorPrimary));
                                         binding.tvStatus.setText(getString(R.string.confirmed));
-                                        navigateToHomeActivity();
+                                        if (fromSplash){
+                                            navigateToHomeActivity();
+
+                                        }else {
+                                            finish();
+                                        }
 
                                     },1500);
 
@@ -162,6 +168,7 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
         intent.putExtra("phone_code",phone_code);
         intent.putExtra("phone",phone);
         intent.putExtra("country_id",country_id);
+        intent.putExtra("from",fromSplash);
         startActivity(intent);
         finish();
 
