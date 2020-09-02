@@ -14,6 +14,7 @@ public class MyViewPager extends ViewPager {
     {
         super( context, attrs );
         setMyScroller();
+
     }
     private void setMyScroller() {
         try {

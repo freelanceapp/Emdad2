@@ -83,6 +83,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
     private void getDataFromIntent()
     {
+
         Intent intent = getIntent();
         placeModel = (NearbyModel.Result) intent.getSerializableExtra("data");
 
