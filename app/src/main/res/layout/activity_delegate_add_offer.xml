@@ -9,8 +9,8 @@
             name="lang"
             type="String" />
         <variable
-            name="listener"
-            type="com.apps.emdad.interfaces.Listeners.BackListener" />
+            name="model"
+            type="com.apps.emdad.models.FromToLocationModel" />
     </data>
 
     <FrameLayout
@@ -78,6 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:background="@color/white"
 
                 >
                 <LinearLayout
@@ -85,8 +86,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:background="@color/gray1"
-                    android:layout_marginTop="10dp"
+                    android:background="@color/gray0"
                     >
                     <LinearLayout
                         android:layout_width="0dp"
@@ -112,6 +112,7 @@
                             android:layout_marginTop="5dp"
                             android:textSize="11sp"
                             tools:ignore="SmallSp"
+                            android:text="@{model.toAddress}"
 
                             />
                         <TextView
@@ -123,6 +124,7 @@
                             android:paddingStart="5dp"
                             android:paddingEnd="5dp"
                             android:gravity="center"
+                            android:text='@{String.valueOf(model.distance_me_drop_off_location)+" "+@string/km}'
                             />
                     </LinearLayout>
                     <View
@@ -154,6 +156,8 @@
                             android:layout_marginTop="5dp"
                             android:textSize="11sp"
                             tools:ignore="SmallSp"
+                            android:text="@{model.fromAddress}"
+
 
                             />
                         <TextView
@@ -165,6 +169,8 @@
                             android:paddingStart="5dp"
                             android:paddingEnd="5dp"
                             android:gravity="center"
+                            android:text='@{String.valueOf(model.distance_me_pick_up_location)+" "+@string/km}'
+
                             />
                     </LinearLayout>
 
@@ -199,6 +205,7 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/gray6"
                         android:lines="1"
+                        android:inputType="numberDecimal"
                         />
                    <TextView
                        android:id="@+id/tvSend"

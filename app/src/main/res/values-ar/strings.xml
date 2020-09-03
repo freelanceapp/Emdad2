@@ -226,5 +226,7 @@
     <string name="enable_alerts">فعل التنبيهات</string>
     <string name="so_that_submit_offers">لكي تستطيع استقبال تنبيهات الطلبات وتقديم العروض عليها</string>
     <string name="send">إرسال</string>
+    <string name="total_delivery_revenue">إجمالي رسوم التوصيل</string>
+    <string name="sar">ر.س</string>
 
 </resources>

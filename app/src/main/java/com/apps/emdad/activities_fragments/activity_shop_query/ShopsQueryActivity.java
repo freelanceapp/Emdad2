@@ -29,10 +29,13 @@ import com.apps.emdad.databinding.ActivityShopsBinding;
 import com.apps.emdad.databinding.ActivityShopsQueryBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.CategoryModel;
+import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
+import com.apps.emdad.tags.Tags;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,6 +64,8 @@ public class ShopsQueryActivity extends AppCompatActivity {
     private String query = "";
     private String next_page="";
     private CategoryModel categoryModel;
+    private Preferences preferences;
+    private UserModel userModel;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -77,6 +82,8 @@ public class ShopsQueryActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
@@ -89,7 +96,12 @@ public class ShopsQueryActivity extends AppCompatActivity {
         }
         resultList = new ArrayList<>();
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new NearbyAdapter3(resultList,this,user_lat,user_lng);
+
+        String currency=getString(R.string.sar);
+        if (userModel!=null){
+            currency = userModel.getUser().getCountry().getWord().getCurrency();
+        }
+        adapter = new NearbyAdapter3(resultList,this,user_lat,user_lng,currency);
         binding.recView.setAdapter(adapter);
 
         skeletonScreen = Skeleton.bind(binding.recView)
@@ -293,7 +305,7 @@ public class ShopsQueryActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         if (resultList.size()>0){
-            sortData();
+            getPlaceDataByGooglePlaceId(0);
 
         }else {
             binding.tvNoData.setVisibility(View.VISIBLE);
@@ -319,14 +331,10 @@ public class ShopsQueryActivity extends AppCompatActivity {
         }
 
 
-        int oldPos = resultList.size();
-        resultList.addAll(resultListFiltered);
-
-        int newPos = resultList.size();
-        adapter.notifyItemRangeChanged(oldPos,newPos);
+       getPlaceDataByGooglePlaceIdLoadMore(0,resultListFiltered);
 
 
-        sortData();
+        //sortData();
 
     }
 
@@ -388,4 +396,115 @@ public class ShopsQueryActivity extends AppCompatActivity {
         return false;
     }
 
+
+    private void getPlaceDataByGooglePlaceId(int index)
+    {
+        if (index<resultList.size()){
+
+            Api.getService(Tags.base_url)
+                    .getCustomPlaceByGooglePlaceId(resultList.get(index).getPlace_id())
+                    .enqueue(new Callback<CustomPlaceDataModel>() {
+                        @Override
+                        public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
+                            if (response.isSuccessful()) {
+
+                                NearbyModel.Result result = resultList.get(index);
+                                result.setCustomPlaceModel(response.body().getData());
+                                resultList.set(index,result);
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceId(newIndex);
+
+
+                            } else {
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceId(newIndex);
+
+                                try {
+                                    Log.e("error_code", response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<CustomPlaceDataModel> call, Throwable t) {
+                            try {
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceId(newIndex);
+
+                                Log.e("Error", t.getMessage());
+                                Toast.makeText(ShopsQueryActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    });
+        }else {
+            adapter.notifyDataSetChanged();
+            //sortData();
+        }
+    }
+
+
+    private void getPlaceDataByGooglePlaceIdLoadMore(int index, List<NearbyModel.Result> results)
+    {
+        if (index<results.size()){
+
+            Api.getService(Tags.base_url)
+                    .getCustomPlaceByGooglePlaceId(resultList.get(index).getPlace_id())
+                    .enqueue(new Callback<CustomPlaceDataModel>() {
+                        @Override
+                        public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
+                            if (response.isSuccessful()) {
+
+                                NearbyModel.Result result = results.get(index);
+                                result.setCustomPlaceModel(response.body().getData());
+                                results.set(index,result);
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
+
+
+                            } else {
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
+
+                                try {
+                                    Log.e("error_code", response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<CustomPlaceDataModel> call, Throwable t) {
+                            try {
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
+
+                                Log.e("Error", t.getMessage());
+                                Toast.makeText(ShopsQueryActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    });
+        }else {
+
+            int oldPos = resultList.size();
+            resultList.addAll(results);
+
+            int newPos = resultList.size();
+            adapter.notifyItemRangeChanged(oldPos,newPos);
+        }
+    }
 }

@@ -29,11 +29,13 @@ public class NearbyAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private LayoutInflater inflater;
     private Fragment_Main fragment_main;
-    public NearbyAdapter2(List<NearbyModel.Result> placeModelList, Context context,Fragment_Main fragment_main) {
+    private String currency="";
+    public NearbyAdapter2(List<NearbyModel.Result> placeModelList, Context context, Fragment_Main fragment_main, String currency) {
         this.placeModelList = placeModelList;
         this.context = context;
         this.fragment_main = fragment_main;
         inflater = LayoutInflater.from(context);
+        this.currency = currency;
 
     }
 
@@ -59,6 +61,7 @@ public class NearbyAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MyHolder myHolder = (MyHolder) holder;
             NearbyModel.Result placeModel = placeModelList.get(position);
             myHolder.binding.setModel(placeModel);
+            myHolder.binding.setCurrency(currency);
             holder.itemView.setOnClickListener(v -> {
                 NearbyModel.Result placeModel1 = placeModelList.get(myHolder.getAdapterPosition());
                 fragment_main.placeItemData(placeModel1);

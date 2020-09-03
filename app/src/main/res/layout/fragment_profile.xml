@@ -14,6 +14,9 @@
             name="model"
             type="com.apps.emdad.models.UserModel" />
 
+        <import type="android.view.View"/>
+
+
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -140,6 +143,7 @@
                         android:layout_marginEnd="10dp"
                         android:text="@string/account_balance"/>
                     <TextView
+                        android:id="@+id/tvBalance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
@@ -154,6 +158,52 @@
                     android:background="@color/gray2"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:gravity="center_vertical"
+                    android:visibility='@{model.user.user_type.equals("client")?View.GONE:View.VISIBLE,default=gone}'
+                    >
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_graphic_progression"
+                        android:tint="@color/gray11"
+                        android:padding="3dp"
+                        />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray11"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/total_delivery_revenue"/>
+                    <TextView
+                        android:id="@+id/tvTotalRevenue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold"
+                        android:text=""
+                        />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/gray2"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:visibility='@{model.user.user_type.equals("client")?View.GONE:View.VISIBLE,default=gone}'
+
                     />
 
                 <LinearLayout
@@ -323,6 +373,7 @@
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
                     android:gravity="center_vertical"
+                    android:visibility="gone"
                     android:onClick="@{()->actions.onCoupons()}"
 
                     >
@@ -398,6 +449,8 @@
                     android:background="@color/gray2"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
+                    android:visibility="gone"
+
                     />
 
 

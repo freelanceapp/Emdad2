@@ -2,6 +2,7 @@ package com.apps.emdad.services;
 
 import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CountryDataModel;
+import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
@@ -127,6 +128,7 @@ public interface Service {
 
     @GET("api/get-profile")
     Call<UserModel> getUserById(@Header("Authorization") String user_token,
+                                @Query(value = "lang") String lang,
                                 @Query(value = "user_id") int user_id);
 
 
@@ -142,4 +144,7 @@ public interface Service {
 
     @GET("api/category")
     Call<CategoryDataModel> getCategory();
+
+    @GET("api/get-place-by-google-id")
+    Call<CustomPlaceDataModel> getCustomPlaceByGooglePlaceId(@Query(value = "google_place_id") String google_place_id);
 }

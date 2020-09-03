@@ -29,14 +29,17 @@ public class NearbyAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private double user_lat = 0.0, user_lng = 0.0;
     private LayoutInflater inflater;
     private AppCompatActivity activity;
+    private String currency ="";
 
-    public NearbyAdapter3(List<NearbyModel.Result> placeModelList, Context context, double user_lat, double user_lng) {
+    public NearbyAdapter3(List<NearbyModel.Result> placeModelList, Context context, double user_lat, double user_lng,String currency) {
         this.placeModelList = placeModelList;
         this.context = context;
         this.user_lat = user_lat;
         this.user_lng = user_lng;
         inflater = LayoutInflater.from(context);
         activity = (AppCompatActivity) context;
+        this.currency = currency;
+
 
     }
 

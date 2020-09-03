@@ -35,6 +35,7 @@ public class NearbyModel implements Serializable {
         private PlaceDetailsModel.Opening_Hours work_hours;
         private List<PhotosModel> photosModels;
         private List<PlaceDetailsModel.Reviews> reviews;
+        private CustomPlaceModel customPlaceModel;
 
         public String getId() {
             return id;
@@ -112,6 +113,14 @@ public class NearbyModel implements Serializable {
 
         public List<String> getTypes() {
             return types;
+        }
+
+        public CustomPlaceModel getCustomPlaceModel() {
+            return customPlaceModel;
+        }
+
+        public void setCustomPlaceModel(CustomPlaceModel customPlaceModel) {
+            this.customPlaceModel = customPlaceModel;
         }
     }
 

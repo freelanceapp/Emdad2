@@ -29,6 +29,8 @@ import com.apps.emdad.language.Language;
 import com.apps.emdad.models.ChatBotModel;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.share.Common;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
@@ -58,6 +60,8 @@ public class AddOrderActivity extends AppCompatActivity {
 
     private FavoriteLocationModel fromLocation, toLocation;
     private boolean isPackageOrder = false;
+    private Preferences preferences;
+    private UserModel userModel;
 
 
     @Override
@@ -88,6 +92,8 @@ public class AddOrderActivity extends AppCompatActivity {
 
     private void initView()
     {
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         chatBotModelList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
@@ -95,7 +101,7 @@ public class AddOrderActivity extends AppCompatActivity {
         binding.tvTime.setText(time);
         String am_pm = time.substring(time.length() - 2);
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ChatBotAdapter(this, chatBotModelList, "Emad", "", am_pm.toLowerCase());
+        adapter = new ChatBotAdapter(this, chatBotModelList, userModel.getUser().getName(), "", am_pm.toLowerCase());
         binding.recView.setAdapter(adapter);
         startChat();
 

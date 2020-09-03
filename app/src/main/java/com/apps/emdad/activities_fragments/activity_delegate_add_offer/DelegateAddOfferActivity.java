@@ -57,6 +57,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 import com.squareup.picasso.Picasso;
@@ -89,7 +90,7 @@ public class DelegateAddOfferActivity extends AppCompatActivity implements OnMap
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_shop_map);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_delegate_add_offer);
         getDataFromIntent();
         initView();
     }
@@ -97,14 +98,16 @@ public class DelegateAddOfferActivity extends AppCompatActivity implements OnMap
     private void getDataFromIntent() {
         Intent intent = getIntent();
         fromToLocationModel = (FromToLocationModel) intent.getSerializableExtra("data");
-
+        if (fromToLocationModel==null){
+            fromToLocationModel = new FromToLocationModel( 30.5657946,31.00722399999999,"ش الجلاء البحرى أمام مسجد المغفرة، Qism Shebeen El-Kom, Shibin el Kom",10.0,30.560600,31.010910,"شبين الكوم",50.0,30.560600,31.010910);
+        }
     }
 
     private void initView() {
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
-
+        binding.setModel(fromToLocationModel);
         binding.close.setOnClickListener(v -> {super.onBackPressed();});
         updateUI();
     }
@@ -130,9 +133,45 @@ public class DelegateAddOfferActivity extends AppCompatActivity implements OnMap
             mMap.setBuildingsEnabled(false);
             mMap.setIndoorEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
+            addMarker(fromToLocationModel.getFromLat(),fromToLocationModel.getFromLng(),1);
+            addMarker(fromToLocationModel.getToLat(),fromToLocationModel.getToLng(),2);
 
         }
+    }
+
+
+    private void addMarker(double lat ,double lng,int type) {
+        View view = LayoutInflater.from(this).inflate(R.layout.map_add_offer_location_row,null);
+        TextView tvTitle = view.findViewById(R.id.tvTitle);
+        if (type==1){
+            tvTitle.setText(getString(R.string.pick_up));
+            tvTitle.setBackgroundResource(R.drawable.rounded_primary);
+        }else {
+            tvTitle.setText(getString(R.string.drop_off));
+            tvTitle.setBackgroundResource(R.drawable.rounded_second);
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(new LatLng(fromToLocationModel.getFromLat(),fromToLocationModel.getFromLng()));
+            builder.include(new LatLng(fromToLocationModel.getToLat(),fromToLocationModel.getToLng()));
+
+            try {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),150));
+
+            }catch (Exception e){
+
+            }
+
+        }
+        IconGenerator iconGenerator = new IconGenerator(this);
+        iconGenerator.setContentPadding(2,2,2,2);
+        iconGenerator.setBackground(null);
+        iconGenerator.setContentView(view);
+
+
+
+        mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).position(new LatLng(lat,lng)));
+
+
+
     }
 
 }

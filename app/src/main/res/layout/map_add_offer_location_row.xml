@@ -19,6 +19,6 @@
     <ImageView
         android:layout_width="40dp"
         android:layout_height="60dp"
-        android:src="@drawable/pin2"
+        android:src="@drawable/pin"
         />
 </LinearLayout>

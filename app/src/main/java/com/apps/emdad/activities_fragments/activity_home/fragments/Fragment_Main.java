@@ -25,6 +25,8 @@ import com.apps.emdad.databinding.FragmentMainBinding;
 import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.MainItemData;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,9 @@ public class Fragment_Main extends Fragment {
     private String lang;
     private List<MainItemData> mainItemDataList;
     private MainAdapter mainAdapter;
+    private Preferences preferences;
+    private UserModel userModel;
+
 
 
     public static Fragment_Main newInstance(double user_lat, double user_lng) {
@@ -64,6 +69,8 @@ public class Fragment_Main extends Fragment {
         mainItemDataList = new ArrayList<>();
 
         activity = (HomeActivity) getActivity();
+        preferences= Preferences.getInstance();
+        userModel = preferences.getUserData(activity);
         Paper.init(activity);
         lang = Paper.book().read("lang", "ar");
         Bundle bundle = getArguments();
@@ -76,7 +83,12 @@ public class Fragment_Main extends Fragment {
         binding.recViewCategory.setLayoutManager(new LinearLayoutManager(activity));
         MainItemData itemData1 = new MainItemData(0);
         mainItemDataList.add(itemData1);
-        mainAdapter = new MainAdapter(mainItemDataList,activity,this,user_lat,user_lng);
+        String currency=getString(R.string.sar);
+        if (userModel!=null){
+            currency = userModel.getUser().getCountry().getWord().getCurrency();
+        }
+
+        mainAdapter = new MainAdapter(mainItemDataList,activity,this,user_lat,user_lng,currency);
         binding.recViewCategory.setAdapter(mainAdapter);
 
         MainItemData itemData2 = new MainItemData(1);

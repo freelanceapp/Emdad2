@@ -9,13 +9,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.databinding.ActivityLanguageBinding;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.remote.Api;
+import com.apps.emdad.tags.Tags;
+
+import java.io.IOException;
 
 import io.paperdb.Paper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LanguageActivity extends AppCompatActivity {
 
@@ -23,6 +34,8 @@ public class LanguageActivity extends AppCompatActivity {
     private String lang;
     private boolean canSelect = false;
     private String selectedLang="";
+    private UserModel userModel;
+    private Preferences preferences;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -37,6 +50,8 @@ public class LanguageActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        preferences  = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
         selectedLang = lang;
@@ -103,10 +118,17 @@ public class LanguageActivity extends AppCompatActivity {
 
         binding.btnConfirm.setOnClickListener(v -> {
             if (canSelect){
-                Paper.book().write("lang",selectedLang);
-                Language.updateResources(this,selectedLang);
-                setResult(RESULT_OK);
-                finish();
+
+                if (userModel==null){
+                    Paper.book().write("lang",selectedLang);
+                    Language.updateResources(this,selectedLang);
+                    setResult(RESULT_OK);
+                    finish();
+                }else {
+                    getUserData();
+                }
+
+
             }
         });
     }
@@ -120,4 +142,56 @@ public class LanguageActivity extends AppCompatActivity {
             binding.btnConfirm.setBackgroundResource(R.drawable.small_rounded_gray);
         }
     }
+
+
+    private void getUserData() {
+        Api.getService(Tags.base_url)
+                .getUserById(userModel.getUser().getToken(),lang,userModel.getUser().getId())
+                .enqueue(new Callback<UserModel>() {
+                    @Override
+                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                        if (response.isSuccessful()) {
+
+                            userModel = response.body();
+                            preferences.create_update_userdata(LanguageActivity.this,userModel);
+
+                            Paper.book().write("lang",selectedLang);
+                            Language.updateResources(LanguageActivity.this,selectedLang);
+                            setResult(RESULT_OK);
+                            finish();
+
+                        } else {
+                            try {
+                                Log.e("error", response.code() + "__" + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (response.code() == 500) {
+                                Toast.makeText(LanguageActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LanguageActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserModel> call, Throwable t) {
+                        try {
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(LanguageActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(LanguageActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
+                        }
+                    }
+                });
+    }
+
 }

@@ -98,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     private void getUserData() {
         Api.getService(Tags.base_url)
-                .getUserById(userModel.getUser().getToken(),userModel.getUser().getId())
+                .getUserById(userModel.getUser().getToken(),lang,userModel.getUser().getId())
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {

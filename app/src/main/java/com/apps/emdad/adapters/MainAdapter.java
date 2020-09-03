@@ -16,10 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
+import com.apps.emdad.activities_fragments.activity_shop_query.ShopsQueryActivity;
 import com.apps.emdad.databinding.MainCategoryDataRowBinding;
 import com.apps.emdad.databinding.MainSliderRowBinding;
 import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CategoryModel;
+import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.MainItemData;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.SliderModel;
@@ -65,7 +67,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String lang;
     private Timer timer;
     private Task task;
-    public MainAdapter(List<MainItemData> list, Context context, Fragment_Main fragment_main, double user_lat, double user_lng) {
+    private MainSliderRowBinding mainSliderRowBinding;
+    private String currency;
+
+    public MainAdapter(List<MainItemData> list, Context context, Fragment_Main fragment_main, double user_lat, double user_lng,String currency) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -78,6 +83,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Paper.init(context);
         lang = Paper.book().read("lang","ar");
         activity = (HomeActivity) context;
+        this.currency = currency;
     }
 
     @NonNull
@@ -288,7 +294,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .enqueue(new Callback<NearbyModel>() {
                     @Override
                     public void onResponse(Call<NearbyModel> call, Response<NearbyModel> response) {
-                        skeletonPopular.hide();
                         if (response.isSuccessful() && response.body() != null) {
                             if (response.body().getStatus().equals("OK")) {
 
@@ -411,6 +416,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void calculateDistance(List<NearbyModel.Result> results,MainSliderRowBinding binding){
+        this.mainSliderRowBinding = binding;
         for (int i =0 ;i<results.size();i++){
             NearbyModel.Result result = results.get(i);
 
@@ -426,8 +432,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if (resultList.size()>0){
             binding.tv.setVisibility(View.VISIBLE);
-            nearbyAdapter = new NearbyAdapter2(resultList,context,fragment_main);
-            binding.recViewPopular.setAdapter(nearbyAdapter);
+            getPlaceDataByGooglePlaceId(0);
+
         }else {
             binding.tv.setVisibility(View.GONE);
         }
@@ -454,11 +460,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
 
-        int oldPos = resultList.size()-1;
 
-        resultList.addAll(resultListFiltered);
-        int newPos = resultList.size();
-        nearbyAdapter.notifyItemRangeChanged(oldPos,newPos);
+
+        getPlaceDataByGooglePlaceIdLoadMore(0,resultListFiltered);
 
 
     }
@@ -511,6 +515,120 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 });
 
 
+    }
+
+
+    private void getPlaceDataByGooglePlaceId(int index)
+    {
+        if (index<resultList.size()){
+
+            Api.getService(Tags.base_url)
+                    .getCustomPlaceByGooglePlaceId(resultList.get(index).getPlace_id())
+                    .enqueue(new Callback<CustomPlaceDataModel>() {
+                        @Override
+                        public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
+                            if (response.isSuccessful()) {
+
+                                NearbyModel.Result result = resultList.get(index);
+                                result.setCustomPlaceModel(response.body().getData());
+                                resultList.set(index,result);
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceId(newIndex);
+
+
+                            } else {
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceId(newIndex);
+
+                                try {
+                                    Log.e("error_code", response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<CustomPlaceDataModel> call, Throwable t) {
+                            try {
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceId(newIndex);
+
+                                Log.e("Error", t.getMessage());
+                                Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    });
+        }else {
+
+            skeletonPopular.hide();
+            nearbyAdapter = new NearbyAdapter2(resultList,context,fragment_main,currency);
+            mainSliderRowBinding.recViewPopular.setAdapter(nearbyAdapter);
+        }
+    }
+
+
+    private void getPlaceDataByGooglePlaceIdLoadMore(int index, List<NearbyModel.Result> results)
+    {
+        if (index<results.size()){
+
+            Api.getService(Tags.base_url)
+                    .getCustomPlaceByGooglePlaceId(resultList.get(index).getPlace_id())
+                    .enqueue(new Callback<CustomPlaceDataModel>() {
+                        @Override
+                        public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
+                            if (response.isSuccessful()) {
+
+                                NearbyModel.Result result = results.get(index);
+                                result.setCustomPlaceModel(response.body().getData());
+                                results.set(index,result);
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
+
+
+                            } else {
+
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
+
+                                try {
+                                    Log.e("error_code", response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<CustomPlaceDataModel> call, Throwable t) {
+                            try {
+                                int newIndex = index+1;
+                                getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
+
+                                Log.e("Error", t.getMessage());
+                                Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    });
+        }else {
+
+            int oldPos = resultList.size()-1;
+
+            resultList.addAll(results);
+            int newPos = resultList.size();
+            nearbyAdapter.notifyItemRangeChanged(oldPos,newPos);
+        }
     }
 
     private  class Task extends TimerTask{

@@ -224,6 +224,8 @@
     <string name="enable_alerts">Enable Alerts</string>
     <string name="so_that_submit_offers">So that you can receive orders alerts and submit offers</string>
     <string name="send">Send</string>
+    <string name="total_delivery_revenue">Total Delivery Revenue</string>
+    <string name="sar">SAR</string>
 
 
 </resources>

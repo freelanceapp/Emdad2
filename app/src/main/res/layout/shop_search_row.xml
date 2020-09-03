@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
             name="model"
             type="com.apps.emdad.models.NearbyModel.Result" />
+        <variable
+            name="currency"
+            type="String" />
+        <import type="android.view.View"/>
+
 
     </data>
     <androidx.cardview.widget.CardView
@@ -67,6 +73,20 @@
                 android:textColor="@color/color4"
                 android:textSize="13sp"
                 distance="@{model.distance}"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/icon"
+                app:layout_constraintTop_toBottomOf="@id/icon"
+                android:background="@drawable/rounded_rose"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="8sp"
+                tools:ignore="SmallSp"
+                android:textColor="@color/white"
+                android:text='@{model.customPlaceModel!=null?(model.customPlaceModel.delivery_offer!=null?(model.customPlaceModel.delivery_offer.offer_type.equals("per")?model.customPlaceModel.delivery_offer.offer_value+"%":model.customPlaceModel.delivery_offer.offer_value+" "+currency):""):""}'
+                android:visibility="@{model.customPlaceModel==null?View.GONE:(model.customPlaceModel.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
