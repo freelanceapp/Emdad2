@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
+import com.apps.emdad.activities_fragments.activity_delegate_orders.DelegateOrdersActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
@@ -87,6 +88,10 @@ public class Fragment_Main extends Fragment {
             intent.putExtra("lat", user_lat);
             intent.putExtra("lng", user_lng);
             intent.putExtra("type", true);
+            startActivity(intent);
+        });
+        binding.imageDelegateOrders.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DelegateOrdersActivity.class);
             startActivity(intent);
         });
 

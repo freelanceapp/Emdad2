@@ -13,10 +13,7 @@
         <variable
             name="actions"
             type="com.apps.emdad.interfaces.Listeners.SettingAction" />
-        <variable
-            name="model"
-            type="com.apps.emdad.models.UserModel" />
-        <import type="android.view.View"/>
+
 
     </data>
 
@@ -121,82 +118,7 @@
                     android:background="@color/gray2" />
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:visibility='@{model==null?View.GONE:View.VISIBLE}'
-                    >
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_weight="1"
-                        android:clickable="false"
-                        android:longClickable="false"
-                        android:singleLine="true"
-                        android:text="@string/notifications"
-                        android:textColor="@color/gray11"
-                        android:textSize="14sp" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/consStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_not_bg"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvTitle">
-
-                        <View
-                            android:id="@+id/v1"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:background="@drawable/rounded_gray"
-                            android:visibility='@{model==null?View.INVISIBLE:(model.user.receive_notifications.equals("yes")?View.INVISIBLE:View.VISIBLE),default=invisible}'
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-
-
-                            />
-
-                        <Space
-                            android:id="@+id/sp"
-                            android:layout_width="10dp"
-                            android:layout_height="1dp"
-                            app:layout_constraintBottom_toBottomOf="@id/v1"
-                            app:layout_constraintStart_toEndOf="@id/v1"
-                            app:layout_constraintTop_toTopOf="@id/v1" />
-
-                        <View
-                            android:id="@+id/v2"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:background="@drawable/rounded_primary"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/sp"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:visibility='@{model==null?View.INVISIBLE:(model.user.receive_notifications.equals("yes")?View.VISIBLE:View.INVISIBLE),default=visible}'
-
-                            />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@color/gray2" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

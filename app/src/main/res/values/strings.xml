@@ -215,6 +215,15 @@
     <string name="confirmed">Confirmed</string>
     <string name="phone_exist">Phone number exists</string>
     <string name="email_exist">Email exists</string>
+    <string name="delivery">Delivery</string>
+    <string name="stop_alerts">Disable Alerts</string>
+    <string name="receive_alert">Receive Alert</string>
+    <string name="your_location">Your Location</string>
+    <string name="alerts_disabled">Alerts Disabled</string>
+    <string name="there_are_orders_near_you_waiting_for_delivery">There are orders near you waiting for delivery</string>
+    <string name="enable_alerts">Enable Alerts</string>
+    <string name="so_that_submit_offers">So that you can receive orders alerts and submit offers</string>
+    <string name="send">Send</string>
 
 
 </resources>

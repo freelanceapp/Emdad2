@@ -217,5 +217,14 @@
     <string name="confirmed">تم التحقق</string>
     <string name="phone_exist">رقم ا لجوال موجود من قبل</string>
     <string name="email_exist">البريد الالكتروني موجود من قبل</string>
+    <string name="delivery">التوصيل</string>
+    <string name="stop_alerts">اوقف التنبيهات</string>
+    <string name="receive_alert">إستقبال التنبيهات</string>
+    <string name="your_location">موقعك</string>
+    <string name="alerts_disabled">التنبيهات معطلة</string>
+    <string name="there_are_orders_near_you_waiting_for_delivery">يوجد طلبات قريبة منك بإنتظار التوصيل</string>
+    <string name="enable_alerts">فعل التنبيهات</string>
+    <string name="so_that_submit_offers">لكي تستطيع استقبال تنبيهات الطلبات وتقديم العروض عليها</string>
+    <string name="send">إرسال</string>
 
 </resources>

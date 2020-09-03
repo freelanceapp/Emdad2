@@ -19,10 +19,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities_fragments.activity_confirm_code_success.ConfirmCodeSuccessActivity"
+        <activity android:name=".activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity"></activity>
+        <activity
+            android:name=".activities_fragments.activity_delegate_orders.DelegateOrdersActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_confirm_code_success.ConfirmCodeSuccessActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_shop_query.ShopsQueryActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
