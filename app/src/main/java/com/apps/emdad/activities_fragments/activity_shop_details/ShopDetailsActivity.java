@@ -2,6 +2,7 @@ package com.apps.emdad.activities_fragments.activity_shop_details;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,15 +12,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Fade;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
+import com.apps.emdad.activities_fragments.activity_image.ImageActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.HoursAdapter;
@@ -41,6 +47,7 @@ import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -74,6 +81,15 @@ public class ShopDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            Transition transition = new Fade();
+            transition.setInterpolator(new LinearInterpolator());
+            transition.setDuration(200);
+            getWindow().setEnterTransition(transition);
+            getWindow().setExitTransition(transition);
+
+        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shop_details);
         getDataFromIntent();
         initView();
@@ -373,7 +389,6 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
     }
 
-
     private void createDialogAlert()
     {
         final AlertDialog dialog = new AlertDialog.Builder(this)
@@ -399,5 +414,23 @@ public class ShopDetailsActivity extends AppCompatActivity {
         if (requestCode==100&&resultCode==RESULT_OK){
 
         }
+    }
+
+    public void setMenuItem(CustomPlaceModel.MenuImage menuImage, RoundedImageView image) {
+        Intent intent = new Intent(this, ImageActivity.class);
+        intent.putExtra("title",placeModel.getName());
+        intent.putExtra("url",Tags.IMAGE_URL+menuImage.getImage());
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this,image,image.getTransitionName());
+            startActivity(intent,optionsCompat.toBundle());
+
+        }else {
+            startActivity(intent);
+
+        }
+
+
+
     }
 }

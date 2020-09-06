@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.databinding.MenuImageRowBinding;
 import com.apps.emdad.databinding.WorkHourRowBinding;
 import com.apps.emdad.models.CustomPlaceModel;
@@ -21,11 +22,13 @@ public class MenuImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<CustomPlaceModel.MenuImage> list;
     private Context context;
     private LayoutInflater inflater;
+    private ShopDetailsActivity activity;
 
     public MenuImageAdapter(List<CustomPlaceModel.MenuImage> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
+        activity = (ShopDetailsActivity) context;
 
 
     }
@@ -46,7 +49,10 @@ public class MenuImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         MyHolder myHolder = (MyHolder) holder;
         myHolder.binding.setModel(list.get(position));
-
+        myHolder.itemView.setOnClickListener(v -> {
+            CustomPlaceModel.MenuImage menuImage = list.get(myHolder.getAdapterPosition());
+            activity.setMenuItem(menuImage,myHolder.binding.image);
+        });
 
 
     }
