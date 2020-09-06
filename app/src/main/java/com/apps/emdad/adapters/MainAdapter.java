@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
+import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.activities_fragments.activity_shop_query.ShopsQueryActivity;
+import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.databinding.MainCategoryDataRowBinding;
 import com.apps.emdad.databinding.MainSliderRowBinding;
 import com.apps.emdad.models.CategoryDataModel;
@@ -339,7 +341,19 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             skeletonPopular.hide();
                             binding.llPopular.setVisibility(View.GONE);
 
-                            Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                                }
+                                else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){ }
+
+                                else {
+                                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
                         } catch (Exception e) {
 
                         }
@@ -360,10 +374,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .enqueue(new Callback<NearbyModel>() {
                     @Override
                     public void onResponse(Call<NearbyModel> call, Response<NearbyModel> response) {
-                        isLoading = false;
-                        resultList.remove(resultList.size()-1);
-                        nearbyAdapter.notifyItemRemoved(resultList.size()-1);
-
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             if (response.body().getStatus().equals("OK")){
@@ -379,13 +389,18 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 {
 
                                     calculateDistanceLoadMore(response.body().getResults());
+                                }else {
+                                    isLoading = false;
+
+                                    if (resultList.get(resultList.size()-1)==null){
+                                        resultList.remove(resultList.size()-1);
+                                        nearbyAdapter.notifyItemRemoved(resultList.size()-1);
+                                    }
                                 }
                             }
 
                         }else
                         {
-                            isLoading = false;
-
 
                             try {
                                 Log.e("error_code",response.errorBody().string());
@@ -400,13 +415,19 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     @Override
                     public void onFailure(Call<NearbyModel> call, Throwable t) {
                         try {
-                            isLoading = false;
-                            if (resultList.get(resultList.size()-1)==null){
-                                resultList.remove(resultList.size()-1);
-                                nearbyAdapter.notifyItemRemoved(resultList.size()-1);
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                                }
+                                else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){ }
+
+                                else {
+                                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            Log.e("Error",t.getMessage());
-                            Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+
                         }catch (Exception e)
                         {
 
@@ -422,7 +443,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             if (result!=null){
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng())));
+                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng()))/1000);
                 resultList.add(result);
             }
 
@@ -453,7 +474,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (result != null) {
 
 
-                result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng())));
+                result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))/1000);
                 resultListFiltered.add(result);
 
             }
@@ -504,10 +525,17 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     @Override
                     public void onFailure(Call<CategoryDataModel> call, Throwable t) {
                         try {
-                            Log.e("Error", t.getMessage());
                             skeletonCategory.hide();
-
-                            Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
+                                }
+                                else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){ }
+                                else {
+                                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         } catch (Exception e) {
 
                         }
@@ -623,6 +651,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     });
         }else {
 
+            isLoading = false;
+            if (resultList.get(resultList.size()-1)==null){
+                resultList.remove(resultList.size()-1);
+                nearbyAdapter.notifyItemRemoved(resultList.size()-1);
+            }
             int oldPos = resultList.size()-1;
 
             resultList.addAll(results);

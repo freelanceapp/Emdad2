@@ -21,12 +21,16 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
+import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.HoursAdapter;
 import com.apps.emdad.adapters.ImagePagerAdapter;
+import com.apps.emdad.adapters.MenuImageAdapter;
 import com.apps.emdad.databinding.ActivityShopDetailsBinding;
 import com.apps.emdad.databinding.DialogAlertBinding;
 import com.apps.emdad.databinding.DialogHoursBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.CustomPlaceDataModel;
+import com.apps.emdad.models.CustomPlaceModel;
 import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PhotosModel;
@@ -59,6 +63,8 @@ public class ShopDetailsActivity extends AppCompatActivity {
     private boolean canSend = false;
     private UserModel userModel;
     private Preferences preferences;
+    private List<CustomPlaceModel.MenuImage> menuImageList;
+    private MenuImageAdapter menuImageAdapter;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -90,10 +96,18 @@ public class ShopDetailsActivity extends AppCompatActivity {
     }
     private void initView()
     {
+
+        menuImageList = new ArrayList<>();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         hourModelList = new ArrayList<>();
         photosModelList = new ArrayList<>();
+        String currency = getString(R.string.sar);
+        if (userModel != null) {
+            currency = userModel.getUser().getCountry().getWord().getCurrency();
+        }
+        binding.setCurrency(currency);
+
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
@@ -138,6 +152,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
             }
         });
+
         binding.flBack.setOnClickListener(v -> {super.onBackPressed();});
 
         getPlaceDetails();
@@ -153,7 +168,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<PlaceDetailsModel> call, Response<PlaceDetailsModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            updateHoursUI(response.body());
+                            getPlaceDataByGooglePlaceId(response.body(),placeModel.getPlace_id());
                         } else {
 
                             try {
@@ -237,22 +252,29 @@ public class ShopDetailsActivity extends AppCompatActivity {
             placeModel.setOpen(false);
 
         }
-        if (placeModel.getPhotos()!=null){
-            if (placeModel.getPhotos().size()>0)
-            {
-                String url = Tags.IMAGE_Places_URL+placeModel.getPhotos().get(0).getPhoto_reference()+"&key="+getString(R.string.map_api_key);
-                Picasso.get().load(Uri.parse(url)).fit().into(binding.image);
 
-            }else
-            {
+        if (placeModel.getCustomPlaceModel()!=null&&placeModel.getCustomPlaceModel().getLogo()!=null&&!placeModel.getCustomPlaceModel().getLogo().isEmpty()&&!placeModel.getCustomPlaceModel().getLogo().equals("0")){
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+placeModel.getCustomPlaceModel().getLogo())).fit().into(binding.image);
+
+        }else {
+            if (placeModel.getPhotos()!=null){
+                if (placeModel.getPhotos().size()>0)
+                {
+                    String url = Tags.IMAGE_Places_URL+placeModel.getPhotos().get(0).getPhoto_reference()+"&key="+getString(R.string.map_api_key);
+                    Picasso.get().load(Uri.parse(url)).fit().into(binding.image);
+
+                }else
+                {
+                    Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(binding.image);
+
+                }
+            }
+            else {
                 Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(binding.image);
 
             }
         }
-        else {
-            Picasso.get().load(Uri.parse(placeModel.getIcon())).fit().into(binding.image);
 
-        }
 
 
 
@@ -262,6 +284,17 @@ public class ShopDetailsActivity extends AppCompatActivity {
         binding.progBar.setVisibility(View.GONE);
         binding.ll.setVisibility(View.VISIBLE);
         binding.imageShare.setVisibility(View.VISIBLE);
+
+
+        if (placeModel.getCustomPlaceModel()!=null&&placeModel.getCustomPlaceModel().getMenu()!=null&&placeModel.getCustomPlaceModel().getMenu().size()>0){
+            menuImageList.clear();
+            menuImageList.addAll(placeModel.getCustomPlaceModel().getMenu());
+            binding.recView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+            menuImageAdapter = new MenuImageAdapter(menuImageList,this);
+            binding.recView.setAdapter(menuImageAdapter);
+
+        }
+
     }
     private List<HourModel> getHours()
     {
@@ -281,6 +314,66 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
         return list;
     }
+    private void getPlaceDataByGooglePlaceId(PlaceDetailsModel body, String place_id) {
+        Api.getService(Tags.base_url).getCustomPlaceByGooglePlaceId(place_id).enqueue(new Callback<CustomPlaceDataModel>() {
+            @Override
+            public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        placeModel.setCustomPlaceModel(response.body().getData());
+                        updateHoursUI(body);
+
+
+                    }catch (Exception e){}
+
+
+
+                } else {
+                    updateHoursUI(body);
+
+                    try {
+                        Log.e("error_code", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<CustomPlaceDataModel> call, Throwable t) {
+
+
+
+                try {
+
+
+                    updateHoursUI(body);
+
+
+                    if (t.getMessage() != null) {
+                        Log.e("error", t.getMessage() + "__");
+
+                        if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                            Toast.makeText(ShopDetailsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                        }else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){}
+                        else {
+                            Toast.makeText(ShopDetailsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+    }
+
+
     private void createDialogAlert()
     {
         final AlertDialog dialog = new AlertDialog.Builder(this)

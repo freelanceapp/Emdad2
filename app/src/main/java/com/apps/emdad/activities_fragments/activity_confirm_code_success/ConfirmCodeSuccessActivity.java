@@ -79,7 +79,6 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
 
                         if (response.isSuccessful() && response.body() != null) {
-                            Log.e("2","2");
 
                             preferences.create_update_userdata(ConfirmCodeSuccessActivity.this, response.body());
                             new Handler()
@@ -98,7 +97,6 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
                                     },1500);
 
                         } else {
-                            Log.e("3","3");
 
 
 
@@ -134,7 +132,6 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
                             navigateToLoginActivity();
 
                             if (t.getMessage() != null) {
-                                Log.e("msg_category_error", t.getMessage() + "__");
 
                                 if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
                                     Toast.makeText(ConfirmCodeSuccessActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();

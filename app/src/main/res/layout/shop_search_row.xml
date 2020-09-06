@@ -85,8 +85,10 @@
                 android:textSize="8sp"
                 tools:ignore="SmallSp"
                 android:textColor="@color/white"
-                android:text='@{model.customPlaceModel!=null?(model.customPlaceModel.delivery_offer!=null?(model.customPlaceModel.delivery_offer.offer_type.equals("per")?model.customPlaceModel.delivery_offer.offer_value+"%":model.customPlaceModel.delivery_offer.offer_value+" "+currency):""):""}'
+                android:text='@{model.customPlaceModel!=null?(model.customPlaceModel.delivery_offer!=null?(model.customPlaceModel.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.customPlaceModel.delivery_offer.offer_value+"%":@string/discount+" "+model.customPlaceModel.delivery_offer.offer_value+" "+currency):""):""}'
                 android:visibility="@{model.customPlaceModel==null?View.GONE:(model.customPlaceModel.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
+                android:layout_marginTop="8dp"
+
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

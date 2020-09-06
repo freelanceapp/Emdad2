@@ -16,6 +16,7 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_orders.DelegateOrdersActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_shop_custom_query.ShopsCustomQueryActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
 import com.apps.emdad.activities_fragments.activity_shop_query.ShopsQueryActivity;
@@ -152,15 +153,21 @@ public class Fragment_Main extends Fragment {
     }
 
     public void setCategoryData(CategoryModel categoryModel) {
+        Intent intent;
         if (categoryModel.getType().equals("google")){
-            Intent intent = new Intent(activity, ShopsQueryActivity.class);
-            intent.putExtra("lat",user_lat);
-            intent.putExtra("lng",user_lng);
+            intent = new Intent(activity, ShopsQueryActivity.class);
 
-            intent.putExtra("data",categoryModel);
-            startActivity(intent);
+        }else {
+            intent = new Intent(activity, ShopsCustomQueryActivity.class);
+
         }
 
+
+        intent.putExtra("lat",user_lat);
+        intent.putExtra("lng",user_lng);
+
+        intent.putExtra("data",categoryModel);
+        startActivity(intent);
 
     }
 }

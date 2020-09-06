@@ -66,6 +66,7 @@ public class ShopsQueryActivity extends AppCompatActivity {
     private CategoryModel categoryModel;
     private Preferences preferences;
     private UserModel userModel;
+    private List<NearbyModel.Result> resultListFiltered;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -156,7 +157,6 @@ public class ShopsQueryActivity extends AppCompatActivity {
                 .enqueue(new Callback<NearbyModel>() {
                     @Override
                     public void onResponse(Call<NearbyModel> call, Response<NearbyModel> response) {
-                        skeletonScreen.hide();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             if (response.body().getStatus().equals("OK")){
@@ -202,9 +202,22 @@ public class ShopsQueryActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<NearbyModel> call, Throwable t) {
                         try {
+
+
+                        if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ShopsQueryActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                }
+                                else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){ }
+
+                                else {
+                                    Toast.makeText(ShopsQueryActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
                             Log.e("Error",t.getMessage());
                             skeletonScreen.hide();
-                            Toast.makeText(ShopsQueryActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
                         }catch (Exception e)
                         {
 
@@ -226,9 +239,7 @@ public class ShopsQueryActivity extends AppCompatActivity {
                 .enqueue(new Callback<NearbyModel>() {
                     @Override
                     public void onResponse(Call<NearbyModel> call, Response<NearbyModel> response) {
-                        isLoading = false;
-                        resultList.remove(resultList.size()-1);
-                        adapter.notifyItemRemoved(resultList.size()-1);
+
 
                         if (response.isSuccessful()&&response.body()!=null)
                         {
@@ -245,12 +256,16 @@ public class ShopsQueryActivity extends AppCompatActivity {
                                 {
 
                                     calculateDistanceLoadMore(response.body().getResults());
+                                }else {
+                                    if (resultList.get(resultList.size()-1)==null){
+                                        resultList.remove(resultList.size()-1);
+                                        adapter.notifyItemRemoved(resultList.size()-1);
+                                    }
                                 }
                             }
 
                         }else
                         {
-                            isLoading = false;
 
 
                             try {
@@ -266,13 +281,16 @@ public class ShopsQueryActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<NearbyModel> call, Throwable t) {
                         try {
-                            isLoading = false;
-                            if (resultList.get(resultList.size()-1)==null){
-                                resultList.remove(resultList.size()-1);
-                                adapter.notifyItemRemoved(resultList.size()-1);
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ShopsQueryActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                                }
+                                else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){ }
+                                else {
+                                    Toast.makeText(ShopsQueryActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            Log.e("Error",t.getMessage());
-                            Toast.makeText(ShopsQueryActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
                         }catch (Exception e)
                         {
 
@@ -286,7 +304,7 @@ public class ShopsQueryActivity extends AppCompatActivity {
     }
 
     private void calculateDistance(List<NearbyModel.Result> results){
-        List<NearbyModel.Result> resultListFiltered = new ArrayList<>();
+        resultListFiltered = new ArrayList<>();
 
         for (int i =0 ;i<results.size();i++){
             NearbyModel.Result result = results.get(i);
@@ -294,17 +312,14 @@ public class ShopsQueryActivity extends AppCompatActivity {
             if (result!=null){
 
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng())));
+                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng()))/1000);
                 resultListFiltered.add(result);
             }
 
         }
-        resultList.clear();
-        adapter.notifyDataSetChanged();
-        resultList.addAll(resultListFiltered);
-        adapter.notifyDataSetChanged();
 
-        if (resultList.size()>0){
+
+        if (resultListFiltered.size()>0){
             getPlaceDataByGooglePlaceId(0);
 
         }else {
@@ -324,7 +339,7 @@ public class ShopsQueryActivity extends AppCompatActivity {
             if (result!=null){
 
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng())));
+                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng()))/1000);
                 resultListFiltered.add(result);
             }
 
@@ -399,18 +414,18 @@ public class ShopsQueryActivity extends AppCompatActivity {
 
     private void getPlaceDataByGooglePlaceId(int index)
     {
-        if (index<resultList.size()){
+        if (index<resultListFiltered.size()){
 
             Api.getService(Tags.base_url)
-                    .getCustomPlaceByGooglePlaceId(resultList.get(index).getPlace_id())
+                    .getCustomPlaceByGooglePlaceId(resultListFiltered.get(index).getPlace_id())
                     .enqueue(new Callback<CustomPlaceDataModel>() {
                         @Override
                         public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
                             if (response.isSuccessful()) {
 
-                                NearbyModel.Result result = resultList.get(index);
+                                NearbyModel.Result result = resultListFiltered.get(index);
                                 result.setCustomPlaceModel(response.body().getData());
-                                resultList.set(index,result);
+                                resultListFiltered.set(index,result);
 
                                 int newIndex = index+1;
                                 getPlaceDataByGooglePlaceId(newIndex);
@@ -434,6 +449,8 @@ public class ShopsQueryActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<CustomPlaceDataModel> call, Throwable t) {
                             try {
+                                skeletonScreen.hide();
+
                                 int newIndex = index+1;
                                 getPlaceDataByGooglePlaceId(newIndex);
 
@@ -445,6 +462,9 @@ public class ShopsQueryActivity extends AppCompatActivity {
                         }
                     });
         }else {
+            skeletonScreen.hide();
+            resultList.clear();
+            resultList.addAll(resultListFiltered);
             adapter.notifyDataSetChanged();
             //sortData();
         }
@@ -453,10 +473,11 @@ public class ShopsQueryActivity extends AppCompatActivity {
 
     private void getPlaceDataByGooglePlaceIdLoadMore(int index, List<NearbyModel.Result> results)
     {
+
         if (index<results.size()){
 
             Api.getService(Tags.base_url)
-                    .getCustomPlaceByGooglePlaceId(resultList.get(index).getPlace_id())
+                    .getCustomPlaceByGooglePlaceId(results.get(index).getPlace_id())
                     .enqueue(new Callback<CustomPlaceDataModel>() {
                         @Override
                         public void onResponse(Call<CustomPlaceDataModel> call, Response<CustomPlaceDataModel> response) {
@@ -499,7 +520,11 @@ public class ShopsQueryActivity extends AppCompatActivity {
                         }
                     });
         }else {
-
+            isLoading = false;
+            if (resultList.get(resultList.size()-1)==null){
+                resultList.remove(resultList.size()-1);
+                adapter.notifyItemRemoved(resultList.size()-1);
+            }
             int oldPos = resultList.size();
             resultList.addAll(results);
 

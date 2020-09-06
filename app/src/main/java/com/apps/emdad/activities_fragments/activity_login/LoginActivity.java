@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
+import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.activities_fragments.activity_verification_code.VerificationCodeActivity;
 import com.apps.emdad.adapters.CountriesAdapter;
 import com.apps.emdad.databinding.ActivityLoginBinding;
@@ -168,8 +169,17 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
                         try {
                             binding.progBar.setVisibility(View.GONE);
 
-                            Log.e("Error", t.getMessage());
-                            Toast.makeText(LoginActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(LoginActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                                }
+                                else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){ }
+                                else {
+                                    Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
                         } catch (Exception e) {
 
                         }

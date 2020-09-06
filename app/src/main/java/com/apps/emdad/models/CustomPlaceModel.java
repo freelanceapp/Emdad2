@@ -18,6 +18,8 @@ public class CustomPlaceModel implements Serializable {
     private String longitude;
     private String address;
     private String details;
+    private double distance;
+    private String comments_count;
     private List<Gallery> gallary;
     private List<MenuImage> menu;
     private DeliveryOffer delivery_offer;
@@ -66,6 +68,14 @@ public class CustomPlaceModel implements Serializable {
         return address;
     }
 
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     public String getDetails() {
         return details;
     }
@@ -90,6 +100,10 @@ public class CustomPlaceModel implements Serializable {
         }
     }
 
+    public String getComments_count() {
+        return comments_count;
+    }
+
     public static class MenuImage implements Serializable{
         private String image;
 
@@ -98,13 +112,14 @@ public class CustomPlaceModel implements Serializable {
         }
     }
 
-    public static class DeliveryOffer{
+    public static class DeliveryOffer implements Serializable{
         private int id;
         private String market_id;
         private String from_date;
         private String to_date;
         private String offer_type;
         private String offer_value;
+        private String less_value;
 
         public int getId() {
             return id;
@@ -128,6 +143,10 @@ public class CustomPlaceModel implements Serializable {
 
         public String getOffer_value() {
             return offer_value;
+        }
+
+        public String getLess_value() {
+            return less_value;
         }
     }
 }

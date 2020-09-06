@@ -6,7 +6,7 @@
     <data>
         <variable
             name="model"
-            type="com.apps.emdad.models.NearbyModel.Result" />
+            type="com.apps.emdad.models.CustomPlaceModel" />
 
         <variable
             name="currency"
@@ -48,7 +48,7 @@
                    <ImageView
                        android:layout_width="match_parent"
                        android:layout_height="match_parent"
-                       placeStoreImage="@{model}"
+                       menuImage="@{model.logo}"
                        android:layout_gravity="center"
                        android:background="@drawable/circle_white_stroke"
                        />
@@ -112,8 +112,8 @@
                android:textSize="8sp"
                tools:ignore="SmallSp"
                android:textColor="@color/white"
-               android:text='@{model.customPlaceModel!=null?(model.customPlaceModel.delivery_offer!=null?(model.customPlaceModel.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.customPlaceModel.delivery_offer.offer_value+"%":@string/discount+" "+model.customPlaceModel.delivery_offer.offer_value+" "+currency):""):""}'
-               android:visibility="@{model.customPlaceModel==null?View.GONE:(model.customPlaceModel.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
+               android:text='@{model.delivery_offer!=null?(model.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.delivery_offer.offer_value+"%":@string/discount+" "+model.delivery_offer.offer_value+" "+currency):""}'
+               android:visibility="@{model.delivery_offer==null?View.GONE:View.VISIBLE,default=gone}"
                android:layout_marginTop="8dp"
                />
        </androidx.constraintlayout.widget.ConstraintLayout>

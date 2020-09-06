@@ -228,5 +228,8 @@
     <string name="send">إرسال</string>
     <string name="total_delivery_revenue">إجمالي رسوم التوصيل</string>
     <string name="sar">ر.س</string>
+    <string name="discount">خصم</string>
+    <string name="discount_on">على رسوم التوصيل بحد اعلى </string>
+
 
 </resources>

@@ -226,6 +226,8 @@
     <string name="send">Send</string>
     <string name="total_delivery_revenue">Total Delivery Revenue</string>
     <string name="sar">SAR</string>
+    <string name="discount">Discount</string>
+    <string name="discount_on">on delivery fees, with a maximum of</string>
 
 
 </resources>

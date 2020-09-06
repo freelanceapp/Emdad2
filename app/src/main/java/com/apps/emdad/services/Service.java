@@ -3,6 +3,7 @@ package com.apps.emdad.services;
 import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
+import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
@@ -147,4 +148,11 @@ public interface Service {
 
     @GET("api/get-place-by-google-id")
     Call<CustomPlaceDataModel> getCustomPlaceByGooglePlaceId(@Query(value = "google_place_id") String google_place_id);
+
+    @GET("api/place-by-category")
+    Call<CustomPlaceDataModel2> getCustomShops(@Query(value = "department_id") String department_id,
+                                               @Query(value = "page") int page,
+                                               @Query(value = "pagination") String pagination,
+                                               @Query(value = "limit_per_page") int limit_per_page
+                                               );
 }
