@@ -214,9 +214,36 @@ public class GeneralMethod {
 
     @BindingAdapter("rate")
     public static void rate(SimpleRatingBar ratingBar,double rate) {
-        ratingBar.getAnimationBuilder()
-                .setRatingTarget((float) rate)
-                .start();
+        ratingBar.setRating((float) rate);
+
+    }
+
+    @BindingAdapter("day")
+    public static void getDay(TextView textView,int day) {
+
+        switch (day){
+            case 1:
+                textView.setText(textView.getContext().getString(R.string.mon));
+                break;
+            case 2:
+                textView.setText(textView.getContext().getString(R.string.tue));
+                break;
+            case 3:
+                textView.setText(textView.getContext().getString(R.string.wed));
+                break;
+            case 4:
+                textView.setText(textView.getContext().getString(R.string.thur));
+                break;
+            case 5:
+                textView.setText(textView.getContext().getString(R.string.fri));
+                break;
+            case 6:
+                textView.setText(textView.getContext().getString(R.string.sat));
+                break;
+            case 7:
+                textView.setText(textView.getContext().getString(R.string.sun));
+                break;
+        }
 
     }
 

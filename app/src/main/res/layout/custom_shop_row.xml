@@ -63,7 +63,6 @@
                app:layout_constraintStart_toEndOf="@id/image"
                app:layout_constraintEnd_toEndOf="parent"
                app:layout_constraintTop_toTopOf="parent"
-               app:layout_constraintBottom_toTopOf="@id/icon"
                android:layout_marginBottom="10dp"
                android:textColor="@color/black"
                android:textSize="16sp"
@@ -74,21 +73,21 @@
                app:layout_constraintHorizontal_bias="0"
                android:textStyle="bold"
                />
+
            <ImageView
                android:id="@+id/icon"
                android:layout_width="15dp"
                android:layout_height="15dp"
                app:layout_constraintStart_toStartOf="@id/tvName"
-               app:layout_constraintBottom_toBottomOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/tvName"
+               android:layout_marginTop="20dp"
                android:src="@drawable/ic_marker"
-               android:tint="@color/gray9"
+               android:tint="@color/color4"
                android:padding="2dp"
-
 
                />
 
            <TextView
-               android:id="@+id/tvDistance"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                app:layout_constraintTop_toTopOf="@id/icon"
@@ -96,11 +95,10 @@
                app:layout_constraintStart_toEndOf="@id/icon"
                android:layout_marginStart="10dp"
                android:layout_marginEnd="10dp"
-               android:textColor="@color/gray9"
-               android:textSize="12sp"
+               android:textColor="@color/color4"
+               android:textSize="13sp"
                distance="@{model.distance}"
                />
-
            <TextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
@@ -112,10 +110,13 @@
                android:textSize="8sp"
                tools:ignore="SmallSp"
                android:textColor="@color/white"
-               android:text='@{model.delivery_offer!=null?(model.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.delivery_offer.offer_value+"%":@string/discount+" "+model.delivery_offer.offer_value+" "+currency):""}'
-               android:visibility="@{model.delivery_offer==null?View.GONE:View.VISIBLE,default=gone}"
+               android:text='@{model!=null?(model.delivery_offer!=null?(model.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.delivery_offer.offer_value+"%":@string/discount+" "+model.delivery_offer.offer_value+" "+currency):""):""}'
+               android:visibility="@{model==null?View.INVISIBLE:(model.delivery_offer==null?View.INVISIBLE:View.VISIBLE),default=invisible}"
                android:layout_marginTop="8dp"
+
                />
+
+
        </androidx.constraintlayout.widget.ConstraintLayout>
 
        <LinearLayout

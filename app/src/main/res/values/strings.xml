@@ -228,6 +228,14 @@
     <string name="sar">SAR</string>
     <string name="discount">Discount</string>
     <string name="discount_on">on delivery fees, with a maximum of</string>
+    <string name="sat">Saturday</string>
+    <string name="sun">Sunday</string>
+    <string name="mon">Monday</string>
+    <string name="tue">Tuesday</string>
+    <string name="wed">Wednesday</string>
+    <string name="thur">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="choose_from_menu_first">Choose From Menu First</string>
 
 
 </resources>

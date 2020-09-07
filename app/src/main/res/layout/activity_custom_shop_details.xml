@@ -13,7 +13,7 @@
             type="String" />
         <variable
             name="model"
-            type="com.apps.emdad.models.NearbyModel.Result" />
+            type="com.apps.emdad.models.CustomPlaceModel" />
         <variable
             name="currency"
             type="String" />
@@ -135,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="invisible"
+                android:visibility="visible"
                 >
                 <ScrollView
                     android:layout_width="match_parent"
@@ -190,7 +190,7 @@
                             android:layout_marginTop="10dp"
                             android:textColor="@color/gray6"
                             android:textSize="12sp"
-                            android:text='@{model.customPlaceModel!=null?model.customPlaceModel.details:""}'
+                            android:text='@{model.details}'
 
                             />
 
@@ -213,8 +213,8 @@
                                 android:textSize="12sp"
                                 tools:ignore="SmallSp"
                                 android:textColor="@color/white"
-                                android:text='@{model.customPlaceModel!=null?(model.customPlaceModel.delivery_offer!=null?(model.customPlaceModel.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.customPlaceModel.delivery_offer.offer_value+"%":@string/discount+" "+model.customPlaceModel.delivery_offer.offer_value+" "+currency):""):""}'
-                                android:visibility="@{model.customPlaceModel==null?View.GONE:(model.customPlaceModel.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
+                                android:text='@{model.delivery_offer!=null?(model.delivery_offer.offer_type.equals("per")?@string/discount+" "+model.delivery_offer.offer_value+"%":@string/discount+" "+model.delivery_offer.offer_value+" "+currency):""}'
+                                android:visibility="@{model==null?View.GONE:(model.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
 
                                 />
                             <Space
@@ -225,8 +225,8 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="12sp"
                                 android:textColor="@color/black"
-                                android:text='@{model.customPlaceModel!=null?@string/discount_on+" "+model.customPlaceModel.delivery_offer.less_value+" "+currency:""}'
-                                android:visibility="@{model.customPlaceModel==null?View.GONE:(model.customPlaceModel.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
+                                android:text='@{model!=null?@string/discount_on+" "+model.delivery_offer.less_value+" "+currency:""}'
+                                android:visibility="@{model==null?View.GONE:(model.delivery_offer==null?View.GONE:View.VISIBLE),default=gone}"
 
                                 />
 
@@ -262,6 +262,7 @@
                                 app:layout_constraintStart_toStartOf="@id/tv1"
                                 app:layout_constraintTop_toBottomOf="@id/tv1"
                                 app:srb_isIndicator="true"
+                                app:srb_rating="0"
                                 app:srb_numberOfStars="5"
                                 app:srb_starBackgroundColor="@color/gray2"
                                 app:srb_starBorderWidth="1"
@@ -270,7 +271,6 @@
                                 android:layout_marginTop="5dp"
                                 app:srb_borderColor="@color/gray2"
                                 app:srb_fillColor="@color/rate_color"
-                                rate="@{model.customPlaceModel!=null?Double.parseDouble(model.customPlaceModel.rating):0}"
                                 />
 
                             <TextView
@@ -283,7 +283,7 @@
                                 android:layout_marginEnd="5dp"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="12sp"
-                                android:text='@{model.customPlaceModel!=null?@string/customer_reviews+" "+model.customPlaceModel.comments_count:@string/customer_reviews+" 0"}'
+                                android:text='@{model!=null?@string/customer_reviews+" "+model.comments_count:@string/customer_reviews+" 0"}'
                                 android:clickable="false"
                                 android:longClickable="false"
                                 />

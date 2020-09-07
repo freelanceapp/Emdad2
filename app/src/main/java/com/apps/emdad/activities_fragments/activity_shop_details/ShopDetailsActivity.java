@@ -142,7 +142,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
         });
 
         binding.imageShare.setOnClickListener(v -> {
-            String url = Tags.base_url+"/"+placeModel.getPlace_id();
+            String url = Tags.base_url+placeModel.getPlace_id();
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT,url);

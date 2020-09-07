@@ -83,7 +83,7 @@ public class ImageActivity extends AppCompatActivity {
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
-        binding.llBack.setOnClickListener(v -> finish());
+        binding.llBack.setOnClickListener(v -> super.onBackPressed());
         binding.setName(title);
         Picasso.get().load(Uri.parse(url)).into(binding.photoView);
 

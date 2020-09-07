@@ -18,11 +18,13 @@ public class CustomPlaceModel implements Serializable {
     private String longitude;
     private String address;
     private String details;
+    private boolean isOpen;
     private double distance;
     private String comments_count;
     private List<Gallery> gallary;
     private List<MenuImage> menu;
     private DeliveryOffer delivery_offer;
+    private List<Days>days;
 
     public int getId() {
         return id;
@@ -56,6 +58,14 @@ public class CustomPlaceModel implements Serializable {
         return google_place_id;
     }
 
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
     public String getLatitude() {
         return latitude;
     }
@@ -75,6 +85,11 @@ public class CustomPlaceModel implements Serializable {
     public void setDistance(double distance) {
         this.distance = distance;
     }
+
+    public List<Days> getDays() {
+        return days;
+    }
+
 
     public String getDetails() {
         return details;
@@ -147,6 +162,30 @@ public class CustomPlaceModel implements Serializable {
 
         public String getLess_value() {
             return less_value;
+        }
+    }
+
+    public static class Days implements Serializable{
+        private int day;
+        private String status;
+        private String from_time;
+        private String to_time;
+
+
+        public int getDay() {
+            return day;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public String getFrom_time() {
+            return from_time;
+        }
+
+        public String getTo_time() {
+            return to_time;
         }
     }
 }

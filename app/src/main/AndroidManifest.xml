@@ -19,7 +19,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities_fragments.activity_image.ImageActivity"></activity>
+        <activity android:name=".activities_fragments.activity_shop_products.ShopProductActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
+        <activity android:name=".activities_fragments.activity_custom_shop_details.CustomShopDetailsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
+        <activity android:name=".activities_fragments.activity_image.ImageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
         <activity
             android:name=".activities_fragments.activity_shop_custom_query.ShopsCustomQueryActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

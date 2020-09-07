@@ -230,6 +230,13 @@
     <string name="sar">ر.س</string>
     <string name="discount">خصم</string>
     <string name="discount_on">على رسوم التوصيل بحد اعلى </string>
-
+    <string name="sat">السبت</string>
+    <string name="sun">الأحد</string>
+    <string name="mon">الإثنين</string>
+    <string name="tue">الثلاثاء</string>
+    <string name="wed">الأربعاء</string>
+    <string name="thur">الخميس</string>
+    <string name="fri">الجمعة</string>
+    <string name="choose_from_menu_first">إختر من القائمة اول</string>
 
 </resources>

@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_custom_shop_details.CustomShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
+import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.adapters.CustomShopsAdapter;
 import com.apps.emdad.adapters.NearbyAdapter3;
 import com.apps.emdad.databinding.ActivityShopsCustomQueryBinding;
@@ -27,6 +29,7 @@ import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.CustomPlaceModel;
+import com.apps.emdad.models.CustomShopDataModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
@@ -360,6 +363,18 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
     }
 
     public void setShopData(CustomPlaceModel placeModel) {
+        /*Intent intent = new Intent(this, CustomShopDetailsActivity.class);
+        intent.putExtra("data",placeModel);
+        startActivity(intent);*/
+        String max_Offer_value="";
+        if (placeModel.getDelivery_offer()!=null){
+            max_Offer_value = placeModel.getDelivery_offer().getLess_value();
+        }
+        CustomShopDataModel customShopDataModel = new CustomShopDataModel(String.valueOf(placeModel.getId()),placeModel.getName(),placeModel.getAddress(),Double.parseDouble(placeModel.getLatitude()),Double.parseDouble(placeModel.getLongitude()),max_Offer_value,placeModel.isOpen(),placeModel.getComments_count(),placeModel.getRating(),"custom",placeModel.getDelivery_offer(),null,placeModel.getDays());
+
+        Intent intent = new Intent(this, ShopProductActivity.class);
+        intent.putExtra("data",customShopDataModel);
+        startActivity(intent);
 
 
     }
