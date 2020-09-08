@@ -860,7 +860,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
             if (isRestaurant(placeModel)){
 
-                if (Integer.parseInt(placeModel.getCustomPlaceModel().getProducts_count())>0){
+                if (placeModel.getCustomPlaceModel()!=null&&Integer.parseInt(placeModel.getCustomPlaceModel().getProducts_count())>0){
 
                     String max_Offer_value="";
                     if (placeModel.getCustomPlaceModel().getDelivery_offer()!=null){
@@ -910,17 +910,20 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     {
         List<HourModel> list = new ArrayList<>();
 
-        for (String time: placeModel.getWork_hours().getWeekday_text()){
+        if (placeModel!=null&&placeModel.getWork_hours()!=null&&placeModel.getWork_hours().getWeekday_text()!=null&&placeModel.getWork_hours().getWeekday_text().size()>0){
+            for (String time: placeModel.getWork_hours().getWeekday_text()){
 
-            String day = time.split(":", 2)[0].trim();
-            String t = time.split(":",2)[1].trim();
-            HourModel hourModel = new HourModel(day,t);
-            list.add(hourModel);
+                String day = time.split(":", 2)[0].trim();
+                String t = time.split(":",2)[1].trim();
+                HourModel hourModel = new HourModel(day,t);
+                list.add(hourModel);
 
 
 
 
+            }
         }
+
 
         return list;
     }

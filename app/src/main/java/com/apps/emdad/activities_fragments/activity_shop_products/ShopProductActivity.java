@@ -295,7 +295,7 @@ public class ShopProductActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<PlaceDetailsModel> call, Response<PlaceDetailsModel> response) {
                         if (response.isSuccessful() && response.body() != null&&response.body().getResult()!=null&&response.body().getResult().getOpening_hours()!=null&&response.body().getResult().getOpening_hours().getWeekday_text()!=null) {
-                            placeModel.setHourModelList(getHours(response.body().getResult().getOpening_hours()));
+                            placeModel.setHourModelList(getHours(response.body()));
                             updateUI();
                         } else {
 
@@ -321,11 +321,14 @@ public class ShopProductActivity extends AppCompatActivity {
                     }
                 });
     }
-    private List<HourModel> getHours(PlaceDetailsModel.Opening_Hours opening_hours)
+    private List<HourModel> getHours(PlaceDetailsModel placeDetailsModel)
     {
         List<HourModel> list = new ArrayList<>();
 
-        for (String time: opening_hours.getWeekday_text()){
+        if (placeDetailsModel!=null&&placeDetailsModel.getResult()!=null&&placeDetailsModel.getResult().getOpening_hours()!=null&&placeDetailsModel.getResult().getOpening_hours().getWeekday_text()!=null&&placeDetailsModel.getResult().getOpening_hours().getWeekday_text().size()>0) {
+
+        }
+            for (String time: placeDetailsModel.getResult().getOpening_hours().getWeekday_text()){
 
             String day = time.split(":", 2)[0].trim();
             String t = time.split(":",2)[1].trim();
