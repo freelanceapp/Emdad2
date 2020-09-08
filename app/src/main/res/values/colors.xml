@@ -31,6 +31,7 @@
     <color name="color_blue">#0000ff</color>
     <color name="trans_black">#55000000</color>
     <color name="color_rose">#ef676b</color>
+    <color name="product_trans">#22000000</color>
 
     <color name="gray1_trans">#ddf5f5f5</color>
     <color name="rate_color">#FFD800</color>

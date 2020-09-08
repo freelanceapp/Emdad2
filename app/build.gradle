@@ -73,6 +73,7 @@ dependencies {
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    implementation 'com.thoughtbot:expandablerecyclerview:1.4'
 
 
 

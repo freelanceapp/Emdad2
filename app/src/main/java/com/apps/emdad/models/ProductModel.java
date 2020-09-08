@@ -14,6 +14,8 @@ public class ProductModel implements Serializable {
     private String offer_type;
     private String offer_value;
     private String details;
+    private int count = 0;
+    private ShopDepartments sub_department;
 
     public int getId() {
         return id;
@@ -57,5 +59,17 @@ public class ProductModel implements Serializable {
 
     public String getDetails() {
         return details;
+    }
+
+    public ShopDepartments getSub_department() {
+        return sub_department;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

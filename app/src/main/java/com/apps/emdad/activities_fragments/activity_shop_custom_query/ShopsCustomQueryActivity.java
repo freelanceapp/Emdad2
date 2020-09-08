@@ -363,25 +363,36 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
     }
 
     public void setShopData(CustomPlaceModel placeModel) {
-        /*Intent intent = new Intent(this, CustomShopDetailsActivity.class);
-        intent.putExtra("data",placeModel);
-        startActivity(intent);*/
-        String max_Offer_value="";
-        if (placeModel.getDelivery_offer()!=null){
-            max_Offer_value = placeModel.getDelivery_offer().getLess_value();
-        }
-        CustomShopDataModel customShopDataModel = new CustomShopDataModel(String.valueOf(placeModel.getId()),placeModel.getName(),placeModel.getAddress(),Double.parseDouble(placeModel.getLatitude()),Double.parseDouble(placeModel.getLongitude()),max_Offer_value,placeModel.isOpen(),placeModel.getComments_count(),placeModel.getRating(),"custom",placeModel.getDelivery_offer(),null,placeModel.getDays());
 
-        Intent intent = new Intent(this, ShopProductActivity.class);
-        intent.putExtra("data",customShopDataModel);
-        startActivity(intent);
+        if (Integer.parseInt(placeModel.getProducts_count())>0){
+            String max_Offer_value="";
+            if (placeModel.getDelivery_offer()!=null){
+                max_Offer_value = placeModel.getDelivery_offer().getLess_value();
+            }
+            CustomShopDataModel customShopDataModel = new CustomShopDataModel(String.valueOf(placeModel.getId()),placeModel.getName(),placeModel.getAddress(),Double.parseDouble(placeModel.getLatitude()),Double.parseDouble(placeModel.getLongitude()),max_Offer_value,isOpen(placeModel),placeModel.getComments_count(),placeModel.getRating(),"custom",placeModel.getDelivery_offer(),null,placeModel.getDays());
+
+            Intent intent = new Intent(this, ShopProductActivity.class);
+            intent.putExtra("data",customShopDataModel);
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent(this, CustomShopDetailsActivity.class);
+            intent.putExtra("data",placeModel);
+            startActivity(intent);
+        }
+
 
 
     }
 
 
 
+    private boolean isOpen(CustomPlaceModel placeModel) {
+        if (placeModel.getDays()!=null&&placeModel.getDays().size()>0&&placeModel.getDays().get(0).getStatus().equals("open")) {
+            return true;
+        }
 
+        return false;
+    }
 
 
 }

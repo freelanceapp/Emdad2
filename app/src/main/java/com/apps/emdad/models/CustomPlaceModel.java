@@ -21,6 +21,7 @@ public class CustomPlaceModel implements Serializable {
     private boolean isOpen;
     private double distance;
     private String comments_count;
+    private String products_count;
     private List<Gallery> gallary;
     private List<MenuImage> menu;
     private DeliveryOffer delivery_offer;
@@ -107,6 +108,14 @@ public class CustomPlaceModel implements Serializable {
         return delivery_offer;
     }
 
+    public String getComments_count() {
+        return comments_count;
+    }
+
+    public String getProducts_count() {
+        return products_count;
+    }
+
     public static class  Gallery implements Serializable{
         private String image;
 
@@ -115,9 +124,7 @@ public class CustomPlaceModel implements Serializable {
         }
     }
 
-    public String getComments_count() {
-        return comments_count;
-    }
+
 
     public static class MenuImage implements Serializable{
         private String image;
@@ -126,6 +133,8 @@ public class CustomPlaceModel implements Serializable {
             return image;
         }
     }
+
+
 
     public static class DeliveryOffer implements Serializable{
         private int id;
@@ -188,4 +197,6 @@ public class CustomPlaceModel implements Serializable {
             return to_time;
         }
     }
+
+
 }

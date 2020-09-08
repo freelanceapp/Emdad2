@@ -104,4 +104,8 @@ public class CustomShopDataModel implements Serializable {
     public void setProductModelList(List<ProductModel> productModelList) {
         this.productModelList = productModelList;
     }
+
+    public void setHourModelList(List<HourModel> hourModelList) {
+        this.hourModelList = hourModelList;
+    }
 }

@@ -23,6 +23,7 @@ import com.apps.emdad.activities_fragments.activity_filter.FilterActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
+import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.activities_fragments.activity_shop_query.ShopsQueryActivity;
 import com.apps.emdad.adapters.NearbyAdapter;
 import com.apps.emdad.adapters.NearbyAdapter2;
@@ -31,9 +32,12 @@ import com.apps.emdad.databinding.ActivityShopsBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.CustomPlaceDataModel;
+import com.apps.emdad.models.CustomPlaceModel;
+import com.apps.emdad.models.CustomShopDataModel;
 import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.FilterModel;
+import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
@@ -853,19 +857,45 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
     public void setShopData(NearbyModel.Result placeModel) {
         if (type) {
             //from main fragment
-            if (isRestaurant(placeModel)) {
-                //if has menu image or products
 
-                Intent intent = new Intent(this, ShopDetailsActivity.class);
-                intent.putExtra("data", placeModel);
-                startActivity(intent);
+            if (isRestaurant(placeModel)){
+
+                if (Integer.parseInt(placeModel.getCustomPlaceModel().getProducts_count())>0){
+
+                    String max_Offer_value="";
+                    if (placeModel.getCustomPlaceModel().getDelivery_offer()!=null){
+                        max_Offer_value = placeModel.getCustomPlaceModel().getDelivery_offer().getLess_value();
+                    }
+                    String comment_count = "0";
+                    CustomPlaceModel.DeliveryOffer deliveryOffer = null;
+                    List<CustomPlaceModel.Days> days = null;
+
+                    if (placeModel.getCustomPlaceModel()!=null){
+                        comment_count = placeModel.getCustomPlaceModel().getComments_count();
+                        deliveryOffer = placeModel.getCustomPlaceModel().getDelivery_offer();
+                        days = placeModel.getCustomPlaceModel().getDays();
+                    }
+
+                    CustomShopDataModel customShopDataModel = new CustomShopDataModel(placeModel.getPlace_id(),placeModel.getName(),placeModel.getVicinity(),placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng(),max_Offer_value,placeModel.isOpen(),comment_count,String.valueOf(placeModel.getRating()),"google",deliveryOffer,getHours(placeModel),days);
+                    Intent intent = new Intent(this, ShopProductActivity.class);
+                    intent.putExtra("data",customShopDataModel);
+                    startActivity(intent);
 
 
-            } else {
+                }else {
+                    Intent intent = new Intent(this, ShopDetailsActivity.class);
+                    intent.putExtra("data",placeModel);
+                    startActivity(intent);
+                }
+
+            }else {
                 Intent intent = new Intent(this, ShopMapActivity.class);
-                intent.putExtra("data", placeModel);
+                intent.putExtra("data",placeModel);
                 startActivity(intent);
             }
+
+
+
 
         } else {
             Intent intent = getIntent();
@@ -874,6 +904,25 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
             finish();
         }
 
+    }
+
+    private List<HourModel> getHours(NearbyModel.Result placeModel)
+    {
+        List<HourModel> list = new ArrayList<>();
+
+        for (String time: placeModel.getWork_hours().getWeekday_text()){
+
+            String day = time.split(":", 2)[0].trim();
+            String t = time.split(":",2)[1].trim();
+            HourModel hourModel = new HourModel(day,t);
+            list.add(hourModel);
+
+
+
+
+        }
+
+        return list;
     }
 
     public void setRecentSearchItem(String query) {

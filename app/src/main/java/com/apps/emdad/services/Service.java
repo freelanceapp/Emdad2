@@ -8,6 +8,7 @@ import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
+import com.apps.emdad.models.ShopDepartmentDataModel;
 import com.apps.emdad.models.SliderModel;
 import com.apps.emdad.models.UserModel;
 
@@ -155,4 +156,8 @@ public interface Service {
                                                @Query(value = "pagination") String pagination,
                                                @Query(value = "limit_per_page") int limit_per_page
                                                );
+
+    @GET("api/get-place-departments-products")
+    Call<ShopDepartmentDataModel> getShopDepartmentProduct(@Query(value = "market_id") String market_id);
+
 }

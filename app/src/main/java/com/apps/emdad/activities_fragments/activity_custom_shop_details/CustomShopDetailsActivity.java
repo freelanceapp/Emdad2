@@ -258,7 +258,7 @@ public class CustomShopDetailsActivity extends AppCompatActivity {
     }
 
     private boolean isOpen(){
-        if (placeModel.getDays().get(0).getStatus().equals("open")){
+        if (placeModel.getDays()!=null&&placeModel.getDays().size()>0&&placeModel.getDays().get(0).getStatus().equals("open")) {
             return true;
         }
 

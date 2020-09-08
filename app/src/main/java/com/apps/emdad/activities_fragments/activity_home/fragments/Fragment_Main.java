@@ -19,11 +19,15 @@ import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_custom_query.ShopsCustomQueryActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
+import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.activities_fragments.activity_shop_query.ShopsQueryActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.adapters.MainAdapter;
 import com.apps.emdad.databinding.FragmentMainBinding;
 import com.apps.emdad.models.CategoryModel;
+import com.apps.emdad.models.CustomPlaceModel;
+import com.apps.emdad.models.CustomShopDataModel;
+import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.MainItemData;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.UserModel;
@@ -129,9 +133,35 @@ public class Fragment_Main extends Fragment {
 
 
         if (isRestaurant(placeModel)){
-            Intent intent = new Intent(activity, ShopDetailsActivity.class);
-            intent.putExtra("data",placeModel);
-            startActivity(intent);
+
+            if (Integer.parseInt(placeModel.getCustomPlaceModel().getProducts_count())>0){
+
+                String max_Offer_value="";
+                if (placeModel.getCustomPlaceModel().getDelivery_offer()!=null){
+                    max_Offer_value = placeModel.getCustomPlaceModel().getDelivery_offer().getLess_value();
+                }
+                String comment_count = "0";
+                CustomPlaceModel.DeliveryOffer deliveryOffer = null;
+                List<CustomPlaceModel.Days> days = null;
+
+                if (placeModel.getCustomPlaceModel()!=null){
+                    comment_count = placeModel.getCustomPlaceModel().getComments_count();
+                    deliveryOffer = placeModel.getCustomPlaceModel().getDelivery_offer();
+                    days = placeModel.getCustomPlaceModel().getDays();
+                }
+
+                CustomShopDataModel customShopDataModel = new CustomShopDataModel(placeModel.getPlace_id(),placeModel.getName(),placeModel.getVicinity(),placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng(),max_Offer_value,placeModel.isOpen(),comment_count,String.valueOf(placeModel.getRating()),"google",deliveryOffer,getHours(placeModel),days);
+                Intent intent = new Intent(activity, ShopProductActivity.class);
+                intent.putExtra("data",customShopDataModel);
+                startActivity(intent);
+
+
+            }else {
+                Intent intent = new Intent(activity, ShopDetailsActivity.class);
+                intent.putExtra("data",placeModel);
+                startActivity(intent);
+            }
+
         }else {
             Intent intent = new Intent(activity, ShopMapActivity.class);
             intent.putExtra("data",placeModel);
@@ -139,6 +169,25 @@ public class Fragment_Main extends Fragment {
         }
 
 
+    }
+
+    private List<HourModel> getHours(NearbyModel.Result placeModel)
+    {
+        List<HourModel> list = new ArrayList<>();
+
+        for (String time: placeModel.getWork_hours().getWeekday_text()){
+
+            String day = time.split(":", 2)[0].trim();
+            String t = time.split(":",2)[1].trim();
+            HourModel hourModel = new HourModel(day,t);
+            list.add(hourModel);
+
+
+
+
+        }
+
+        return list;
     }
 
     private boolean isRestaurant(NearbyModel.Result result){
