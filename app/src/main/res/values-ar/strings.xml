@@ -238,5 +238,7 @@
     <string name="thur">الخميس</string>
     <string name="fri">الجمعة</string>
     <string name="choose_from_menu_first">إختر من القائمة اول</string>
+    <string name="additions">إضافات</string>
+    <string name="add">إضافة</string>
 
 </resources>

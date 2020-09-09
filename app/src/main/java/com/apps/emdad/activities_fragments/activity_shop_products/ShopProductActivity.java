@@ -3,12 +3,14 @@ package com.apps.emdad.activities_fragments.activity_shop_products;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,15 +23,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
-import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
+import com.apps.emdad.adapters.AdditionProductAdapter;
 import com.apps.emdad.adapters.CustomHoursAdapter;
 import com.apps.emdad.adapters.HoursAdapter;
-import com.apps.emdad.adapters.shop_products_adapters.ProductAdapter;
-import com.apps.emdad.adapters.shop_products_adapters.ShopExpandGroup;
+import com.apps.emdad.adapters.shop_products_adapters.ProductCategoryAdapter;
+import com.apps.emdad.adapters.shop_products_adapters.ProductSectionAdapter;
 import com.apps.emdad.databinding.ActivityShopProductsBinding;
 import com.apps.emdad.databinding.DialogHoursBinding;
 import com.apps.emdad.language.Language;
-import com.apps.emdad.models.CustomPlaceDataModel;
+import com.apps.emdad.models.AdditionModel;
 import com.apps.emdad.models.CustomPlaceModel;
 import com.apps.emdad.models.CustomShopDataModel;
 import com.apps.emdad.models.HourModel;
@@ -43,6 +45,7 @@ import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,11 +62,20 @@ public class ShopProductActivity extends AppCompatActivity {
     private String lang;
     private List<CustomPlaceModel.Days> daysModelList;
     private List<HourModel> hourModelList;
-    private ProductAdapter productAdapter;
+    private ProductSectionAdapter productSectionAdapter;
     private boolean canSend = false;
     private UserModel userModel;
     private Preferences preferences;
     private String currency;
+    private ProductCategoryAdapter categoryAdapter;
+    private boolean clicked = false;
+    private double totalItemProductPrice = 0;
+    private ProductModel selectedProduct;
+    private int childPos = -1;
+    private int parentPos = -1;
+    private int count = 1;
+    private double additionPrice = 0;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -109,22 +121,40 @@ public class ShopProductActivity extends AppCompatActivity {
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
 
+        binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!clicked){
+                    LinearLayoutManager manager = (LinearLayoutManager) binding.recView.getLayoutManager();
+                    int pos = manager.findFirstVisibleItemPosition();
+                    if (categoryAdapter!=null){
+                        categoryAdapter.setSelectedPos(pos);
+                        binding.recViewDepartment.scrollToPosition(pos);
+                    }
+                }
+
+                clicked  =false;
+
+
+            }
+        });
         binding.appBar.addOnOffsetChangedListener((AppBarLayout.BaseOnOffsetChangedListener) (appBarLayout, verticalOffset) -> {
             int total = appBarLayout.getTotalScrollRange() + verticalOffset;
             if (total == 0) {
                 if (placeModel.getShopDepartmentsList()!=null&&placeModel.getShopDepartmentsList().size()>0){
-                    binding.tab.setVisibility(View.VISIBLE);
+                    binding.recViewDepartment.setVisibility(View.VISIBLE);
                     binding.tvMenu.setVisibility(View.INVISIBLE);
 
                 }else {
-                    binding.tab.setVisibility(View.INVISIBLE);
+                    binding.recViewDepartment.setVisibility(View.INVISIBLE);
                     binding.tvMenu.setVisibility(View.VISIBLE);
 
 
                 }
             } else {
                 binding.tvMenu.setVisibility(View.VISIBLE);
-                binding.tab.setVisibility(View.INVISIBLE);
+                binding.recViewDepartment.setVisibility(View.INVISIBLE);
 
 
             }
@@ -134,19 +164,19 @@ public class ShopProductActivity extends AppCompatActivity {
 
 
         binding.tvShow.setOnClickListener(v -> {
-            if (placeModel.getPlace_type().equals("custom")) {
-                if (daysModelList.size() > 0) {
-                    createDialogAlertDays();
-                } else {
-                    Toast.makeText(this, R.string.work_hour_not_aval, Toast.LENGTH_SHORT).show();
-                }
+
+            if (daysModelList.size() > 0) {
+                createDialogAlertDays();
             } else {
+
                 if (hourModelList.size() > 0) {
                     createDialogAlertHours();
                 } else {
                     Toast.makeText(this, R.string.work_hour_not_aval, Toast.LENGTH_SHORT).show();
                 }
             }
+
+
 
         });
 
@@ -181,6 +211,26 @@ public class ShopProductActivity extends AppCompatActivity {
             super.onBackPressed();
         });
 
+        binding.imageHideSheet.setOnClickListener(v -> {
+            closeSheet();
+        });
+
+        binding.tvIncrease.setOnClickListener(v -> {
+            count++;
+            binding.tvCount.setText(String.valueOf(count));
+        });
+
+        binding.tvDecrease.setOnClickListener(v -> {
+            if (count>1){
+                count--;
+                binding.tvCount.setText(String.valueOf(count));
+            }
+
+        });
+        binding.btnAddProduct.setOnClickListener(v -> {
+
+        });
+
         if (placeModel.getPlace_type().equals("custom")) {
             updateUI();
         }
@@ -198,6 +248,8 @@ public class ShopProductActivity extends AppCompatActivity {
             public void onResponse(Call<ShopDepartmentDataModel> call, Response<ShopDepartmentDataModel> response) {
                 binding.progBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
+                    Log.e("data",response.body().getData().size()+"__");
+
                     if (response.body()!=null&&response.body().getData()!=null&&response.body().getData().size()>0){
                         updateDepartmentsUi(response.body().getData());
 
@@ -243,46 +295,22 @@ public class ShopProductActivity extends AppCompatActivity {
 
     }
 
-    private void updateDepartmentsUi(List<ShopDepartments> data) {
+    private void updateDepartmentsUi(List<ShopDepartments> data)
+    {
         placeModel.setShopDepartmentsList(data);
         binding.setModel(placeModel);
-        ShopExpandGroup shopExpandGroup;
-        List<ShopExpandGroup> shopExpandGroupList = new ArrayList<>();
+        categoryAdapter = new ProductCategoryAdapter(this,data);
+        binding.recViewDepartment.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        binding.recViewDepartment.setAdapter(categoryAdapter);
+        binding.recView.scrollToPosition(0);
+        ////////////////////////////////////////
 
-        for (ShopDepartments departments: data){
-
-            TabLayout.Tab tab = binding.tab.newTab();
-            tab.setTag(departments);
-            String title ="";
-            if (lang.equals("ar")){
-                title = departments.getTitle_ar();
-
-
-            }else {
-                title = departments.getTitle_en();
-
-
-            }
-            tab.setText(title);
-            binding.tab.addTab(tab);
-
-            shopExpandGroup = new ShopExpandGroup(departments,departments.getProducts_list(),title);
-            shopExpandGroupList.add(shopExpandGroup);
-            productAdapter = new ProductAdapter(shopExpandGroupList,this,currency);
-            binding.recView.setLayoutManager(new LinearLayoutManager(this));
-            binding.recView.setAdapter(productAdapter);
-            if (shopExpandGroupList.size()>0){
-                productAdapter.toggleGroup(0);
-
-            }
-
-        }
-
-
-
+        binding.recView.setNestedScrollingEnabled(true);
+        productSectionAdapter = new ProductSectionAdapter(this,currency,data);
+        binding.recView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recView.setAdapter(productSectionAdapter);
 
     }
-
 
     private void getPlaceDetails()
     {
@@ -327,13 +355,14 @@ public class ShopProductActivity extends AppCompatActivity {
 
         if (placeDetailsModel!=null&&placeDetailsModel.getResult()!=null&&placeDetailsModel.getResult().getOpening_hours()!=null&&placeDetailsModel.getResult().getOpening_hours().getWeekday_text()!=null&&placeDetailsModel.getResult().getOpening_hours().getWeekday_text().size()>0) {
 
-        }
             for (String time: placeDetailsModel.getResult().getOpening_hours().getWeekday_text()){
 
-            String day = time.split(":", 2)[0].trim();
-            String t = time.split(":",2)[1].trim();
-            HourModel hourModel = new HourModel(day,t);
-            list.add(hourModel);
+                String day = time.split(":", 2)[0].trim();
+                String t = time.split(":",2)[1].trim();
+                HourModel hourModel = new HourModel(day,t);
+                list.add(hourModel);
+        }
+
 
 
 
@@ -422,6 +451,99 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
 
+    public void setSelectedDepartmentPosition(int adapterPosition) {
+        clicked = true;
+        binding.recView.scrollToPosition(adapterPosition);
+    }
+
+    public void setProductData(ProductModel model, int adapterPosition, int parentPos) {
+        this.selectedProduct = model;
+        this.childPos = adapterPosition;
+        this.parentPos = parentPos;
+        count = 1;
+        binding.tvCount.setText(String.valueOf(count));
+        totalItemProductPrice = Double.parseDouble(model.getPrice());
+        Picasso.get().load(Uri.parse(Tags.IMAGE_URL+model.getImage())).into(binding.image, new com.squareup.picasso.Callback() {
+            @Override
+            public void onSuccess() {
+                binding.flNoImage.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("ddd","ddd");
+
+                binding.image.setVisibility(View.GONE);
+                binding.flNoImage.setVisibility(View.VISIBLE);
+            }
+        });
+        binding.setProductModel(model);
+        AdditionProductAdapter additionProductAdapter = new AdditionProductAdapter(this,model.getAddtions(),currency);
+        binding.recViewAddition.setLayoutManager(new LinearLayoutManager(this));
+        binding.recViewAddition.setAdapter(additionProductAdapter);
+        openSheet();
+    }
+
+    public void setAdditionItem(AdditionModel additionModel) {
+
+
+    }
+
+
+    private void openSheet()
+    {
+        binding.flSheet.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        binding.flSheet.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                binding.flSheet.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+    private void closeSheet()
+    {
+        binding.flSheet.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        binding.flSheet.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                binding.flSheet.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (binding.flSheet.getVisibility()==View.VISIBLE){
+            closeSheet();
+        }else {
+            super.onBackPressed();
+
+        }
+    }
 
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     >
     <data>
@@ -14,6 +15,7 @@
         android:orientation="vertical"
         >
         <LinearLayout
+            android:id="@+id/llExpand"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal"
@@ -39,10 +41,25 @@
                 android:id="@+id/imageArrow"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:src="@drawable/ic_arrow_down2"
+                android:src="@drawable/ic_up_arrow2"
                 android:padding="5dp"
+                android:tint="@color/gray4"
                 />
         </LinearLayout>
+        <net.cachapa.expandablelayout.ExpandableLayout
+            android:id="@+id/expandLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:el_duration="200"
+            app:el_parallax=".5"
+            app:el_expanded="true"
+            android:background="@color/white"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </net.cachapa.expandablelayout.ExpandableLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="20dp"

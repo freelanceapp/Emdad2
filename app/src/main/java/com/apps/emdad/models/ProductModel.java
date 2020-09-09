@@ -1,6 +1,7 @@
 package com.apps.emdad.models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ProductModel implements Serializable {
     private int id;
@@ -14,6 +15,7 @@ public class ProductModel implements Serializable {
     private String offer_type;
     private String offer_value;
     private String details;
+    private List<AdditionModel> addtions;
     private int count = 0;
     private ShopDepartments sub_department;
 
@@ -71,5 +73,9 @@ public class ProductModel implements Serializable {
 
     public int getCount() {
         return count;
+    }
+
+    public List<AdditionModel> getAddtions() {
+        return addtions;
     }
 }

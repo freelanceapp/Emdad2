@@ -236,6 +236,8 @@
     <string name="thur">Thursday</string>
     <string name="fri">Friday</string>
     <string name="choose_from_menu_first">Choose From Menu First</string>
+    <string name="additions">Additions</string>
+    <string name="add">Add</string>
 
 
 </resources>

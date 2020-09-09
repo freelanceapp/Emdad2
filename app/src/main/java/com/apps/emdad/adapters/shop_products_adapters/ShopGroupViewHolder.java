@@ -11,7 +11,6 @@ public class ShopGroupViewHolder extends GroupViewHolder {
     public ShopGroupViewHolder(GroupTitleRowBinding binding) {
         super(binding.getRoot());
         this.binding =binding;
-        expand();
     }
 
 
