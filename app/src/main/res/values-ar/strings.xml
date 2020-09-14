@@ -240,5 +240,12 @@
     <string name="choose_from_menu_first">إختر من القائمة اول</string>
     <string name="additions">إضافات</string>
     <string name="add">إضافة</string>
+    <string name="complete_order">أكمل الطلب</string>
+    <string name="cost_with_tax">السعر يشمل الضريبة</string>
+    <string name="order_menu">قائمة الطلبات</string>
+    <string name="add_comment">تفاصيل إضافية</string>
+    <string name="item_total">المجموع</string>
+    <string name="vat">الضريبة</string>
+    <string name="total_with_vat_included">المجموع شاملا الضريبة المضافة</string>
 
 </resources>

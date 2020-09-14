@@ -238,6 +238,13 @@
     <string name="choose_from_menu_first">Choose From Menu First</string>
     <string name="additions">Additions</string>
     <string name="add">Add</string>
+    <string name="complete_order">Place Order</string>
+    <string name="cost_with_tax">Cost with VAT </string>
+    <string name="order_menu">ITEMS</string>
+    <string name="add_comment">Add Comment</string>
+    <string name="item_total">Item total</string>
+    <string name="vat">VAT</string>
+    <string name="total_with_vat_included">Total with VAT included</string>
 
 
 </resources>

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order_products.AddOrderProductActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.adapters.AdditionProductAdapter;
@@ -31,6 +31,7 @@ import com.apps.emdad.adapters.shop_products_adapters.ProductSectionAdapter;
 import com.apps.emdad.databinding.ActivityShopProductsBinding;
 import com.apps.emdad.databinding.DialogHoursBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.AddOrderProductsModel;
 import com.apps.emdad.models.AdditionModel;
 import com.apps.emdad.models.CustomPlaceModel;
 import com.apps.emdad.models.CustomShopDataModel;
@@ -44,7 +45,6 @@ import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -69,12 +69,15 @@ public class ShopProductActivity extends AppCompatActivity {
     private String currency;
     private ProductCategoryAdapter categoryAdapter;
     private boolean clicked = false;
-    private double totalItemProductPrice = 0;
+    private double totalOrderCost = 0;
     private ProductModel selectedProduct;
     private int childPos = -1;
     private int parentPos = -1;
     private int count = 1;
-    private double additionPrice = 0;
+    private List<ShopDepartments> shopDepartmentsList;
+    private AddOrderProductsModel addOrderProductsModel;
+    private List<AdditionModel> selectedAdditionList;
+
 
 
     @Override
@@ -106,6 +109,9 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        selectedAdditionList = new ArrayList<>();
+        addOrderProductsModel = new AddOrderProductsModel();
+        shopDepartmentsList = new ArrayList<>();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         daysModelList = new ArrayList<>();
@@ -217,18 +223,79 @@ public class ShopProductActivity extends AppCompatActivity {
 
         binding.tvIncrease.setOnClickListener(v -> {
             count++;
+            this.selectedProduct.setCount(count);
             binding.tvCount.setText(String.valueOf(count));
+            double total = getTotalItemCost(selectedProduct)*count;
+            this.selectedProduct.setTotal_cost(total);
+            binding.tvTotalCost.setText(String.format("%s %s", total,currency));
+
         });
 
         binding.tvDecrease.setOnClickListener(v -> {
             if (count>1){
                 count--;
+                this.selectedProduct.setCount(count);
                 binding.tvCount.setText(String.valueOf(count));
+                double total = getTotalItemCost(selectedProduct)*count;
+                this.selectedProduct.setTotal_cost(total);
+
+                binding.tvTotalCost.setText(String.format("%s %s", total,currency));
             }
 
         });
-        binding.btnAddProduct.setOnClickListener(v -> {
 
+        binding.btnAddProduct.setOnClickListener(v -> {
+            Log.e("id",selectedProduct.getId()+"_");
+            ShopDepartments departments = shopDepartmentsList.get(parentPos);
+            departments.setCount(count);
+            selectedProduct.setCount(count);
+            departments.getProducts_list().set(childPos,selectedProduct);
+            shopDepartmentsList.set(parentPos,departments);
+            productSectionAdapter.notifyItemChanged(parentPos);
+            List<ProductModel> productModelList = addOrderProductsModel.getProductModelList();
+
+            if (productModelList.size()>0){
+
+                int pos = isSelectedProductListHasItem(productModelList,selectedProduct);
+                selectedProduct.setTotal_cost(getTotalItemCost(selectedProduct));
+                if (pos!=-1){
+                    productModelList.set(pos,selectedProduct);
+                }else {
+                    productModelList.add(selectedProduct);
+                }
+
+            }else {
+                selectedProduct.setTotal_cost(getTotalItemCost(selectedProduct));
+                productModelList.add(selectedProduct);
+
+            }
+            addOrderProductsModel.setProductModelList(productModelList);
+            totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
+
+            updateTotalUi();
+            closeSheet();
+            count = 1;
+            childPos=-1;
+            parentPos = -1;
+            selectedProduct = null;
+
+        });
+        binding.flChooseFromMenu.setOnClickListener(v -> {
+            if (userModel!=null){
+                if (canSend){
+                   addOrderProductsModel.setUser_id(userModel.getUser().getId());
+                   addOrderProductsModel.setShop_id(placeModel.getShop_id());
+                   addOrderProductsModel.setShop_name(placeModel.getShop_name());
+
+                    Intent intent = new Intent(this, AddOrderProductActivity.class);
+                    intent.putExtra("data",addOrderProductsModel);
+                    startActivity(intent);
+                }
+            }else {
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.putExtra("from",false);
+                startActivity(intent);
+            }
         });
 
         if (placeModel.getPlace_type().equals("custom")) {
@@ -239,10 +306,75 @@ public class ShopProductActivity extends AppCompatActivity {
         }
 
         getDepartments();
+        updateTotalUi();
     }
 
-    private void getDepartments(){
-        Log.e("id",placeModel.getShop_id());
+
+    private void updateUI()
+    {
+        if (placeModel.getDays() != null && placeModel.getDays().size() > 0) {
+            binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+            binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.gray11));
+            daysModelList.clear();
+            daysModelList.addAll(placeModel.getDays());
+            binding.tvHours.setText(String.format("%s%s%s", daysModelList.get(0).getFrom_time(), "-", daysModelList.get(0).getTo_time()));
+
+
+
+        } else {
+            if (placeModel.getHourModelList()!=null&&placeModel.getHourModelList().size()>0){
+                binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.gray11));
+                binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.gray11));
+                hourModelList.clear();
+                hourModelList.addAll(placeModel.getHourModelList());
+                binding.tvHours.setText(hourModelList.get(0).getTime());
+
+            }else {
+                binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.color_rose));
+                binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.color_rose));
+
+            }
+
+
+
+
+
+
+
+
+
+        }
+
+
+        binding.setModel(placeModel);
+        binding.imageShare.setVisibility(View.VISIBLE);
+        binding.llContainer.setVisibility(View.VISIBLE);
+
+
+    }
+    private void updateTotalUi()
+    {
+
+        addOrderProductsModel.setTotal_cost(totalOrderCost);
+        binding.tvPrice.setText(String.format("%s %s %s",getString(R.string.cost_with_tax),totalOrderCost,currency));
+
+        if (addOrderProductsModel!=null&&addOrderProductsModel.getProductModelList()!=null&&addOrderProductsModel.getProductModelList().size()>0){
+            canSend = true;
+            binding.iconHand.setVisibility(View.GONE);
+            binding.tvChooseFromMenu.setText(R.string.complete_order);
+            binding.flChooseFromMenu.setBackgroundResource(R.color.colorPrimary);
+            binding.tvPrice.setVisibility(View.VISIBLE);
+        }else {
+            canSend = false;
+
+            binding.iconHand.setVisibility(View.VISIBLE);
+            binding.tvChooseFromMenu.setText(R.string.choose_from_menu_first);
+            binding.flChooseFromMenu.setBackgroundResource(R.color.gray12);
+            binding.tvPrice.setVisibility(View.GONE);
+        }
+    }
+    private void getDepartments()
+    {
         Api.getService(Tags.base_url).getShopDepartmentProduct(placeModel.getShop_id()).enqueue(new Callback<ShopDepartmentDataModel>() {
             @Override
             public void onResponse(Call<ShopDepartmentDataModel> call, Response<ShopDepartmentDataModel> response) {
@@ -294,9 +426,10 @@ public class ShopProductActivity extends AppCompatActivity {
         });
 
     }
-
     private void updateDepartmentsUi(List<ShopDepartments> data)
     {
+        shopDepartmentsList.clear();
+        shopDepartmentsList.addAll(data);
         placeModel.setShopDepartmentsList(data);
         binding.setModel(placeModel);
         categoryAdapter = new ProductCategoryAdapter(this,data);
@@ -306,12 +439,11 @@ public class ShopProductActivity extends AppCompatActivity {
         ////////////////////////////////////////
 
         binding.recView.setNestedScrollingEnabled(true);
-        productSectionAdapter = new ProductSectionAdapter(this,currency,data);
+        productSectionAdapter = new ProductSectionAdapter(this,currency,shopDepartmentsList);
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(productSectionAdapter);
 
     }
-
     private void getPlaceDetails()
     {
 
@@ -371,49 +503,6 @@ public class ShopProductActivity extends AppCompatActivity {
 
         return list;
     }
-    private void updateUI()
-    {
-        if (placeModel.getDays() != null && placeModel.getDays().size() > 0) {
-            binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.gray11));
-            binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.gray11));
-            daysModelList.clear();
-            daysModelList.addAll(placeModel.getDays());
-            binding.tvHours.setText(String.format("%s%s%s", daysModelList.get(0).getFrom_time(), "-", daysModelList.get(0).getTo_time()));
-
-
-
-        } else {
-            if (placeModel.getHourModelList()!=null&&placeModel.getHourModelList().size()>0){
-                binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.gray11));
-                binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.gray11));
-                hourModelList.clear();
-                hourModelList.addAll(placeModel.getHourModelList());
-                binding.tvHours.setText(hourModelList.get(0).getTime());
-
-            }else {
-                binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.color_rose));
-                binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.color_rose));
-
-            }
-
-
-
-
-
-
-
-
-
-        }
-
-
-        binding.setModel(placeModel);
-        binding.imageShare.setVisibility(View.VISIBLE);
-        binding.llContainer.setVisibility(View.VISIBLE);
-
-
-    }
-
     private void createDialogAlertHours()
     {
         final AlertDialog dialog = new AlertDialog.Builder(this)
@@ -431,7 +520,6 @@ public class ShopProductActivity extends AppCompatActivity {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-
     private void createDialogAlertDays()
     {
         final AlertDialog dialog = new AlertDialog.Builder(this)
@@ -449,20 +537,20 @@ public class ShopProductActivity extends AppCompatActivity {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-
-
-    public void setSelectedDepartmentPosition(int adapterPosition) {
+    public void setSelectedDepartmentPosition(int adapterPosition)
+    {
         clicked = true;
         binding.recView.scrollToPosition(adapterPosition);
     }
+    public void setProductData(ProductModel model, int adapterPosition, int parentPos)
+    {
 
-    public void setProductData(ProductModel model, int adapterPosition, int parentPos) {
         this.selectedProduct = model;
         this.childPos = adapterPosition;
         this.parentPos = parentPos;
         count = 1;
+        selectedAdditionList = new ArrayList<>();
         binding.tvCount.setText(String.valueOf(count));
-        totalItemProductPrice = Double.parseDouble(model.getPrice());
         Picasso.get().load(Uri.parse(Tags.IMAGE_URL+model.getImage())).into(binding.image, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
@@ -471,8 +559,6 @@ public class ShopProductActivity extends AppCompatActivity {
 
             @Override
             public void onError(Exception e) {
-                Log.e("ddd","ddd");
-
                 binding.image.setVisibility(View.GONE);
                 binding.flNoImage.setVisibility(View.VISIBLE);
             }
@@ -483,13 +569,48 @@ public class ShopProductActivity extends AppCompatActivity {
         binding.recViewAddition.setAdapter(additionProductAdapter);
         openSheet();
     }
+    public void setAdditionItem(AdditionModel additionModel, int pos, boolean isSelected)
+    {
+        if (isSelected){
 
-    public void setAdditionItem(AdditionModel additionModel) {
+            selectedAdditionList.add(additionModel);
+        }else {
+            selectedAdditionList.remove(pos);
+
+
+
+        }
+        selectedProduct.setSelectedAdditions(selectedAdditionList);
+        double total = getTotalItemCost(selectedProduct)*count;
+        binding.tvTotalCost.setText(String.format("%s %s", total,currency));
+
+    }
+    public void deleteSelectedItem(int parentPos, int childPos, ProductModel model)
+    {
+
+        List<ProductModel> productModelList = addOrderProductsModel.getProductModelList();
+        ShopDepartments departments = shopDepartmentsList.get(parentPos);
+        model.setCount(0);
+        departments.getProducts_list().set(childPos,model);
+        departments.setCount(0);
+        shopDepartmentsList.set(parentPos,departments);
+        productSectionAdapter.notifyItemChanged(parentPos);
+
+        int pos = isSelectedProductListHasItem(productModelList,model);
+        if (pos!=-1){
+            productModelList.remove(pos);
+            addOrderProductsModel.setProductModelList(productModelList);
+            totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
+            Log.e("total_order_cost",totalOrderCost+"_");
+        }
+        updateTotalUi();
+
+
+
+
 
 
     }
-
-
     private void openSheet()
     {
         binding.flSheet.clearAnimation();
@@ -533,6 +654,56 @@ public class ShopProductActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private int isSelectedProductListHasItem(List<ProductModel> productModelList,ProductModel productModel){
+        int pos = -1;
+        for (int index =0;index<productModelList.size();index++){
+            ProductModel productModel2 = productModelList.get(index);
+            if (productModel.getId()==productModel2.getId()){
+                pos = index;
+                return pos;
+            }
+        }
+        return pos;
+
+    }
+
+    private double getTotalOrderCost(List<ProductModel> productModelList)
+    {
+        double total=0.0;
+        for (ProductModel model:productModelList){
+            Log.e("model",model.getTitle()+"__"+model.getPrice()+"addSize"+model.getSelectedAdditions().size());
+            total +=(Double.parseDouble(model.getPrice())+getTotalCostAdditions(model.getSelectedAdditions()))*model.getCount();
+        }
+
+        return total;
+    }
+    private double getTotalCostAdditions(List<AdditionModel> selectedAdditionList)
+    {
+        double cost = 0.0;
+        for (AdditionModel additionModel:selectedAdditionList){
+
+            cost += Double.parseDouble(additionModel.getPrice());
+
+        }
+        return cost;
+    }
+
+
+    private double getTotalItemCost(ProductModel productModel)
+    {
+        double total= (Double.parseDouble(productModel.getPrice())+getTotalItemCostAdditions(productModel));
+        Log.e("total",total+"__");
+        return total;
+    }
+    private double getTotalItemCostAdditions(ProductModel productModel)
+    {
+        double cost = 0.0;
+        for (AdditionModel additionModel:productModel.getSelectedAdditions()){
+            cost += Double.parseDouble(additionModel.getPrice());
+            Log.e("cost",cost+"__");
+        }
+        return cost;
     }
 
     @Override

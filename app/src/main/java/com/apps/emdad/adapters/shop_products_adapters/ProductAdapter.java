@@ -52,8 +52,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ShopChildViewHolder> {
         holder.binding.setModel(productModel);
         holder.itemView.setOnClickListener(v -> {
             ProductModel model = list.get(holder.getAdapterPosition());
-
             activity.setProductData(model,holder.getAdapterPosition(),parentPos);
+        });
+        holder.binding.imageDelete.setOnClickListener(v -> {
+            ProductModel model = list.get(holder.getAdapterPosition());
+            activity.deleteSelectedItem(parentPos,holder.getAdapterPosition(),model);
         });
     }
 

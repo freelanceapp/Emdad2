@@ -8,11 +8,13 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order_products.AddOrderProductActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.databinding.AddOrderImagesMoreRowBinding;
@@ -30,13 +32,13 @@ public class AddOrderImagesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private List<Uri> list;
     private Context context;
     private LayoutInflater inflater;
-    private AddOrderTextActivity activity;
+    private AppCompatActivity activity;
 
     public AddOrderImagesAdapter(List<Uri> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        activity = (AddOrderTextActivity) context;
+        activity = (AppCompatActivity) context;
 
     }
 
@@ -63,12 +65,32 @@ public class AddOrderImagesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             Uri uri = list.get(position);
             Picasso.get().load(uri).fit().into(myHolder.binding.image);
             myHolder.binding.cardViewDelete.setOnClickListener(v -> {
-                activity.delete(myHolder.getAdapterPosition());
+                if (activity instanceof AddOrderTextActivity){
+                    AddOrderTextActivity addOrderTextActivity = (AddOrderTextActivity) activity;
+                    addOrderTextActivity.delete(myHolder.getAdapterPosition());
+
+                }else if (activity instanceof AddOrderProductActivity){
+                    AddOrderProductActivity addOrderProductActivity = (AddOrderProductActivity) activity;
+                    addOrderProductActivity.delete(myHolder.getAdapterPosition());
+
+                }
             });
 
         }else if (holder instanceof AddOrderMoreMoreHolder){
             AddOrderMoreMoreHolder addOrderMoreMoreHolder = (AddOrderMoreMoreHolder) holder;
-            addOrderMoreMoreHolder.itemView.setOnClickListener(v -> activity.createDialogAlert());
+            addOrderMoreMoreHolder.itemView.setOnClickListener(v -> {
+
+                if (activity instanceof AddOrderTextActivity){
+                    AddOrderTextActivity addOrderTextActivity = (AddOrderTextActivity) activity;
+                    addOrderTextActivity.createDialogAlert();
+
+                }else if (activity instanceof AddOrderProductActivity){
+                    AddOrderProductActivity addOrderProductActivity = (AddOrderProductActivity) activity;
+                    addOrderProductActivity.createDialogAlert();
+
+                }
+
+            });
         }
 
     }

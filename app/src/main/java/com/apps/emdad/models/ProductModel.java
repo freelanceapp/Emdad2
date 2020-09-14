@@ -1,6 +1,7 @@
 package com.apps.emdad.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductModel implements Serializable {
@@ -15,7 +16,9 @@ public class ProductModel implements Serializable {
     private String offer_type;
     private String offer_value;
     private String details;
+    private double total_cost;
     private List<AdditionModel> addtions;
+    private List<AdditionModel> selectedAdditions = new ArrayList<>();
     private int count = 0;
     private ShopDepartments sub_department;
 
@@ -77,5 +80,21 @@ public class ProductModel implements Serializable {
 
     public List<AdditionModel> getAddtions() {
         return addtions;
+    }
+
+    public List<AdditionModel> getSelectedAdditions() {
+        return selectedAdditions;
+    }
+
+    public void setSelectedAdditions(List<AdditionModel> selectedAdditions) {
+        this.selectedAdditions = selectedAdditions;
+    }
+
+    public double getTotal_cost() {
+        return total_cost;
+    }
+
+    public void setTotal_cost(double total_cost) {
+        this.total_cost = total_cost;
     }
 }

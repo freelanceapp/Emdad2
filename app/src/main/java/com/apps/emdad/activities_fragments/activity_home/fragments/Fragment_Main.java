@@ -134,7 +134,7 @@ public class Fragment_Main extends Fragment {
 
         if (isRestaurant(placeModel)){
 
-            if (Integer.parseInt(placeModel.getCustomPlaceModel().getProducts_count())>0){
+            if (placeModel.getCustomPlaceModel()!=null&&Integer.parseInt(placeModel.getCustomPlaceModel().getProducts_count())>0){
 
                 String max_Offer_value="";
                 if (placeModel.getCustomPlaceModel().getDelivery_offer()!=null){
@@ -150,7 +150,7 @@ public class Fragment_Main extends Fragment {
                     days = placeModel.getCustomPlaceModel().getDays();
                 }
 
-                CustomShopDataModel customShopDataModel = new CustomShopDataModel(placeModel.getPlace_id(),placeModel.getName(),placeModel.getVicinity(),placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng(),max_Offer_value,placeModel.isOpen(),comment_count,String.valueOf(placeModel.getRating()),"google",deliveryOffer,getHours(placeModel),days);
+                CustomShopDataModel customShopDataModel = new CustomShopDataModel(String.valueOf(placeModel.getCustomPlaceModel().getId()),placeModel.getName(),placeModel.getVicinity(),placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng(),max_Offer_value,placeModel.isOpen(),comment_count,String.valueOf(placeModel.getRating()),"custom",deliveryOffer,getHours(placeModel),days);
                 Intent intent = new Intent(activity, ShopProductActivity.class);
                 intent.putExtra("data",customShopDataModel);
                 startActivity(intent);
@@ -175,17 +175,20 @@ public class Fragment_Main extends Fragment {
     {
         List<HourModel> list = new ArrayList<>();
 
-        for (String time: placeModel.getWork_hours().getWeekday_text()){
+        if (placeModel!=null&&placeModel.getWork_hours()!=null&&placeModel.getWork_hours().getWeekday_text()!=null){
+            for (String time: placeModel.getWork_hours().getWeekday_text()){
 
-            String day = time.split(":", 2)[0].trim();
-            String t = time.split(":",2)[1].trim();
-            HourModel hourModel = new HourModel(day,t);
-            list.add(hourModel);
+                String day = time.split(":", 2)[0].trim();
+                String t = time.split(":",2)[1].trim();
+                HourModel hourModel = new HourModel(day,t);
+                list.add(hourModel);
 
 
 
 
+            }
         }
+
 
         return list;
     }

@@ -9,6 +9,7 @@ public class ShopDepartments implements Serializable {
     private String title_ar;
     private String title_en;
     private String image;
+    private int count;
     private List<ProductModel>products_list;
 
     public int getId() {
@@ -33,5 +34,13 @@ public class ShopDepartments implements Serializable {
 
     public List<ProductModel> getProducts_list() {
         return products_list;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

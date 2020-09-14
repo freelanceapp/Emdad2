@@ -5,6 +5,7 @@ import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.OfferSettingModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
@@ -160,4 +161,6 @@ public interface Service {
     @GET("api/get-place-departments-products")
     Call<ShopDepartmentDataModel> getShopDepartmentProduct(@Query(value = "market_id") String market_id);
 
+    @GET("api/offer-settings")
+    Call<OfferSettingModel> getOfferSetting();
 }

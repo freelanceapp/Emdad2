@@ -1,6 +1,7 @@
 package com.apps.emdad.adapters;
 
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +26,9 @@ public class AdditionProductAdapter extends RecyclerView.Adapter<AdditionProduct
     private Context context;
     private List<AdditionModel> list;
     private String lang;
-    private int selectedPos = -1;
     private String currency;
     private ShopProductActivity activity;
+    private SparseBooleanArray sparseBooleanArray;
 
     public AdditionProductAdapter(Context context, List<AdditionModel> list,String currency) {
         this.context = context;
@@ -36,6 +37,7 @@ public class AdditionProductAdapter extends RecyclerView.Adapter<AdditionProduct
         lang = Paper.book().read("lang", "ar");
         this.currency = currency;
         activity = (ShopProductActivity) context;
+        sparseBooleanArray = new SparseBooleanArray();
 
     }
 
@@ -52,7 +54,7 @@ public class AdditionProductAdapter extends RecyclerView.Adapter<AdditionProduct
         holder.binding.setCurrency(currency);
         holder.binding.setModel(model);
 
-        if (selectedPos==position){
+        if (sparseBooleanArray.get(position,false)){
             holder.binding.checkbox.setChecked(true);
         }else {
             holder.binding.checkbox.setChecked(false);
@@ -60,19 +62,16 @@ public class AdditionProductAdapter extends RecyclerView.Adapter<AdditionProduct
 
         holder.binding.checkbox.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
-            activity.setAdditionItem(list.get(pos));
-            if (selectedPos==pos){
+            if (holder.binding.checkbox.isChecked()){
+                sparseBooleanArray.put(pos,true);
+                activity.setAdditionItem(list.get(pos),pos,true);
 
-                if (holder.binding.checkbox.isChecked()){
-                    selectedPos = -1;
-                }else {
-                    selectedPos = pos;
-                }
             }else {
-                selectedPos = pos;
-            }
-            notifyDataSetChanged();
+                sparseBooleanArray.put(pos,false);
+                activity.setAdditionItem(list.get(pos),pos,false);
 
+            }
+            notifyItemChanged(pos);
         });
 
 

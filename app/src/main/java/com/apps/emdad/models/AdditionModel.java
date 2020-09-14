@@ -33,4 +33,6 @@ public class AdditionModel implements Serializable {
     public String getPrice() {
         return price;
     }
+
+
 }
