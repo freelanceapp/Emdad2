@@ -87,6 +87,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
         super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
