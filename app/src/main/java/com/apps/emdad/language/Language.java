@@ -10,10 +10,7 @@ import android.preference.PreferenceManager;
 import java.util.Locale;
 
 public class Language {
-    public static void setNewLocale(Context c, String language) {
-        persistLanguage(c, language);
-        updateResources(c, language);
-    }
+
 
     public static Context updateResources(Context context, String language) {
         Locale locale = new Locale(language);
@@ -36,11 +33,4 @@ public class Language {
 
 
     }
-
-
-    private static void persistLanguage(Context c, String language) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(c);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("lang",language);
-        editor.apply();
-    }}
+}

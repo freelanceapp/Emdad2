@@ -22,24 +22,24 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="m"
-        >
-        <activity android:name=".activities_fragments.activity_add_order_products.AddOrderProductActivity"
+        tools:targetApi="m">
+        <activity android:name=".activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity"></activity>
+        <activity
+            android:name=".activities_fragments.activity_add_order_products.AddOrderProductActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-        <activity android:name=".activities_fragments.activity_shop_products.ShopProductActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_shop_products.ShopProductActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-        <activity android:name=".activities_fragments.activity_custom_shop_details.CustomShopDetailsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_custom_shop_details.CustomShopDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
-        <activity android:name=".activities_fragments.activity_image.ImageActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_image.ImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_shop_custom_query.ShopsCustomQueryActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

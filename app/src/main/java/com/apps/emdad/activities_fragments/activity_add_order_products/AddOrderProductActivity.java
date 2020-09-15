@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
+import com.apps.emdad.activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity;
 import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.adapters.AddOrderImagesAdapter;
 import com.apps.emdad.adapters.AddOrderSelectedProductAdapter;
@@ -134,11 +135,14 @@ public class AddOrderProductActivity extends AppCompatActivity {
             binding.tvAddComment.setVisibility(View.GONE);
             binding.llNotes.setVisibility(View.VISIBLE);
         });
-
+        binding.btnNext.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapDeliveryLocationActivity.class);
+            intent.putExtra("data",addOrderProductsModel);
+            startActivityForResult(intent,200);
+        });
         binding.imageHideSheet.setOnClickListener(v -> {
             closeSheet();
         });
-
         binding.recViewProducts.setLayoutManager(new LinearLayoutManager(this));
         addOrderSelectedProductAdapter  = new AddOrderSelectedProductAdapter(addOrderProductsModel.getProductModelList(),this,currency);
         binding.recViewProducts.setAdapter(addOrderSelectedProductAdapter);

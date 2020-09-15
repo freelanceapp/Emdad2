@@ -247,5 +247,13 @@
     <string name="item_total">المجموع</string>
     <string name="vat">الضريبة</string>
     <string name="total_with_vat_included">المجموع شاملا الضريبة المضافة</string>
+    <string name="deliver_within">وقت التوصيل</string>
+    <string name="select_time">إختر الوقت</string>
+    <string name="hour1">1 ساعة</string>
+    <string name="hour2">2 ساعات</string>
+    <string name="hour3">3 ساعات</string>
+    <string name="day1">1 يوم</string>
+    <string name="day2">2 أيام</string>
+    <string name="day3">3 أيام</string>
 
 </resources>

@@ -8,12 +8,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color4"
+            android:textColor="@color/black"
             android:textSize="15sp"
-            android:text="@string/choose_year"
+            android:text="@string/select_time"
             android:layout_marginTop="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+
             />
         <ImageView
             android:id="@+id/imageUp"
@@ -25,12 +26,27 @@
             android:tint="@color/gray4"
             android:padding="5dp"
             />
-        <NumberPicker
-            android:id="@+id/picker"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            />
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/gray1"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                />
+            <NumberPicker
+                android:id="@+id/picker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                />
+
+        </FrameLayout>
+
 
         <ImageView
             android:id="@+id/imageDown"

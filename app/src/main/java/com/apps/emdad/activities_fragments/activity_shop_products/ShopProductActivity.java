@@ -131,9 +131,11 @@ public class ShopProductActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager manager = (LinearLayoutManager) binding.recView.getLayoutManager();
+
                 if (!clicked){
-                    LinearLayoutManager manager = (LinearLayoutManager) binding.recView.getLayoutManager();
                     int pos = manager.findFirstVisibleItemPosition();
+
                     if (categoryAdapter!=null){
                         categoryAdapter.setSelectedPos(pos);
                         binding.recViewDepartment.scrollToPosition(pos);
@@ -286,6 +288,9 @@ public class ShopProductActivity extends AppCompatActivity {
                    addOrderProductsModel.setUser_id(userModel.getUser().getId());
                    addOrderProductsModel.setShop_id(placeModel.getShop_id());
                    addOrderProductsModel.setShop_name(placeModel.getShop_name());
+                   addOrderProductsModel.setShop_address(placeModel.getShop_address());
+                   addOrderProductsModel.setShop_lat(placeModel.getShop_lat());
+                   addOrderProductsModel.setShop_lng(placeModel.getShop_lng());
 
                     Intent intent = new Intent(this, AddOrderProductActivity.class);
                     intent.putExtra("data",addOrderProductsModel);
