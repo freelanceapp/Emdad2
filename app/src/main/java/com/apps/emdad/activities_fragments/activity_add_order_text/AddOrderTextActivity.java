@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,6 +31,8 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
+import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
+import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.adapters.AddOrderImagesAdapter;
 import com.apps.emdad.adapters.HoursAdapter;
@@ -40,10 +43,15 @@ import com.apps.emdad.databinding.DialogAlertBinding;
 import com.apps.emdad.databinding.DialogHoursBinding;
 import com.apps.emdad.databinding.DialogSelectImage2Binding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.AddOrderTextModel;
+import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.PhotosModel;
 import com.apps.emdad.models.PlaceDetailsModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
 import com.apps.emdad.tags.Tags;
@@ -59,6 +67,8 @@ import java.util.List;
 import java.util.Locale;
 
 import io.paperdb.Paper;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,6 +85,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
     private List<Uri> imagesList;
     private  AlertDialog dialog;
     private AddOrderImagesAdapter addOrderImagesAdapter;
+    private AddOrderTextModel addOrderTextModel;
+    private Preferences preferences;
+    private UserModel userModel;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -97,7 +110,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
     }
 
     private void initView() {
-
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
+        addOrderTextModel = new AddOrderTextModel();
         imagesList = new ArrayList<>();
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
@@ -135,6 +150,30 @@ public class AddOrderTextActivity extends AppCompatActivity {
             startActivityForResult(intent,100);
         });
         binding.close.setOnClickListener(v -> {super.onBackPressed();});
+        binding.btnNext.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapSearchActivity.class);
+            intent.putExtra("type", 1);
+            startActivityForResult(intent, 200);
+        });
+        if (placeModel.getCustomPlaceModel()!=null){
+            addOrderTextModel.setMarket_id(placeModel.getCustomPlaceModel().getId());
+            addOrderTextModel.setOrder_type("emdad_market");
+        }else {
+            addOrderTextModel.setOrder_type("google_market");
+            addOrderTextModel.setMarket_id(0);
+
+        }
+        addOrderTextModel.setUser_id(userModel.getUser().getId());
+        addOrderTextModel.setPlace_id(placeModel.getPlace_id());
+        addOrderTextModel.setPlace_name(placeModel.getName());
+        addOrderTextModel.setPlace_address(placeModel.getVicinity());
+        addOrderTextModel.setPlace_lat(placeModel.getGeometry().getLocation().getLat());
+        addOrderTextModel.setPlace_lng(placeModel.getGeometry().getLocation().getLng());
+        addOrderTextModel.setPayment("cash");
+        addOrderTextModel.setCoupon_id("0");
+        addOrderTextModel.setComments("");
+
+
 
     }
 
@@ -147,6 +186,149 @@ public class AddOrderTextActivity extends AppCompatActivity {
         }
     }
 
+
+
+    private void sendOrderTextWithoutImage() {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url)
+                .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),"0",addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),"1",addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
+                .enqueue(new Callback<OrderModel>() {
+                    @Override
+                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()&&response.body()!=null)
+                        {
+                            Toast.makeText(AddOrderTextActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
+                            AddOrderTextActivity.super.onBackPressed();
+                        }else
+                        {
+                            if (response.code()==500)
+                            {
+                                Toast.makeText(AddOrderTextActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            } else
+                            {
+                                Toast.makeText(AddOrderTextActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+
+                            try {
+                                Log.e("error",response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("msg_category_error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(AddOrderTextActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(AddOrderTextActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.e("Error",e.getMessage()+"__");
+                        }
+                    }
+                });
+    }
+
+    private void sendOrderTextWithImage() {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.show();
+        addOrderTextModel.setOrder_text(binding.edtOrder.getText().toString().trim());
+        RequestBody user_id_part = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
+        RequestBody order_type_part;
+        if (placeModel.getCustomPlaceModel()==null){
+            order_type_part = Common.getRequestBodyText("google_market");
+
+        }else {
+            order_type_part = Common.getRequestBodyText("emdad_market");
+
+        }
+        RequestBody market_id_part = Common.getRequestBodyText(String.valueOf(addOrderTextModel.getMarket_id()));
+        RequestBody google_place_id_part = Common.getRequestBodyText(addOrderTextModel.getPlace_id());
+        RequestBody bill_cost_part = Common.getRequestBodyText("0");
+        RequestBody client_address_part = Common.getRequestBodyText(addOrderTextModel.getTo_address());
+        RequestBody client_lat_part = Common.getRequestBodyText(String.valueOf(addOrderTextModel.getTo_lat()));
+        RequestBody client_lng_part = Common.getRequestBodyText(String.valueOf(addOrderTextModel.getTo_lng()));
+        RequestBody market_name_part = Common.getRequestBodyText(addOrderTextModel.getPlace_name());
+        RequestBody market_address_part = Common.getRequestBodyText(addOrderTextModel.getPlace_address());
+        RequestBody market_lat_part = Common.getRequestBodyText(String.valueOf(addOrderTextModel.getPlace_lat()));
+        RequestBody market_lng_part = Common.getRequestBodyText(String.valueOf(addOrderTextModel.getPlace_lng()));
+        RequestBody arrival_time_part = Common.getRequestBodyText("1");
+        RequestBody coupon_id_part = Common.getRequestBodyText(addOrderTextModel.getCoupon_id());
+        RequestBody details_part = Common.getRequestBodyText(addOrderTextModel.getOrder_text());
+        RequestBody notes_part = Common.getRequestBodyText(addOrderTextModel.getComments());
+
+
+        Api.getService(Tags.base_url)
+                .sendTextOrderWithImage(userModel.getUser().getToken(),user_id_part,order_type_part,market_id_part,google_place_id_part,bill_cost_part,client_address_part,client_lat_part,client_lng_part,market_name_part,market_address_part,market_lat_part,market_lng_part,arrival_time_part,coupon_id_part,details_part,notes_part,getMultiPartImages())
+                .enqueue(new Callback<OrderModel>() {
+                    @Override
+                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()&&response.body()!=null)
+                        {
+                            Toast.makeText(AddOrderTextActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
+                            AddOrderTextActivity.super.onBackPressed();
+                        }else
+                        {
+                            if (response.code()==500)
+                            {
+                                Toast.makeText(AddOrderTextActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            } else
+                            {
+                                Toast.makeText(AddOrderTextActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+
+                            try {
+                                Log.e("error",response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("msg_category_error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(AddOrderTextActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(AddOrderTextActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.e("Error",e.getMessage()+"__");
+                        }
+                    }
+                });
+    }
+
+
+    private List<MultipartBody.Part> getMultiPartImages(){
+        List<MultipartBody.Part> parts = new ArrayList<>();
+        for (Uri uri :imagesList){
+            MultipartBody.Part part = Common.getMultiPart(this,uri,"images[]");
+            parts.add(part);
+        }
+        return parts;
+    }
     public void createDialogAlert()
     {
         dialog = new AlertDialog.Builder(this)
@@ -284,9 +466,24 @@ public class AddOrderTextActivity extends AppCompatActivity {
         }
         else if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null){
             //coupon
+        }else if (requestCode == 200 && resultCode == Activity.RESULT_OK && data != null){
+            FavoriteLocationModel model = (FavoriteLocationModel) data.getSerializableExtra("data");
+            addOrderTextModel.setTo_address(model.getAddress());
+            addOrderTextModel.setTo_lat(model.getLat());
+            addOrderTextModel.setTo_lng(model.getLng());
+            if (imagesList.size()>0){
+                sendOrderTextWithImage();
+            }else {
+                sendOrderTextWithoutImage();
+            }
         }
 
+
+
     }
+
+
+
 
     private void cropImage(Uri uri) {
 

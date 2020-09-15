@@ -153,9 +153,15 @@ public class CustomShopDetailsActivity extends AppCompatActivity {
         binding.btnNext.setOnClickListener(v -> {
             canSend = true;
             if (canSend){
-                Intent intent = new Intent(this, AddOrderTextActivity.class);
-                intent.putExtra("data",placeModel);
-                startActivityForResult(intent,100);
+
+                if (userModel!=null){
+                    Intent intent = new Intent(this, AddOrderTextActivity.class);
+                    intent.putExtra("data",placeModel);
+                    startActivityForResult(intent,100);
+                }else {
+
+                }
+
 
             }
         });

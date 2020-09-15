@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.adapters.HoursAdapter;
 import com.apps.emdad.adapters.ImagePagerAdapter;
@@ -47,6 +48,8 @@ import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.PhotosModel;
 import com.apps.emdad.models.PlaceDetailsModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
 import com.google.android.gms.common.ConnectionResult;
@@ -99,6 +102,8 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
     private final String gps_perm = Manifest.permission.ACCESS_FINE_LOCATION;
     private final int loc_req = 22;
     private boolean canSend = false;
+    private Preferences preferences;
+    private UserModel userModel;
 
 
     @Override
@@ -122,6 +127,8 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     private void initView() {
+        preferences  = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         hourModelList = new ArrayList<>();
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
@@ -159,9 +166,16 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
         binding.btnNext.setOnClickListener(v -> {
             canSend = true;
             if (canSend){
-                Intent intent = new Intent(this, AddOrderTextActivity.class);
-                intent.putExtra("data",placeModel);
-                startActivityForResult(intent,100);
+                if (userModel!=null){
+                    Intent intent = new Intent(this, AddOrderTextActivity.class);
+                    intent.putExtra("data",placeModel);
+                    startActivityForResult(intent,100);
+                }else {
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.putExtra("from", false);
+                    startActivity(intent);
+                }
+
 
             }
         });

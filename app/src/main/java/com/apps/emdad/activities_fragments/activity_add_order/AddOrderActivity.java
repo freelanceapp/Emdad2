@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -17,24 +18,31 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_package_map.PackageMapActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
 import com.apps.emdad.adapters.ChatBotAdapter;
 import com.apps.emdad.databinding.ActivityAddOrderBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.AddOrderTextModel;
 import com.apps.emdad.models.ChatBotModel;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
+import com.apps.emdad.tags.Tags;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +51,9 @@ import java.util.List;
 import java.util.Locale;
 
 import io.paperdb.Paper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddOrderActivity extends AppCompatActivity {
     private ActivityAddOrderBinding binding;
@@ -57,7 +68,7 @@ public class AddOrderActivity extends AppCompatActivity {
     private int share_location_pos = -1;
     private int coupon_pos = -1;
     private boolean mapLocation = false;
-
+    private AddOrderTextModel addOrderTextModel;
     private FavoriteLocationModel fromLocation, toLocation;
     private boolean isPackageOrder = false;
     private Preferences preferences;
@@ -101,7 +112,7 @@ public class AddOrderActivity extends AppCompatActivity {
         binding.tvTime.setText(time);
         String am_pm = time.substring(time.length() - 2);
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ChatBotAdapter(this, chatBotModelList, userModel.getUser().getName(), "", am_pm.toLowerCase());
+        adapter = new ChatBotAdapter(this, chatBotModelList, userModel.getUser().getName(),userModel.getUser().getLogo(), am_pm.toLowerCase());
         binding.recView.setAdapter(adapter);
         startChat();
 
@@ -141,6 +152,7 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     private void startChat()
     {
+
         shopListPos =-1;
         write_order_details_pos = -1;
         order_details_pos = -1;
@@ -153,6 +165,8 @@ public class AddOrderActivity extends AppCompatActivity {
         binding.edtDetails.setText(null);
         chatBotModelList.clear();
         adapter.notifyDataSetChanged();
+        addOrderTextModel = null;
+        addOrderTextModel = new AddOrderTextModel();
 
         ChatBotModel chatBotModel = createInstance(ChatBotAdapter.empty);
         chatBotModelList.add(chatBotModel);
@@ -264,6 +278,7 @@ public class AddOrderActivity extends AppCompatActivity {
 
                 } else {
                     chatBotModel2 = createInstance(ChatBotAdapter.share_location);
+                    addOrderTextModel.setOrder_type("tard_emdad");
 
 
                 }
@@ -295,6 +310,7 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     private void addOrderDetails(String details)
     {
+        addOrderTextModel.setOrder_text(details);
         Common.CloseKeyBoard(this, binding.edtDetails);
         closeSheet();
 
@@ -383,6 +399,7 @@ public class AddOrderActivity extends AppCompatActivity {
     {
         this.coupon_pos = adapterPosition;
         if (coupon.equals(getString(R.string.don_t_have_coupon))) {
+            addOrderTextModel.setCoupon_id("0");
             updateCouponAction(coupon);
         }
         else {
@@ -423,6 +440,8 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     public void payment(int adapterPosition)
     {
+
+        addOrderTextModel.setPayment("cash");
         ChatBotModel chatBotModel = chatBotModelList.get(adapterPosition);
         chatBotModel.setEnabled(false);
         chatBotModelList.set(adapterPosition, chatBotModel);
@@ -501,6 +520,61 @@ public class AddOrderActivity extends AppCompatActivity {
         }, 1000);
 
     }
+    public void submitOrder() {
+
+
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url)
+                .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),"0",addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),"1",addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
+                .enqueue(new Callback<OrderModel>() {
+                    @Override
+                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()&&response.body()!=null)
+                        {
+                            Toast.makeText(AddOrderActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
+                            AddOrderActivity.super.onBackPressed();
+                        }else
+                        {
+                            if (response.code()==500)
+                            {
+                                Toast.makeText(AddOrderActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            } else
+                            {
+                                Toast.makeText(AddOrderActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+
+                            try {
+                                Log.e("error",response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("msg_category_error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(AddOrderActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(AddOrderActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.e("Error",e.getMessage()+"__");
+                        }
+                    }
+                });
+    }
+
     private void navigateToPackageMapActivity(int req)
     {
         Intent intent = new Intent(this, PackageMapActivity.class);
@@ -508,7 +582,6 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     private void navigateToMapSearch(int req)
     {
-        Log.e("req",req+"__");
         Intent intent = new Intent(this, MapSearchActivity.class);
         startActivityForResult(intent, req);
     }
@@ -519,6 +592,21 @@ public class AddOrderActivity extends AppCompatActivity {
         if (requestCode == 100 && resultCode == RESULT_OK && data != null)
         {
             NearbyModel.Result result = (NearbyModel.Result) data.getSerializableExtra("data");
+            addOrderTextModel.setPlace_id(result.getPlace_id());
+            if (result.getCustomPlaceModel()!=null){
+                addOrderTextModel.setOrder_type("emdad_market");
+                addOrderTextModel.setMarket_id(result.getCustomPlaceModel().getId());
+            }else {
+                addOrderTextModel.setOrder_type("google_market");
+                addOrderTextModel.setMarket_id(0);
+
+            }
+            addOrderTextModel.setPlace_name(result.getName());
+            addOrderTextModel.setPlace_address(result.getVicinity());
+            addOrderTextModel.setPlace_lat(result.getGeometry().getLocation().getLat());
+            addOrderTextModel.setPlace_lng(result.getGeometry().getLocation().getLng());
+
+
             updateSelectedShopUI(result);
 
         } else if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
@@ -531,11 +619,22 @@ public class AddOrderActivity extends AppCompatActivity {
 
             ChatBotModel chatBotModel2;
             if (mapLocation){
+                addOrderTextModel.setTo_address(favoriteLocationModel.getAddress());
+                addOrderTextModel.setTo_lat(favoriteLocationModel.getLat());
+                addOrderTextModel.setTo_lng(favoriteLocationModel.getLng());
+
                 chatBotModel2 = createInstance(ChatBotAdapter.drop_location_details);
                 chatBotModel2.setTo_address(favoriteLocationModel.getAddress());
                 chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
                 chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
             }else {
+
+
+                addOrderTextModel.setTo_address(favoriteLocationModel.getAddress());
+                addOrderTextModel.setTo_lat(favoriteLocationModel.getLat());
+                addOrderTextModel.setTo_lng(favoriteLocationModel.getLng());
+
+
                 chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
                 chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
                 chatBotModel2.setFrom_lat(favoriteLocationModel.getLat());
@@ -593,6 +692,20 @@ public class AddOrderActivity extends AppCompatActivity {
             fromLocation = (FavoriteLocationModel) data.getSerializableExtra("data1");
             toLocation = (FavoriteLocationModel) data.getSerializableExtra("data2");
 
+
+            addOrderTextModel.setPlace_id("0");
+            addOrderTextModel.setMarket_id(0);
+            addOrderTextModel.setPlace_name("");
+            addOrderTextModel.setPlace_address(fromLocation.getAddress());
+            addOrderTextModel.setPlace_lat(fromLocation.getLat());
+            addOrderTextModel.setPlace_lng(fromLocation.getLng());
+
+            addOrderTextModel.setTo_address(toLocation.getAddress());
+            addOrderTextModel.setTo_lat(toLocation.getLat());
+            addOrderTextModel.setTo_lng(toLocation.getLng());
+
+
+
             ChatBotModel chatBotModel1 = chatBotModelList.get(share_location_pos);
             chatBotModel1.setEnabled(false);
             chatBotModelList.set(share_location_pos, chatBotModel1);
@@ -631,10 +744,20 @@ public class AddOrderActivity extends AppCompatActivity {
 
                     }, 1000);
         }else if (requestCode == 400 && resultCode == RESULT_OK && data != null) {
-           updateCouponAction("تم حصولك على خصم 10%");
+           addOrderTextModel.setCoupon_id("0");
+            updateCouponAction("تم حصولك على خصم 10%");
+
         }else if (requestCode==500 && resultCode==RESULT_OK && data!=null){
             mapLocation = true;
+
             FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
+
+            addOrderTextModel.setPlace_id("0");
+            addOrderTextModel.setPlace_name("");
+            addOrderTextModel.setPlace_address(favoriteLocationModel.getAddress());
+            addOrderTextModel.setPlace_lat(favoriteLocationModel.getLat());
+            addOrderTextModel.setPlace_lng(favoriteLocationModel.getLng());
+
             ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
             chatBotModel1.setEnabled(false);
             chatBotModelList.set(shopListPos, chatBotModel1);
@@ -781,6 +904,7 @@ public class AddOrderActivity extends AppCompatActivity {
         }
 
     }
+
 
 
 }

@@ -234,10 +234,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             NewOrderHolder newOrderHolder = (NewOrderHolder) holder;
             newOrderHolder.binding.tvNewOrder.setText(chatBotModel.getText());
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(newOrderHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(newOrderHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(newOrderHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(newOrderHolder.binding.image);
 
             }
 
@@ -282,10 +282,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             StoreDetailsHolder storeDetailsHolder = (StoreDetailsHolder) holder;
             storeDetailsHolder.binding.tvStoreDetails.setText(chatBotModel.getText());
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(storeDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(storeDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(storeDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(storeDetailsHolder.binding.image);
 
             }
 
@@ -299,10 +299,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             placeDetailsHolder.binding.tvRate.setText(String.valueOf(chatBotModel.getRate()));
 
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(placeDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(placeDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(placeDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(placeDetailsHolder.binding.image);
 
             }
 
@@ -331,10 +331,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             orderDetailsHolder.binding.tvDetails.setText(chatBotModel.getText());
             orderDetailsHolder.binding.setLang(lang);
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(orderDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(orderDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(orderDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(orderDetailsHolder.binding.image);
 
             }
             orderDetailsHolder.binding.llChange.setOnClickListener(v -> {
@@ -375,10 +375,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             DropLocationDetailsHolder dropLocationDetailsHolder = (DropLocationDetailsHolder) holder;
             dropLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getTo_address());
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(dropLocationDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(dropLocationDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(dropLocationDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(dropLocationDetailsHolder.binding.image);
 
             }
 
@@ -389,10 +389,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             pickUpLocationDetailsHolder.binding.tvAddress.setText(chatBotModel.getFrom_address());
 
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(pickUpLocationDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(pickUpLocationDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(pickUpLocationDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(pickUpLocationDetailsHolder.binding.image);
 
             }
 
@@ -406,10 +406,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             DropLocationPackageDetailsHolder dropLocationPackageDetailsHolder = (DropLocationPackageDetailsHolder) holder;
             dropLocationPackageDetailsHolder.binding.tvDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",chatBotModel.getDistance(),context.getString(R.string.km)));
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(dropLocationPackageDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(dropLocationPackageDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(dropLocationPackageDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(dropLocationPackageDetailsHolder.binding.image);
 
             }
 
@@ -459,10 +459,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             couponDetailsHolder.binding.tvCoupon.setText(chatBotModel.getText());
 
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(couponDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(couponDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(couponDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(couponDetailsHolder.binding.image);
 
             }
         }
@@ -487,10 +487,10 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             paymentDetailsHolder.binding.tvCoupon.setText(chatBotModel.getText());
 
             if (user_image==null){
-                Picasso.get().load(R.drawable.image_avatar).fit().into(paymentDetailsHolder.binding.image);
+                Picasso.get().load(R.drawable.image_avatar).fit().placeholder(R.drawable.image_avatar).into(paymentDetailsHolder.binding.image);
 
             }else {
-                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().into(paymentDetailsHolder.binding.image);
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL+user_image)).fit().placeholder(R.drawable.image_avatar).into(paymentDetailsHolder.binding.image);
 
             }
         }
@@ -498,6 +498,9 @@ public class ChatBotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             FinishHolder finishHolder = (FinishHolder) holder;
             finishHolder.binding.tvCancel.setOnClickListener(v -> {
                 activity.cancelOrder();
+            });
+            finishHolder.binding.tvSubmit.setOnClickListener(v -> {
+                activity.submitOrder();
             });
         }
         else if (holder instanceof TypingHolder){

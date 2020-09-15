@@ -255,5 +255,6 @@
     <string name="day1">1 يوم</string>
     <string name="day2">2 أيام</string>
     <string name="day3">3 أيام</string>
+    <string name="success">تم بنجاح</string>
 
 </resources>
