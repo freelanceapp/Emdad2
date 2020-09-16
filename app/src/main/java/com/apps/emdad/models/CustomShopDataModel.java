@@ -5,6 +5,7 @@ import java.util.List;
 
 public class CustomShopDataModel implements Serializable {
     private String shop_id;
+    private int market_id;
     private String shop_name;
     private String shop_address;
     private double shop_lat;
@@ -20,8 +21,9 @@ public class CustomShopDataModel implements Serializable {
     private List<HourModel> hourModelList;
     private List<CustomPlaceModel.Days> days;
 
-    public CustomShopDataModel(String shop_id, String shop_name, String shop_address, double shop_lat, double shop_lng, String max_offer_value, boolean isOpen, String comments_count, String rate, String place_type, CustomPlaceModel.DeliveryOffer deliveryOffer, List<HourModel> hourModelList, List<CustomPlaceModel.Days> days) {
+    public CustomShopDataModel(String shop_id,int market_id ,String shop_name, String shop_address, double shop_lat, double shop_lng, String max_offer_value, boolean isOpen, String comments_count, String rate, String place_type, CustomPlaceModel.DeliveryOffer deliveryOffer, List<HourModel> hourModelList, List<CustomPlaceModel.Days> days) {
         this.shop_id = shop_id;
+        this.market_id = market_id;
         this.shop_name = shop_name;
         this.shop_address = shop_address;
         this.shop_lat = shop_lat;
@@ -39,6 +41,10 @@ public class CustomShopDataModel implements Serializable {
 
     public String getShop_id() {
         return shop_id;
+    }
+
+    public void setShop_id(String shop_id) {
+        this.shop_id = shop_id;
     }
 
     public String getShop_name() {
@@ -107,5 +113,9 @@ public class CustomShopDataModel implements Serializable {
 
     public void setHourModelList(List<HourModel> hourModelList) {
         this.hourModelList = hourModelList;
+    }
+
+    public int getMarket_id() {
+        return market_id;
     }
 }

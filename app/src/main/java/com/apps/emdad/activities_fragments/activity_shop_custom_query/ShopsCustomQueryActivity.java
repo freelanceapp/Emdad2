@@ -369,7 +369,7 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
             if (placeModel.getDelivery_offer()!=null){
                 max_Offer_value = placeModel.getDelivery_offer().getLess_value();
             }
-            CustomShopDataModel customShopDataModel = new CustomShopDataModel(String.valueOf(placeModel.getId()),placeModel.getName(),placeModel.getAddress(),Double.parseDouble(placeModel.getLatitude()),Double.parseDouble(placeModel.getLongitude()),max_Offer_value,isOpen(placeModel),placeModel.getComments_count(),placeModel.getRating(),"custom",placeModel.getDelivery_offer(),null,placeModel.getDays());
+            CustomShopDataModel customShopDataModel = new CustomShopDataModel(placeModel.getGoogle_place_id(),placeModel.getId(),placeModel.getName(),placeModel.getAddress(),Double.parseDouble(placeModel.getLatitude()),Double.parseDouble(placeModel.getLongitude()),max_Offer_value,isOpen(placeModel),placeModel.getComments_count(),placeModel.getRating(),"custom",placeModel.getDelivery_offer(),null,placeModel.getDays());
 
             Intent intent = new Intent(this, ShopProductActivity.class);
             intent.putExtra("data",customShopDataModel);

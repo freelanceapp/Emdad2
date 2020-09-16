@@ -876,7 +876,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                         days = placeModel.getCustomPlaceModel().getDays();
                     }
 
-                    CustomShopDataModel customShopDataModel = new CustomShopDataModel(String.valueOf(placeModel.getCustomPlaceModel().getId()),placeModel.getName(),placeModel.getVicinity(),placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng(),max_Offer_value,placeModel.isOpen(),comment_count,String.valueOf(placeModel.getRating()),"custom",deliveryOffer,getHours(placeModel),days);
+                    CustomShopDataModel customShopDataModel = new CustomShopDataModel(placeModel.getPlace_id(),placeModel.getCustomPlaceModel().getId(),placeModel.getName(),placeModel.getVicinity(),placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng(),max_Offer_value,placeModel.isOpen(),comment_count,String.valueOf(placeModel.getRating()),"custom",deliveryOffer,getHours(placeModel),days);
                     Intent intent = new Intent(this, ShopProductActivity.class);
                     intent.putExtra("data",customShopDataModel);
                     startActivity(intent);

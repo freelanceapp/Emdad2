@@ -20,6 +20,7 @@ public class AddOrderTextModel implements Serializable {
     private String order_text;
     private String order_type;
     private String coupon_id;
+    private int time;
     private List<String> images = new ArrayList<>();
 
     public int getUser_id() {
@@ -148,5 +149,13 @@ public class AddOrderTextModel implements Serializable {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 }

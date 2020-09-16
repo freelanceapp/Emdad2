@@ -7,6 +7,7 @@ import java.util.List;
 public class AddOrderProductsModel implements Serializable {
     private int user_id;
     private String shop_id;
+    private int market_id;
     private String shop_name;
     private String shop_icon;
     private String shop_address;
@@ -26,6 +27,14 @@ public class AddOrderProductsModel implements Serializable {
 
     public void setShop_id(String shop_id) {
         this.shop_id = shop_id;
+    }
+
+    public int getMarket_id() {
+        return market_id;
+    }
+
+    public void setMarket_id(int market_id) {
+        this.market_id = market_id;
     }
 
     public int getUser_id() {

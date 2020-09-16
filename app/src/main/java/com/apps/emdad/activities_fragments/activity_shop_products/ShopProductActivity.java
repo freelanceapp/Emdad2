@@ -79,7 +79,6 @@ public class ShopProductActivity extends AppCompatActivity {
     private List<AdditionModel> selectedAdditionList;
 
 
-
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -117,7 +116,7 @@ public class ShopProductActivity extends AppCompatActivity {
         daysModelList = new ArrayList<>();
         hourModelList = new ArrayList<>();
 
-         currency = getString(R.string.sar);
+        currency = getString(R.string.sar);
         if (userModel != null) {
             currency = userModel.getUser().getCountry().getWord().getCurrency();
         }
@@ -133,16 +132,16 @@ public class ShopProductActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager manager = (LinearLayoutManager) binding.recView.getLayoutManager();
 
-                if (!clicked){
+                if (!clicked) {
                     int pos = manager.findFirstVisibleItemPosition();
 
-                    if (categoryAdapter!=null){
+                    if (categoryAdapter != null) {
                         categoryAdapter.setSelectedPos(pos);
                         binding.recViewDepartment.scrollToPosition(pos);
                     }
                 }
 
-                clicked  =false;
+                clicked = false;
 
 
             }
@@ -150,11 +149,11 @@ public class ShopProductActivity extends AppCompatActivity {
         binding.appBar.addOnOffsetChangedListener((AppBarLayout.BaseOnOffsetChangedListener) (appBarLayout, verticalOffset) -> {
             int total = appBarLayout.getTotalScrollRange() + verticalOffset;
             if (total == 0) {
-                if (placeModel.getShopDepartmentsList()!=null&&placeModel.getShopDepartmentsList().size()>0){
+                if (placeModel.getShopDepartmentsList() != null && placeModel.getShopDepartmentsList().size() > 0) {
                     binding.recViewDepartment.setVisibility(View.VISIBLE);
                     binding.tvMenu.setVisibility(View.INVISIBLE);
 
-                }else {
+                } else {
                     binding.recViewDepartment.setVisibility(View.INVISIBLE);
                     binding.tvMenu.setVisibility(View.VISIBLE);
 
@@ -183,7 +182,6 @@ public class ShopProductActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.work_hour_not_aval, Toast.LENGTH_SHORT).show();
                 }
             }
-
 
 
         });
@@ -227,46 +225,46 @@ public class ShopProductActivity extends AppCompatActivity {
             count++;
             this.selectedProduct.setCount(count);
             binding.tvCount.setText(String.valueOf(count));
-            double total = getTotalItemCost(selectedProduct)*count;
+            double total = getTotalItemCost(selectedProduct) * count;
             this.selectedProduct.setTotal_cost(total);
-            binding.tvTotalCost.setText(String.format("%s %s", total,currency));
+            binding.tvTotalCost.setText(String.format("%s %s", total, currency));
 
         });
 
         binding.tvDecrease.setOnClickListener(v -> {
-            if (count>1){
+            if (count > 1) {
                 count--;
                 this.selectedProduct.setCount(count);
                 binding.tvCount.setText(String.valueOf(count));
-                double total = getTotalItemCost(selectedProduct)*count;
+                double total = getTotalItemCost(selectedProduct) * count;
                 this.selectedProduct.setTotal_cost(total);
 
-                binding.tvTotalCost.setText(String.format("%s %s", total,currency));
+                binding.tvTotalCost.setText(String.format("%s %s", total, currency));
             }
 
         });
 
         binding.btnAddProduct.setOnClickListener(v -> {
-            Log.e("id",selectedProduct.getId()+"_");
+            Log.e("id", selectedProduct.getId() + "_");
             ShopDepartments departments = shopDepartmentsList.get(parentPos);
             departments.setCount(count);
             selectedProduct.setCount(count);
-            departments.getProducts_list().set(childPos,selectedProduct);
-            shopDepartmentsList.set(parentPos,departments);
+            departments.getProducts_list().set(childPos, selectedProduct);
+            shopDepartmentsList.set(parentPos, departments);
             productSectionAdapter.notifyItemChanged(parentPos);
             List<ProductModel> productModelList = addOrderProductsModel.getProductModelList();
 
-            if (productModelList.size()>0){
+            if (productModelList.size() > 0) {
 
-                int pos = isSelectedProductListHasItem(productModelList,selectedProduct);
+                int pos = isSelectedProductListHasItem(productModelList, selectedProduct);
                 selectedProduct.setTotal_cost(getTotalItemCost(selectedProduct));
-                if (pos!=-1){
-                    productModelList.set(pos,selectedProduct);
-                }else {
+                if (pos != -1) {
+                    productModelList.set(pos, selectedProduct);
+                } else {
                     productModelList.add(selectedProduct);
                 }
 
-            }else {
+            } else {
                 selectedProduct.setTotal_cost(getTotalItemCost(selectedProduct));
                 productModelList.add(selectedProduct);
 
@@ -277,36 +275,36 @@ public class ShopProductActivity extends AppCompatActivity {
             updateTotalUi();
             closeSheet();
             count = 1;
-            childPos=-1;
+            childPos = -1;
             parentPos = -1;
             selectedProduct = null;
 
         });
         binding.flChooseFromMenu.setOnClickListener(v -> {
-            if (userModel!=null){
-                if (canSend){
-                   addOrderProductsModel.setUser_id(userModel.getUser().getId());
-                   addOrderProductsModel.setShop_id(placeModel.getShop_id());
-                   addOrderProductsModel.setShop_name(placeModel.getShop_name());
-                   addOrderProductsModel.setShop_address(placeModel.getShop_address());
-                   addOrderProductsModel.setShop_lat(placeModel.getShop_lat());
-                   addOrderProductsModel.setShop_lng(placeModel.getShop_lng());
+            if (userModel != null) {
+                if (canSend) {
+                    addOrderProductsModel.setUser_id(userModel.getUser().getId());
+                    addOrderProductsModel.setShop_id(placeModel.getShop_id());
+                    addOrderProductsModel.setMarket_id(placeModel.getMarket_id());
+                    addOrderProductsModel.setShop_name(placeModel.getShop_name());
+                    addOrderProductsModel.setShop_address(placeModel.getShop_address());
+                    addOrderProductsModel.setShop_lat(placeModel.getShop_lat());
+                    addOrderProductsModel.setShop_lng(placeModel.getShop_lng());
 
                     Intent intent = new Intent(this, AddOrderProductActivity.class);
-                    intent.putExtra("data",addOrderProductsModel);
+                    intent.putExtra("data", addOrderProductsModel);
                     startActivity(intent);
                 }
-            }else {
+            } else {
                 Intent intent = new Intent(this, LoginActivity.class);
-                intent.putExtra("from",false);
+                intent.putExtra("from", false);
                 startActivity(intent);
             }
         });
 
         if (placeModel.getPlace_type().equals("custom")) {
             updateUI();
-        }
-        else {
+        } else {
             getPlaceDetails();
         }
 
@@ -315,8 +313,7 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
 
-    private void updateUI()
-    {
+    private void updateUI() {
         if (placeModel.getDays() != null && placeModel.getDays().size() > 0) {
             binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.gray11));
             binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.gray11));
@@ -325,27 +322,19 @@ public class ShopProductActivity extends AppCompatActivity {
             binding.tvHours.setText(String.format("%s%s%s", daysModelList.get(0).getFrom_time(), "-", daysModelList.get(0).getTo_time()));
 
 
-
         } else {
-            if (placeModel.getHourModelList()!=null&&placeModel.getHourModelList().size()>0){
+            if (placeModel.getHourModelList() != null && placeModel.getHourModelList().size() > 0) {
                 binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.gray11));
                 binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.gray11));
                 hourModelList.clear();
                 hourModelList.addAll(placeModel.getHourModelList());
                 binding.tvHours.setText(hourModelList.get(0).getTime());
 
-            }else {
+            } else {
                 binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.color_rose));
                 binding.icon.setColorFilter(ContextCompat.getColor(this, R.color.color_rose));
 
             }
-
-
-
-
-
-
-
 
 
         }
@@ -357,19 +346,19 @@ public class ShopProductActivity extends AppCompatActivity {
 
 
     }
-    private void updateTotalUi()
-    {
+
+    private void updateTotalUi() {
 
         addOrderProductsModel.setTotal_cost(totalOrderCost);
-        binding.tvPrice.setText(String.format("%s %s %s",getString(R.string.cost_with_tax),totalOrderCost,currency));
+        binding.tvPrice.setText(String.format("%s %s %s", getString(R.string.cost_with_tax), totalOrderCost, currency));
 
-        if (addOrderProductsModel!=null&&addOrderProductsModel.getProductModelList()!=null&&addOrderProductsModel.getProductModelList().size()>0){
+        if (addOrderProductsModel != null && addOrderProductsModel.getProductModelList() != null && addOrderProductsModel.getProductModelList().size() > 0) {
             canSend = true;
             binding.iconHand.setVisibility(View.GONE);
             binding.tvChooseFromMenu.setText(R.string.complete_order);
             binding.flChooseFromMenu.setBackgroundResource(R.color.colorPrimary);
             binding.tvPrice.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             canSend = false;
 
             binding.iconHand.setVisibility(View.VISIBLE);
@@ -378,16 +367,16 @@ public class ShopProductActivity extends AppCompatActivity {
             binding.tvPrice.setVisibility(View.GONE);
         }
     }
-    private void getDepartments()
-    {
-        Api.getService(Tags.base_url).getShopDepartmentProduct(placeModel.getShop_id()).enqueue(new Callback<ShopDepartmentDataModel>() {
+
+    private void getDepartments() {
+        Api.getService(Tags.base_url).getShopDepartmentProduct(String.valueOf(placeModel.getMarket_id())).enqueue(new Callback<ShopDepartmentDataModel>() {
             @Override
             public void onResponse(Call<ShopDepartmentDataModel> call, Response<ShopDepartmentDataModel> response) {
                 binding.progBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
-                    Log.e("data",response.body().getData().size()+"__");
+                    Log.e("data", response.body().getData().size() + "__");
 
-                    if (response.body()!=null&&response.body().getData()!=null&&response.body().getData().size()>0){
+                    if (response.body() != null && response.body().getData() != null && response.body().getData().size() > 0) {
                         updateDepartmentsUi(response.body().getData());
 
                     }
@@ -407,7 +396,6 @@ public class ShopProductActivity extends AppCompatActivity {
             public void onFailure(Call<ShopDepartmentDataModel> call, Throwable t) {
 
 
-
                 try {
                     binding.progBar.setVisibility(View.GONE);
 
@@ -417,8 +405,8 @@ public class ShopProductActivity extends AppCompatActivity {
 
                         if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
                             Toast.makeText(ShopProductActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                        }else if (t.getMessage().toLowerCase().contains("socket")||t.getMessage().toLowerCase().contains("canceled")){}
-                        else {
+                        } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                        } else {
                             Toast.makeText(ShopProductActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -431,26 +419,26 @@ public class ShopProductActivity extends AppCompatActivity {
         });
 
     }
-    private void updateDepartmentsUi(List<ShopDepartments> data)
-    {
+
+    private void updateDepartmentsUi(List<ShopDepartments> data) {
         shopDepartmentsList.clear();
         shopDepartmentsList.addAll(data);
         placeModel.setShopDepartmentsList(data);
         binding.setModel(placeModel);
-        categoryAdapter = new ProductCategoryAdapter(this,data);
-        binding.recViewDepartment.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        categoryAdapter = new ProductCategoryAdapter(this, data);
+        binding.recViewDepartment.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.recViewDepartment.setAdapter(categoryAdapter);
         binding.recView.scrollToPosition(0);
         ////////////////////////////////////////
 
         binding.recView.setNestedScrollingEnabled(true);
-        productSectionAdapter = new ProductSectionAdapter(this,currency,shopDepartmentsList);
+        productSectionAdapter = new ProductSectionAdapter(this, currency, shopDepartmentsList);
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(productSectionAdapter);
 
     }
-    private void getPlaceDetails()
-    {
+
+    private void getPlaceDetails() {
 
         String fields = "opening_hours,photos,reviews";
 
@@ -459,7 +447,7 @@ public class ShopProductActivity extends AppCompatActivity {
                 .enqueue(new Callback<PlaceDetailsModel>() {
                     @Override
                     public void onResponse(Call<PlaceDetailsModel> call, Response<PlaceDetailsModel> response) {
-                        if (response.isSuccessful() && response.body() != null&&response.body().getResult()!=null&&response.body().getResult().getOpening_hours()!=null&&response.body().getResult().getOpening_hours().getWeekday_text()!=null) {
+                        if (response.isSuccessful() && response.body() != null && response.body().getResult() != null && response.body().getResult().getOpening_hours() != null && response.body().getResult().getOpening_hours().getWeekday_text() != null) {
                             placeModel.setHourModelList(getHours(response.body()));
                             updateUI();
                         } else {
@@ -486,30 +474,27 @@ public class ShopProductActivity extends AppCompatActivity {
                     }
                 });
     }
-    private List<HourModel> getHours(PlaceDetailsModel placeDetailsModel)
-    {
+
+    private List<HourModel> getHours(PlaceDetailsModel placeDetailsModel) {
         List<HourModel> list = new ArrayList<>();
 
-        if (placeDetailsModel!=null&&placeDetailsModel.getResult()!=null&&placeDetailsModel.getResult().getOpening_hours()!=null&&placeDetailsModel.getResult().getOpening_hours().getWeekday_text()!=null&&placeDetailsModel.getResult().getOpening_hours().getWeekday_text().size()>0) {
+        if (placeDetailsModel != null && placeDetailsModel.getResult() != null && placeDetailsModel.getResult().getOpening_hours() != null && placeDetailsModel.getResult().getOpening_hours().getWeekday_text() != null && placeDetailsModel.getResult().getOpening_hours().getWeekday_text().size() > 0) {
 
-            for (String time: placeDetailsModel.getResult().getOpening_hours().getWeekday_text()){
+            for (String time : placeDetailsModel.getResult().getOpening_hours().getWeekday_text()) {
 
                 String day = time.split(":", 2)[0].trim();
-                String t = time.split(":",2)[1].trim();
-                HourModel hourModel = new HourModel(day,t);
+                String t = time.split(":", 2)[1].trim();
+                HourModel hourModel = new HourModel(day, t);
                 list.add(hourModel);
-        }
-
-
-
+            }
 
 
         }
 
         return list;
     }
-    private void createDialogAlertHours()
-    {
+
+    private void createDialogAlertHours() {
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .create();
         DialogHoursBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_hours, null, false);
@@ -525,8 +510,8 @@ public class ShopProductActivity extends AppCompatActivity {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-    private void createDialogAlertDays()
-    {
+
+    private void createDialogAlertDays() {
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .create();
         DialogHoursBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_hours, null, false);
@@ -542,13 +527,13 @@ public class ShopProductActivity extends AppCompatActivity {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-    public void setSelectedDepartmentPosition(int adapterPosition)
-    {
+
+    public void setSelectedDepartmentPosition(int adapterPosition) {
         clicked = true;
         binding.recView.scrollToPosition(adapterPosition);
     }
-    public void setProductData(ProductModel model, int adapterPosition, int parentPos)
-    {
+
+    public void setProductData(ProductModel model, int adapterPosition, int parentPos) {
 
         this.selectedProduct = model;
         this.childPos = adapterPosition;
@@ -556,7 +541,7 @@ public class ShopProductActivity extends AppCompatActivity {
         count = 1;
         selectedAdditionList = new ArrayList<>();
         binding.tvCount.setText(String.valueOf(count));
-        Picasso.get().load(Uri.parse(Tags.IMAGE_URL+model.getImage())).into(binding.image, new com.squareup.picasso.Callback() {
+        Picasso.get().load(Uri.parse(Tags.IMAGE_URL + model.getImage())).into(binding.image, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
                 binding.flNoImage.setVisibility(View.GONE);
@@ -569,55 +554,50 @@ public class ShopProductActivity extends AppCompatActivity {
             }
         });
         binding.setProductModel(model);
-        AdditionProductAdapter additionProductAdapter = new AdditionProductAdapter(this,model.getAddtions(),currency);
+        AdditionProductAdapter additionProductAdapter = new AdditionProductAdapter(this, model.getAddtions(), currency);
         binding.recViewAddition.setLayoutManager(new LinearLayoutManager(this));
         binding.recViewAddition.setAdapter(additionProductAdapter);
         openSheet();
     }
-    public void setAdditionItem(AdditionModel additionModel, int pos, boolean isSelected)
-    {
-        if (isSelected){
+
+    public void setAdditionItem(AdditionModel additionModel, int pos, boolean isSelected) {
+        if (isSelected) {
 
             selectedAdditionList.add(additionModel);
-        }else {
+        } else {
             selectedAdditionList.remove(pos);
-
 
 
         }
         selectedProduct.setSelectedAdditions(selectedAdditionList);
-        double total = getTotalItemCost(selectedProduct)*count;
-        binding.tvTotalCost.setText(String.format("%s %s", total,currency));
+        double total = getTotalItemCost(selectedProduct) * count;
+        binding.tvTotalCost.setText(String.format("%s %s", total, currency));
 
     }
-    public void deleteSelectedItem(int parentPos, int childPos, ProductModel model)
-    {
+
+    public void deleteSelectedItem(int parentPos, int childPos, ProductModel model) {
 
         List<ProductModel> productModelList = addOrderProductsModel.getProductModelList();
         ShopDepartments departments = shopDepartmentsList.get(parentPos);
         model.setCount(0);
-        departments.getProducts_list().set(childPos,model);
+        departments.getProducts_list().set(childPos, model);
         departments.setCount(0);
-        shopDepartmentsList.set(parentPos,departments);
+        shopDepartmentsList.set(parentPos, departments);
         productSectionAdapter.notifyItemChanged(parentPos);
 
-        int pos = isSelectedProductListHasItem(productModelList,model);
-        if (pos!=-1){
+        int pos = isSelectedProductListHasItem(productModelList, model);
+        if (pos != -1) {
             productModelList.remove(pos);
             addOrderProductsModel.setProductModelList(productModelList);
             totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
-            Log.e("total_order_cost",totalOrderCost+"_");
+            Log.e("total_order_cost", totalOrderCost + "_");
         }
         updateTotalUi();
 
 
-
-
-
-
     }
-    private void openSheet()
-    {
+
+    private void openSheet() {
         binding.flSheet.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
         binding.flSheet.startAnimation(animation);
@@ -638,8 +618,8 @@ public class ShopProductActivity extends AppCompatActivity {
             }
         });
     }
-    private void closeSheet()
-    {
+
+    private void closeSheet() {
         binding.flSheet.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
         binding.flSheet.startAnimation(animation);
@@ -660,11 +640,12 @@ public class ShopProductActivity extends AppCompatActivity {
             }
         });
     }
-    private int isSelectedProductListHasItem(List<ProductModel> productModelList,ProductModel productModel){
+
+    private int isSelectedProductListHasItem(List<ProductModel> productModelList, ProductModel productModel) {
         int pos = -1;
-        for (int index =0;index<productModelList.size();index++){
+        for (int index = 0; index < productModelList.size(); index++) {
             ProductModel productModel2 = productModelList.get(index);
-            if (productModel.getId()==productModel2.getId()){
+            if (productModel.getId() == productModel2.getId()) {
                 pos = index;
                 return pos;
             }
@@ -673,20 +654,18 @@ public class ShopProductActivity extends AppCompatActivity {
 
     }
 
-    private double getTotalOrderCost(List<ProductModel> productModelList)
-    {
-        double total=0.0;
-        for (ProductModel model:productModelList){
-            Log.e("model",model.getTitle()+"__"+model.getPrice()+"addSize"+model.getSelectedAdditions().size());
-            total +=(Double.parseDouble(model.getPrice())+getTotalCostAdditions(model.getSelectedAdditions()))*model.getCount();
+    private double getTotalOrderCost(List<ProductModel> productModelList) {
+        double total = 0.0;
+        for (ProductModel model : productModelList) {
+            total += (Double.parseDouble(model.getPrice()) + getTotalCostAdditions(model.getSelectedAdditions())) * model.getCount();
         }
 
         return total;
     }
-    private double getTotalCostAdditions(List<AdditionModel> selectedAdditionList)
-    {
+
+    private double getTotalCostAdditions(List<AdditionModel> selectedAdditionList) {
         double cost = 0.0;
-        for (AdditionModel additionModel:selectedAdditionList){
+        for (AdditionModel additionModel : selectedAdditionList) {
 
             cost += Double.parseDouble(additionModel.getPrice());
 
@@ -695,27 +674,26 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
 
-    private double getTotalItemCost(ProductModel productModel)
-    {
-        double total= (Double.parseDouble(productModel.getPrice())+getTotalItemCostAdditions(productModel));
-        Log.e("total",total+"__");
+    private double getTotalItemCost(ProductModel productModel) {
+        double total = (Double.parseDouble(productModel.getPrice()) + getTotalItemCostAdditions(productModel));
+        Log.e("total", total + "__");
         return total;
     }
-    private double getTotalItemCostAdditions(ProductModel productModel)
-    {
+
+    private double getTotalItemCostAdditions(ProductModel productModel) {
         double cost = 0.0;
-        for (AdditionModel additionModel:productModel.getSelectedAdditions()){
+        for (AdditionModel additionModel : productModel.getSelectedAdditions()) {
             cost += Double.parseDouble(additionModel.getPrice());
-            Log.e("cost",cost+"__");
+            Log.e("cost", cost + "__");
         }
         return cost;
     }
 
     @Override
     public void onBackPressed() {
-        if (binding.flSheet.getVisibility()==View.VISIBLE){
+        if (binding.flSheet.getVisibility() == View.VISIBLE) {
             closeSheet();
-        }else {
+        } else {
             super.onBackPressed();
 
         }

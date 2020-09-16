@@ -31,6 +31,7 @@ import com.apps.emdad.databinding.DialogYearBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.AddOrderProductsModel;
+import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -82,6 +83,7 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
     private Preferences preferences;
     private AddOrderProductsModel addOrderProductsModel;
     private boolean canSelect = false;
+    private int time = 1;
 
 
     @Override
@@ -114,7 +116,12 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
         binding.tvTime.setText(getString(R.string.hour1));
         binding.btnConfirm.setOnClickListener(v -> {
             if (canSelect){
-
+                FavoriteLocationModel favoriteLocationModel = new FavoriteLocationModel("","",address,drop_off_lat,drop_off_lng);
+                Intent intent = getIntent();
+                intent.putExtra("data",favoriteLocationModel);
+                intent.putExtra("time",time);
+                setResult(RESULT_OK,intent);
+                finish();
             }
         });
         binding.llTime.setOnClickListener(v -> createTimeDialogAlert());
@@ -126,7 +133,6 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
 
 
     }
-
 
     private void checkPermission()
     {
@@ -153,7 +159,6 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
 
 
     }
-
 
     private void createTimeDialogAlert() {
         final AlertDialog dialog = new AlertDialog.Builder(this)
@@ -186,8 +191,8 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
 
         binding.btnOk.setOnClickListener(v ->
                 {
+                    MapDeliveryLocationActivity.this.time = binding.picker.getValue()+1;
                     dialog.dismiss();
-
                     String time = values[binding.picker.getValue()];
                     MapDeliveryLocationActivity.this.binding.tvTime.setText(time);
                 }
@@ -201,7 +206,6 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -236,10 +240,6 @@ public class MapDeliveryLocationActivity extends AppCompatActivity implements On
             });
         }
     }
-
-
-
-
 
     private void getGeoData(final double lat, double lng) {
         binding.progBar.setVisibility(View.VISIBLE);

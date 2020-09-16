@@ -266,7 +266,6 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         return Uri.parse(MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "", ""));
     }
 
-
     private void createDialogAlert() {
         final AlertDialog dialog = new AlertDialog.Builder(this)
                 .create();
@@ -459,7 +458,9 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                 });
 
     }
-    private void navigateToHomeActivity() {
+
+    private void navigateToHomeActivity()
+    {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
