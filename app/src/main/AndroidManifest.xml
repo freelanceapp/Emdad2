@@ -23,7 +23,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
-        <activity android:name=".activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity"></activity>
+        <activity android:name=".activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
         <activity
             android:name=".activities_fragments.activity_add_order_products.AddOrderProductActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -154,6 +157,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".location_service.LocationService"
+            android:enabled="true"
+            android:stopWithTask="false"
+            />
     </application>
 
 </manifest>

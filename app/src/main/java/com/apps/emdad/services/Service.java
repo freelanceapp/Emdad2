@@ -213,5 +213,14 @@ public interface Service {
                                             @Part List<MultipartBody.Part> images
 
 
-                                            );
+    );
+
+
+    @FormUrlEncoded
+    @POST("api/update-location")
+    Call<ResponseBody> updateLocation(@Header("Authorization") String user_token,
+                                      @Field("user_id") int user_id,
+                                      @Field("latitude") double latitude,
+                                      @Field("longitude") double longitude
+    );
 }

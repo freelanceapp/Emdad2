@@ -83,7 +83,7 @@ public class AddOrderTextActivity extends AppCompatActivity {
     private final String camera_permission = Manifest.permission.CAMERA;
     private final int READ_REQ = 1, CAMERA_REQ = 2;
     private List<Uri> imagesList;
-    private  AlertDialog dialog;
+    private AlertDialog dialog;
     private AddOrderImagesAdapter addOrderImagesAdapter;
     private AddOrderTextModel addOrderTextModel;
     private Preferences preferences;
@@ -103,13 +103,14 @@ public class AddOrderTextActivity extends AppCompatActivity {
         initView();
     }
 
-    private void getDataFromIntent() {
+    private void getDataFromIntent()
+    {
         Intent intent = getIntent();
         placeModel = (NearbyModel.Result) intent.getSerializableExtra("data");
 
     }
-
-    private void initView() {
+    private void initView()
+    {
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         addOrderTextModel = new AddOrderTextModel();
@@ -176,8 +177,8 @@ public class AddOrderTextActivity extends AppCompatActivity {
 
 
     }
-
-    private void updateBtnUI() {
+    private void updateBtnUI()
+    {
         if (canSend){
             binding.btnNext.setBackgroundResource(R.color.colorPrimary);
         }else {
@@ -185,10 +186,8 @@ public class AddOrderTextActivity extends AppCompatActivity {
 
         }
     }
-
-
-
-    private void sendOrderTextWithoutImage() {
+    private void sendOrderTextWithoutImage()
+    {
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
@@ -240,8 +239,8 @@ public class AddOrderTextActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void sendOrderTextWithImage() {
+    private void sendOrderTextWithImage()
+    {
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
@@ -318,14 +317,17 @@ public class AddOrderTextActivity extends AppCompatActivity {
                         }
                     }
                 });
+
     }
-
-
-    private List<MultipartBody.Part> getMultiPartImages(){
+    private List<MultipartBody.Part> getMultiPartImages()
+    {
         List<MultipartBody.Part> parts = new ArrayList<>();
         for (Uri uri :imagesList){
-            MultipartBody.Part part = Common.getMultiPart(this,uri,"images[]");
-            parts.add(part);
+            if (uri!=null){
+                MultipartBody.Part part = Common.getMultiPartImage(this,uri,"images[]");
+                parts.add(part);
+            }
+
         }
         return parts;
     }
@@ -343,17 +345,16 @@ public class AddOrderTextActivity extends AppCompatActivity {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-
-
-    public void checkReadPermission() {
+    public void checkReadPermission()
+    {
         if (ActivityCompat.checkSelfPermission(this, READ_PERM) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{READ_PERM}, READ_REQ);
         } else {
             SelectImage(READ_REQ);
         }
     }
-
-    public void checkCameraPermission() {
+    public void checkCameraPermission()
+    {
 
 
         if (ContextCompat.checkSelfPermission(this, write_permission) == PackageManager.PERMISSION_GRANTED
@@ -364,8 +365,8 @@ public class AddOrderTextActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{camera_permission, write_permission}, CAMERA_REQ);
         }
     }
-
-    private void SelectImage(int req) {
+    private void SelectImage(int req)
+    {
 
         Intent intent = new Intent();
 

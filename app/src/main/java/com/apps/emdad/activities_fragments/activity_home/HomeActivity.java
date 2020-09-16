@@ -56,6 +56,7 @@ import com.apps.emdad.databinding.ActivityHomeBinding;
 import com.apps.emdad.databinding.ActivityLoginBinding;
 import com.apps.emdad.databinding.DialogCountriesBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.location_service.LocationService;
 import com.apps.emdad.models.CountryModel;
 import com.apps.emdad.models.LoginModel;
 import com.apps.emdad.models.UserModel;
@@ -469,7 +470,10 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         } else {
 
             initGoogleApiClient();
-
+            if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
+                Intent intent = new Intent(this, LocationService.class);
+                startService(intent);
+            }
         }
     }
 
@@ -485,6 +489,10 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         if (requestCode == loc_req) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initGoogleApiClient();
+                if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
+                    Intent intent = new Intent(this, LocationService.class);
+                    startService(intent);
+                }
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
@@ -574,6 +582,10 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
         if (requestCode == 1255 && resultCode == RESULT_OK) {
             startLocationUpdate();
+            if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
+                Intent intent = new Intent(this, LocationService.class);
+                startService(intent);
+            }
         }
     }
 
@@ -598,6 +610,13 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void logout() {
         if (userModel != null) {
+
+            try {
+                if (userModel.getUser().getUser_type().equals("driver")){
+                    Intent intent = new Intent(this,LocationService.class);
+                    stopService(intent);
+                }
+            }catch (Exception e){}
 
 
             ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));

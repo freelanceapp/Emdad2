@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -215,8 +216,9 @@ public class Common {
     }
 
     public static MultipartBody.Part getMultiPartImage(Context context, Uri uri, String partName) {
-        File file = getFileFromImagePath(getImagePath(context, uri));
-        String name = System.currentTimeMillis()+file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."));
+        File file = new File(FileUtils.getPathFromUri(context,uri));
+        Log.e("path",file.getAbsolutePath()+"__");
+        String name = System.currentTimeMillis()+".jpg";
         RequestBody requestBody = getRequestBodyImage(file);
         MultipartBody.Part part = MultipartBody.Part.createFormData(partName, name, requestBody);
         return part;

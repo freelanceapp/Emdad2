@@ -95,6 +95,7 @@ public class IntroSliderActivity extends AppCompatActivity {
 
 
 
+
         binding.pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

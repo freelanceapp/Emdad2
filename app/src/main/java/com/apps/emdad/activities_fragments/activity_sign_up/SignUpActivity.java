@@ -459,8 +459,6 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                 });
 
     }
-
-
     private void navigateToHomeActivity() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
