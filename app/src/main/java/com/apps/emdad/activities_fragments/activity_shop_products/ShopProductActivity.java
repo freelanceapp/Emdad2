@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -194,14 +195,6 @@ public class ShopProductActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(intent, "Share"));
         });
 
-        binding.flChooseFromMenu.setOnClickListener(v -> {
-            if (canSend) {
-                Intent intent = new Intent(this, AddOrderTextActivity.class);
-                intent.putExtra("data", placeModel);
-                startActivityForResult(intent, 100);
-
-            }
-        });
 
         binding.consReview.setOnClickListener(v -> {
             if (userModel == null) {
@@ -293,7 +286,7 @@ public class ShopProductActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(this, AddOrderProductActivity.class);
                     intent.putExtra("data", addOrderProductsModel);
-                    startActivity(intent);
+                    startActivityForResult(intent,100);
                 }
             } else {
                 Intent intent = new Intent(this, LoginActivity.class);
@@ -687,6 +680,15 @@ public class ShopProductActivity extends AppCompatActivity {
             Log.e("cost", cost + "__");
         }
         return cost;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==100&&resultCode==RESULT_OK){
+            finish();
+
+        }
     }
 
     @Override

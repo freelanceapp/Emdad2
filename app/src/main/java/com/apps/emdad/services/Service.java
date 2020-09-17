@@ -7,10 +7,12 @@ import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.OfferSettingModel;
 import com.apps.emdad.models.OrderModel;
+import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
 import com.apps.emdad.models.ShopDepartmentDataModel;
+import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.SliderModel;
 import com.apps.emdad.models.UserModel;
 
@@ -170,47 +172,47 @@ public interface Service {
 
     @FormUrlEncoded
     @POST("api/create-order")
-    Call<OrderModel> sendTextOrder(@Header("Authorization") String user_token,
-                                   @Field("user_id") int user_id,
-                                   @Field("order_type") String order_type,
-                                   @Field("market_id") int market_id,
-                                   @Field("google_place_id") String google_place_id,
-                                   @Field("bill_cost") String bill_cost,
-                                   @Field("client_address") String client_address,
-                                   @Field("client_latitude") double client_latitude,
-                                   @Field("client_longitude") double client_longitude,
-                                   @Field("market_name") String market_name,
-                                   @Field("market_address") String market_address,
-                                   @Field("market_latitude") double market_latitude,
-                                   @Field("market_longitude") double market_longitude,
-                                   @Field("order_time_arrival") String order_time_arrival,
-                                   @Field("coupon_id") String coupon_id,
-                                   @Field("details") String details,
-                                   @Field("notes") String notes
+    Call<SingleOrderDataModel> sendTextOrder(@Header("Authorization") String user_token,
+                                             @Field("user_id") int user_id,
+                                             @Field("order_type") String order_type,
+                                             @Field("market_id") int market_id,
+                                             @Field("google_place_id") String google_place_id,
+                                             @Field("bill_cost") String bill_cost,
+                                             @Field("client_address") String client_address,
+                                             @Field("client_latitude") double client_latitude,
+                                             @Field("client_longitude") double client_longitude,
+                                             @Field("market_name") String market_name,
+                                             @Field("market_address") String market_address,
+                                             @Field("market_latitude") double market_latitude,
+                                             @Field("market_longitude") double market_longitude,
+                                             @Field("order_time_arrival") String order_time_arrival,
+                                             @Field("coupon_id") String coupon_id,
+                                             @Field("details") String details,
+                                             @Field("notes") String notes
 
 
     );
 
     @Multipart
     @POST("api/create-order")
-    Call<OrderModel> sendTextOrderWithImage(@Header("Authorization") String user_token,
-                                            @Part("user_id") RequestBody user_id,
-                                            @Part("order_type") RequestBody order_type,
-                                            @Part("market_id") RequestBody market_id,
-                                            @Part("google_place_id") RequestBody google_place_id,
-                                            @Part("bill_cost") RequestBody bill_cost,
-                                            @Part("client_address") RequestBody client_address,
-                                            @Part("client_latitude") RequestBody client_latitude,
-                                            @Part("client_longitude") RequestBody client_longitude,
-                                            @Part("market_name") RequestBody market_name,
-                                            @Part("market_address") RequestBody market_address,
-                                            @Part("market_latitude") RequestBody market_latitude,
-                                            @Part("market_longitude") RequestBody market_longitude,
-                                            @Part("order_time_arrival") RequestBody order_time_arrival,
-                                            @Part("coupon_id") RequestBody coupon_id,
-                                            @Part("details") RequestBody details,
-                                            @Part("notes") RequestBody notes,
-                                            @Part List<MultipartBody.Part> images
+    Call<SingleOrderDataModel> sendTextOrderWithImage(@Header("Authorization") String user_token,
+                                                      @Part("user_id") RequestBody user_id,
+                                                      @Part("order_type") RequestBody order_type,
+                                                      @Part("market_id") RequestBody market_id,
+                                                      @Part("google_place_id") RequestBody google_place_id,
+                                                      @Part("bill_cost") RequestBody bill_cost,
+                                                      @Part("client_address") RequestBody client_address,
+                                                      @Part("client_latitude") RequestBody client_latitude,
+                                                      @Part("client_longitude") RequestBody client_longitude,
+                                                      @Part("market_name") RequestBody market_name,
+                                                      @Part("market_address") RequestBody market_address,
+                                                      @Part("market_latitude") RequestBody market_latitude,
+                                                      @Part("market_longitude") RequestBody market_longitude,
+                                                      @Part("order_time_arrival") RequestBody order_time_arrival,
+                                                      @Part("coupon_id") RequestBody coupon_id,
+                                                      @Part("details") RequestBody details,
+                                                      @Part("notes") RequestBody notes,
+                                                      @Part List<MultipartBody.Part> images
 
 
     );
@@ -222,5 +224,15 @@ public interface Service {
                                       @Field("user_id") int user_id,
                                       @Field("latitude") double latitude,
                                       @Field("longitude") double longitude
+    );
+
+
+    @GET("api/get-client-orders")
+    Call<OrdersDataModel> getClientOrder(@Header("Authorization") String user_token,
+                                         @Query(value = "user_id") int user_id,
+                                         @Query(value = "type") String type,
+                                         @Query(value = "page") int page,
+                                         @Query(value = "pagination") String pagination,
+                                         @Query(value = "limit_per_page") int limit_per_page
     );
 }

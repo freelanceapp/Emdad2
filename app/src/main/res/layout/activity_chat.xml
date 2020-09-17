@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    >
+    <data>
+
+        <variable
+            name="lang"
+            type="String" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".activities_fragments.activity_choose_order_type.ChooseOrderTypeActivity"
+
+            >
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@color/white"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+                        <LinearLayout
+                            android:id="@+id/llBack"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            >
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="start|top"
+
+                                >
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:layout_width="45dp"
+                                    android:layout_height="45dp"
+                                    android:src="@color/gray1_trans"
+                                    android:layout_gravity="center"
+                                    />
+                                <ImageView
+                                    android:id="@+id/close"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:src="@drawable/ic_next"
+                                    android:padding="8dp"
+                                    android:tint="@color/color4"
+                                    android:layout_gravity="center"
+                                    android:rotation='@{lang.equals("ar")?180:0}'
+
+
+                                    />
+                            </FrameLayout>
+
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/llBack"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:textColor="@color/gray9"
+                                android:lines="1"
+                                android:textSize="15sp"
+                                android:text="ssssssssss"
+                                />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="10dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    android:textSize="9sp"
+                                    android:background="@drawable/pending_bg"
+                                    android:paddingStart="8dp"
+                                    android:paddingEnd="8dp"
+                                    android:text="@string/pending"
+                                    tools:ignore="SmallSp" />
+                                <View
+                                    android:layout_width="1px"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:background="@color/gray4"
+                                    />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/gray9"
+                                    android:lines="1"
+                                    android:text="#22222222"
+                                    />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/colorPrimary"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginTop="10dp"
+
+                        >
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+
+                            >
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_reload"
+                                android:tint="@color/white"
+                                android:padding="3sp"
+                                />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:text="@string/resend_order"
+                                />
+                        </LinearLayout>
+                    </FrameLayout>
+
+                </LinearLayout>
+
+
+
+            </androidx.appcompat.widget.Toolbar>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintBottom_toTopOf="@id/msgContent"
+                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="8dp"
+                    />
+                <ProgressBar
+                    android:id="@+id/progBar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    />
+            </FrameLayout>
+
+
+            <ImageView
+                android:id="@+id/imageRecord"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                android:src="@drawable/ic_mic"
+                android:tint="@color/white"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="false"
+                android:longClickable="false"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+
+                />
+
+            <ImageView
+                android:id="@+id/imageChooser"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_bg"
+                app:layout_constraintStart_toEndOf="@id/imageRecord"
+                app:layout_constraintTop_toTopOf="@id/imageRecord"
+                app:layout_constraintBottom_toBottomOf="@id/imageRecord"
+                android:src="@drawable/ic_camera"
+                android:tint="@color/white"
+                android:padding="10dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                />
+
+            <ImageView
+                android:id="@+id/imageSend"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/imageRecord"
+                app:layout_constraintBottom_toBottomOf="@id/imageRecord"
+                android:src="@drawable/ic_send"
+                android:tint="@color/white"
+                android:padding="10dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:rotation='@{lang.equals("ar")?180:0}'
+
+                />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/msgContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/imageRecord"
+                app:layout_constraintStart_toEndOf="@id/imageChooser"
+                app:layout_constraintEnd_toStartOf="@id/imageSend"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintBottom_toBottomOf="@id/imageRecord"
+
+                >
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:layout_gravity="center"
+
+                        >
+                        <EditText
+                            android:id="@+id/edtMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:textColor="@color/black"
+                            android:minHeight="40dp"
+                            android:hint="@string/type_a_message"
+                            android:textSize="14sp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:inputType="textMultiLine"
+                            android:maxLines="5"
+
+                            />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/recordTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        />
+
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/expandedLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/msgContent"
+                app:layout_constraintStart_toStartOf="@id/msgContent"
+                app:layout_constraintEnd_toEndOf="@id/msgContent"
+                app:el_duration="500"
+                app:el_parallax=".5"
+                app:el_expanded="false"
+                android:background="@drawable/rounded_top"
+
+                >
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="10dp"
+                            >
+
+                            <ImageView
+                                android:id="@+id/imageCamera"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/camera_bg"
+                                android:src="@drawable/ic_camera"
+                                android:padding="10dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:tint="@color/white"
+
+                                />
+                            <ImageView
+                                android:id="@+id/imgGallery"
+
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/img_bg"
+                                android:src="@drawable/ic_img_chooser"
+                                android:padding="12dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:tint="@color/white"
+
+                                />
+
+                        </LinearLayout>
+                        <FrameLayout
+                            android:id="@+id/btnHide"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            >
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_down_arrow"
+                                android:padding="5dp"
+                                android:clickable="false"
+                                android:longClickable="false"
+                                />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+
+                </FrameLayout>
+            </net.cachapa.expandablelayout.ExpandableLayout>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--  ______________offer View  _____________ -->
+        <FrameLayout
+            android:id="@+id/flOffers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/trans_black2"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    >
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            >
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                >
+                                <com.github.ybq.android.spinkit.SpinKitView
+                                    android:id="@+id/progBarWait"
+                                    android:layout_width="170dp"
+                                    android:layout_height="170dp"
+                                    app:SpinKit_Style="FadingCircle"
+                                    app:SpinKit_Color="@color/colorPrimaryDark"
+                                    style="@style/SpinKitView.Small"
+                                    />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textSize="13sp"
+                                    android:textColor="@color/white"
+                                    android:text="@string/waiting_n_offers"
+                                    android:gravity="center"
+                                    />
+                            </FrameLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:layout_marginStart="30dp"
+                                android:layout_marginEnd="30dp"
+                                android:text="@string/order_sent_wait_offers"
+                                />
+                        </LinearLayout>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            />
+                    </FrameLayout>
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:minWidth="130dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="40dp"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:text="@string/cancel"
+                    android:background="@drawable/small_rounded_rose"/>
+            </LinearLayout>
+        </FrameLayout>
+    </FrameLayout>
+</layout>

@@ -50,6 +50,7 @@ import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.PhotosModel;
 import com.apps.emdad.models.PlaceDetailsModel;
+import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -193,9 +194,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
         dialog.show();
         Api.getService(Tags.base_url)
                 .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),"0",addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),"1",addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
-                .enqueue(new Callback<OrderModel>() {
+                .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
-                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
@@ -220,7 +221,7 @@ public class AddOrderTextActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {
@@ -272,9 +273,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
 
         Api.getService(Tags.base_url)
                 .sendTextOrderWithImage(userModel.getUser().getToken(),user_id_part,order_type_part,market_id_part,google_place_id_part,bill_cost_part,client_address_part,client_lat_part,client_lng_part,market_name_part,market_address_part,market_lat_part,market_lng_part,arrival_time_part,coupon_id_part,details_part,notes_part,getMultiPartImages())
-                .enqueue(new Callback<OrderModel>() {
+                .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
-                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
@@ -299,7 +300,7 @@ public class AddOrderTextActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {

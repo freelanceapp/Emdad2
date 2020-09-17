@@ -1,5 +1,7 @@
 package com.apps.emdad.tags;
 
+import android.os.Environment;
+
 public class Tags {
 
     public static String base_url = "http://tawsel-emdad.creativeshare.sa/";
@@ -8,6 +10,7 @@ public class Tags {
     public static final String session_login = "login";
     public static final String session_logout = "logout";
     public static final String not_tag = "emdad_not_tag";
+    public static final String audio_path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Emdad";
     public static final int not_id = 3254;
 
 }

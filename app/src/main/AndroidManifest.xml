@@ -10,8 +10,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-
     <application
         android:name=".share.App"
         android:allowBackup="true"
@@ -23,10 +25,14 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
-        <activity android:name=".activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity"
+        <activity android:name=".activities_fragments.activity_chat.ChatActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             />
+        <activity
+            android:name=".activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_add_order_products.AddOrderProductActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -152,15 +158,18 @@
 
         <service
             android:name=".notifications.FireBaseMessaging"
-            android:exported="false">
+            android:exported="false"
+            android:enabled="true"
+            android:stopWithTask="false"
+            >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".location_service.LocationService"
+        <service
+            android:name=".location_service.LocationService"
             android:enabled="true"
-            android:stopWithTask="false"
-            />
+            android:stopWithTask="false" />
     </application>
 
 </manifest>

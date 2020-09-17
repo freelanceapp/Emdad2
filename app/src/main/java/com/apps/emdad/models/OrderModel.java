@@ -31,6 +31,11 @@ public class OrderModel implements Serializable {
     private String coupon_id;
     private String details;
     private String notes;
+    private CountryModel coupon;
+    private MarketModel market;
+    private UserModel.User client;
+    private UserModel.User driver;
+
     private List<OrderImages>order_images;
 
 
@@ -140,6 +145,22 @@ public class OrderModel implements Serializable {
 
     public String getNotes() {
         return notes;
+    }
+
+    public CountryModel getCoupon() {
+        return coupon;
+    }
+
+    public MarketModel getMarket() {
+        return market;
+    }
+
+    public UserModel.User getClient() {
+        return client;
+    }
+
+    public UserModel.User getDriver() {
+        return driver;
     }
 
     public List<OrderImages> getOrder_images() {

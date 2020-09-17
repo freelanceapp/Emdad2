@@ -34,6 +34,7 @@ import com.apps.emdad.models.ChatBotModel;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.OrderModel;
+import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -528,9 +529,9 @@ public class AddOrderActivity extends AppCompatActivity {
         dialog.show();
         Api.getService(Tags.base_url)
                 .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),"0",addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),"1",addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
-                .enqueue(new Callback<OrderModel>() {
+                .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
-                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
@@ -555,7 +556,7 @@ public class AddOrderActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {

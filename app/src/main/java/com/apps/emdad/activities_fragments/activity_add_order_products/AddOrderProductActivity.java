@@ -49,6 +49,7 @@ import com.apps.emdad.models.OfferSettingModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.ProductModel;
 import com.apps.emdad.models.ShopDepartmentDataModel;
+import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -168,7 +169,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
         getVAT();
     }
 
-    private void getVAT() {
+    private void getVAT()
+    {
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
@@ -219,8 +221,6 @@ public class AddOrderProductActivity extends AppCompatActivity {
         });
 
     }
-
-
     private void sendOrderTextWithoutImage()
     {
 
@@ -232,14 +232,15 @@ public class AddOrderProductActivity extends AppCompatActivity {
         addOrderTextModel.setComments(binding.edtComment.getText().toString());
         Api.getService(Tags.base_url)
                 .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),String.valueOf(addOrderProductsModel.getTotal_cost()),addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),String.valueOf(addOrderTextModel.getTime()),addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
-                .enqueue(new Callback<OrderModel>() {
+                .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
-                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             Toast.makeText(AddOrderProductActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            AddOrderProductActivity.super.onBackPressed();
+                            setResult(RESULT_OK);
+                            finish();
                         }else
                         {
                             if (response.code()==500)
@@ -259,7 +260,7 @@ public class AddOrderProductActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {
@@ -306,9 +307,9 @@ public class AddOrderProductActivity extends AppCompatActivity {
 
         Api.getService(Tags.base_url)
                 .sendTextOrderWithImage(userModel.getUser().getToken(),user_id_part,order_type_part,market_id_part,google_place_id_part,bill_cost_part,client_address_part,client_lat_part,client_lng_part,market_name_part,market_address_part,market_lat_part,market_lng_part,arrival_time_part,coupon_id_part,details_part,notes_part,getMultiPartImages())
-                .enqueue(new Callback<OrderModel>() {
+                .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
-                    public void onResponse(Call<OrderModel> call, Response<OrderModel> response) {
+                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
@@ -333,7 +334,7 @@ public class AddOrderProductActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<OrderModel> call, Throwable t) {
+                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
                         try {
                             dialog.dismiss();
                             if (t.getMessage() != null) {
@@ -365,27 +366,27 @@ public class AddOrderProductActivity extends AppCompatActivity {
         }
         return parts;
     }
-
-    private String convertOrderToText() {
+    private String convertOrderToText()
+    {
         String order = "";
         for (int index = 0;index<addOrderProductsModel.getProductModelList().size();index++){
             ProductModel model = addOrderProductsModel.getProductModelList().get(index);
 
             if (model.getSelectedAdditions().size()>0){
-                order = order+model.getTitle()+getAdditions(model);
+                order = order+model.getTitle()+"\n"+getAdditions(model);
             }else {
-                order = order+model.getTitle();
+                order = order+model.getTitle()+"\n";
             }
         }
 
         return order;
     }
-
-    private String getAdditions(ProductModel productModel){
+    private String getAdditions(ProductModel productModel)
+    {
         String additions="";
         for (int index=0;index<productModel.getSelectedAdditions().size();index++){
             AdditionModel additionModel = productModel.getSelectedAdditions().get(index);
-            additions =additions+(index+1)+"-"+additionModel.getTitle();
+            additions =additions+(index+1)+"-"+additionModel.getTitle()+"\n";
         }
 
         if (additions.isEmpty()){
@@ -394,16 +395,14 @@ public class AddOrderProductActivity extends AppCompatActivity {
             return getString(R.string.additions)+":-"+"\n"+additions;
         }
     }
-
-    private void calculateTotalPrice() {
+    private void calculateTotalPrice()
+    {
         double tax = addOrderProductsModel.getTotal_cost()*(Double.parseDouble(vat)/100);
         binding.setVat(String.format(Locale.ENGLISH,"%.2f",tax));
         double priceBeforeVat = addOrderProductsModel.getTotal_cost()-tax;
         binding.setPriceBeforeVat(String.format(Locale.ENGLISH,"%.2f",priceBeforeVat));
 
     }
-
-
     public void createDialogAlert()
     {
         dialog = new AlertDialog.Builder(this)
@@ -418,17 +417,16 @@ public class AddOrderProductActivity extends AppCompatActivity {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
-
-
-    public void checkReadPermission() {
+    public void checkReadPermission()
+    {
         if (ActivityCompat.checkSelfPermission(this, READ_PERM) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{READ_PERM}, READ_REQ);
         } else {
             SelectImage(READ_REQ);
         }
     }
-
-    public void checkCameraPermission() {
+    public void checkCameraPermission()
+    {
 
 
         if (ContextCompat.checkSelfPermission(this, write_permission) == PackageManager.PERMISSION_GRANTED
@@ -439,8 +437,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{camera_permission, write_permission}, CAMERA_REQ);
         }
     }
-
-    private void SelectImage(int req) {
+    private void SelectImage(int req)
+    {
 
         Intent intent = new Intent();
 
@@ -490,7 +488,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == READ_REQ && resultCode == Activity.RESULT_OK && data != null) {
 
@@ -557,21 +556,20 @@ public class AddOrderProductActivity extends AppCompatActivity {
         }
 
     }
-
-    private void cropImage(Uri uri) {
+    private void cropImage(Uri uri)
+    {
 
         CropImage.activity(uri).setAspectRatio(1,1).setGuidelines(CropImageView.Guidelines.ON).start(this);
 
     }
-
-    private Uri getUriFromBitmap(Bitmap bitmap) {
+    private Uri getUriFromBitmap(Bitmap bitmap)
+    {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         return Uri.parse(MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "", ""));
     }
-
-
-    public void delete(int adapterPosition) {
+    public void delete(int adapterPosition)
+    {
         imagesList.remove(adapterPosition);
         if (imagesList.size()==1){
             imagesList.clear();
@@ -580,8 +578,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
             addOrderImagesAdapter.notifyItemRemoved(adapterPosition);
         }
     }
-
-    public void updateItemCount(ProductModel productModel, int pos) {
+    public void updateItemCount(ProductModel productModel, int pos)
+    {
         List<ProductModel> productModelList = addOrderProductsModel.getProductModelList();
         productModelList.set(pos,productModel);
         addOrderProductsModel.setProductModelList(productModelList);
@@ -590,7 +588,6 @@ public class AddOrderProductActivity extends AppCompatActivity {
 
         calculateTotalPrice();
     }
-
     private double getTotalOrderCost(List<ProductModel> productModelList)
     {
         double total=0.0;
@@ -610,8 +607,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
         }
         return cost;
     }
-
-    public void setItemProduct(ProductModel productModel){
+    public void setItemProduct(ProductModel productModel)
+    {
         Picasso.get().load(Uri.parse(Tags.IMAGE_URL+productModel.getImage())).into(binding.image, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
@@ -630,7 +627,6 @@ public class AddOrderProductActivity extends AppCompatActivity {
         binding.recViewAddition.setAdapter(selectedAdditionProductAdapter);
         openSheet();
     }
-
     private void openSheet()
     {
         binding.flSheet.clearAnimation();
@@ -675,9 +671,9 @@ public class AddOrderProductActivity extends AppCompatActivity {
             }
         });
     }
-
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         if (binding.flSheet.getVisibility()==View.VISIBLE){
             closeSheet();
         }else {
