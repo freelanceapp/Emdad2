@@ -1,6 +1,7 @@
 package com.apps.emdad.adapters.shop_products_adapters;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -55,6 +56,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ShopChildViewHolder> {
             activity.setProductData(model,holder.getAdapterPosition(),parentPos);
         });
         holder.binding.imageDelete.setOnClickListener(v -> {
+
             ProductModel model = list.get(holder.getAdapterPosition());
             activity.deleteSelectedItem(parentPos,holder.getAdapterPosition(),model);
         });

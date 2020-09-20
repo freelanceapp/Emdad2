@@ -1,6 +1,7 @@
 package com.apps.emdad.adapters;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,17 +62,21 @@ public class AdditionProductAdapter extends RecyclerView.Adapter<AdditionProduct
         }
 
         holder.binding.checkbox.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
-            if (holder.binding.checkbox.isChecked()){
-                sparseBooleanArray.put(pos,true);
-                activity.setAdditionItem(list.get(pos),pos,true);
+            new Handler().postDelayed(()->{
+                int pos = holder.getAdapterPosition();
+                if (holder.binding.checkbox.isChecked()){
+                    sparseBooleanArray.put(pos,true);
+                    activity.setAdditionItem(list.get(pos),pos,true);
 
-            }else {
-                sparseBooleanArray.put(pos,false);
-                activity.setAdditionItem(list.get(pos),pos,false);
+                }else {
+                    sparseBooleanArray.put(pos,false);
+                    activity.setAdditionItem(list.get(pos),pos,false);
 
-            }
-            notifyItemChanged(pos);
+                }
+                notifyItemChanged(pos);
+
+            },2000);
+
         });
 
 

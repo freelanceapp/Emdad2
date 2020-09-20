@@ -580,18 +580,15 @@ public class ShopProductActivity extends AppCompatActivity {
         productSectionAdapter.notifyItemChanged(parentPos);
 
 
-        new Handler().postDelayed(()->{
-            int pos = isSelectedProductListHasItem(productModelList, model);
-            if (pos != -1) {
-                productModelList.remove(pos);
-                addOrderProductsModel.setProductModelList(productModelList);
-                totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
-                Log.e("total_order_cost", totalOrderCost + "_");
-            }
-            updateTotalUi();
 
-        },1000);
-
+        int pos = isSelectedProductListHasItem(productModelList, model);
+        if (pos != -1) {
+            productModelList.remove(pos);
+            addOrderProductsModel.setProductModelList(productModelList);
+            totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
+            Log.e("total_order_cost", totalOrderCost + "_");
+        }
+        updateTotalUi();
 
 
     }
