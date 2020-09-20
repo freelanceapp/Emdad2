@@ -3,6 +3,7 @@ package com.apps.emdad.activities_fragments.activity_sign_up_delegate;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -16,10 +17,20 @@ import android.webkit.WebViewClient;
 
 import com.apps.emdad.R;
 import com.apps.emdad.databinding.ActivitySignUpDelegateBinding;
+import com.apps.emdad.language.Language;
+
+import io.paperdb.Paper;
 
 public class SignUpDelegateActivity extends AppCompatActivity {
     private ActivitySignUpDelegateBinding binding;
     private String url="";
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Paper.init(newBase);
+        super.attachBaseContext(Language.updateResources(newBase,Paper.book().read("lang","ar")));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

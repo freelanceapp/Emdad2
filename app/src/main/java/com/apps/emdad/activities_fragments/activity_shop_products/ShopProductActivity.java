@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -578,14 +579,19 @@ public class ShopProductActivity extends AppCompatActivity {
         shopDepartmentsList.set(parentPos, departments);
         productSectionAdapter.notifyItemChanged(parentPos);
 
-        int pos = isSelectedProductListHasItem(productModelList, model);
-        if (pos != -1) {
-            productModelList.remove(pos);
-            addOrderProductsModel.setProductModelList(productModelList);
-            totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
-            Log.e("total_order_cost", totalOrderCost + "_");
-        }
-        updateTotalUi();
+
+        new Handler().postDelayed(()->{
+            int pos = isSelectedProductListHasItem(productModelList, model);
+            if (pos != -1) {
+                productModelList.remove(pos);
+                addOrderProductsModel.setProductModelList(productModelList);
+                totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
+                Log.e("total_order_cost", totalOrderCost + "_");
+            }
+            updateTotalUi();
+
+        },1000);
+
 
 
     }

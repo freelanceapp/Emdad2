@@ -26,6 +26,8 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
+import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.activities_fragments.activity_verification_code.VerificationCodeActivity;
 import com.apps.emdad.adapters.CountriesAdapter;
 import com.apps.emdad.databinding.ActivityLoginBinding;
@@ -120,7 +122,10 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
             }
         });
         binding.tvSkip.setOnClickListener(v -> {
-            navigateToHomeActivity();
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            startActivity(intent);
+            finish();
+            //navigateToHomeActivity();
         });
         createCountriesDialog();
         getPhoneCodes();

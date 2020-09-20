@@ -39,9 +39,11 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_intro_slider.IntroSliderActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
+import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.databinding.ActivitySplashBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.location_service.LocationService;
 import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.share.App;
@@ -81,6 +83,8 @@ public class SplashActivity extends AppCompatActivity {
 
 
 
+
+
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -115,7 +119,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 if (preferences.getSession(this).equals(Tags.session_login)){
                     new Handler().postDelayed(() -> {
-                        Intent intent = new Intent(this, HomeActivity.class);
+                        Intent intent = new Intent(this, SplashLoadingActivity.class);
                         startActivity(intent);
                         finish();
                     },1500);
@@ -194,6 +198,7 @@ public class SplashActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
 
 
 

@@ -176,10 +176,12 @@ public class ShopsQueryActivity extends AppCompatActivity {
 
                                 }else
                                 {
+                                    skeletonScreen.hide();
                                     binding.tvNoData.setVisibility(View.VISIBLE);
 
                                 }
                             }else {
+                                skeletonScreen.hide();
                                 binding.tvNoData.setVisibility(View.VISIBLE);
 
                             }

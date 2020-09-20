@@ -239,6 +239,7 @@
            />
 
         <!--_______________________loading____________________-->
+<!--
         <FrameLayout
             android:id="@+id/flLoading"
             android:layout_width="match_parent"
@@ -265,6 +266,7 @@
                     android:text="@string/fetching_location"/>
             </LinearLayout>
         </FrameLayout>
+-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

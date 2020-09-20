@@ -70,7 +70,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class HomeActivity extends AppCompatActivity {
     private ActivityHomeBinding binding;
     private FragmentManager fragmentManager;
     private Fragment_Main fragment_main;
@@ -79,12 +79,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     private Fragment_Profile fragment_profile;
     private UserModel userModel;
     private Preferences preferences;
-    private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallback;
-    private final String gps_perm = Manifest.permission.ACCESS_FINE_LOCATION;
-    private final int loc_req = 22;
-    public Location location;
+    private double user_lat =0.0,user_lng=0.0;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -116,7 +111,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getSupportFragmentManager();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setEnterTransition(new TransitionSet());
@@ -125,13 +119,24 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
+        getDataFromIntent();
         initView();
-        if (savedInstanceState == null) {
-            CheckPermission();
+        if (savedInstanceState==null){
+            displayFragmentMain();
         }
+
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        user_lat = intent.getDoubleExtra("lat",0.0);
+        user_lng = intent.getDoubleExtra("lng",0.0);
+
     }
 
     private void initView() {
+        fragmentManager = getSupportFragmentManager();
+
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         binding.fab.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN);
@@ -176,8 +181,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
                 Intent intent = new Intent(this, AddOrderActivity.class);
-                intent.putExtra("lat", location.getLatitude());
-                intent.putExtra("lng", location.getLongitude());
+                intent.putExtra("lat", user_lat);
+                intent.putExtra("lng", user_lng);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, binding.fab2, binding.fab2.getTransitionName());
                     startActivity(intent, options.toBundle());
@@ -313,13 +318,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         updateMainUi();
 
         if (fragment_main == null) {
-            if (location != null) {
-                fragment_main = Fragment_Main.newInstance(location.getLatitude(), location.getLatitude());
+            fragment_main = Fragment_Main.newInstance(user_lat, user_lng);
 
-            } else {
-                fragment_main = Fragment_Main.newInstance(0.0, 0.0);
-
-            }
         }
 
         if (fragment_order != null && fragment_order.isAdded()) {
@@ -482,28 +482,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    private void initGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addOnConnectionFailedListener(this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
-        googleApiClient.connect();
-    }
-
-    private void CheckPermission() {
-        if (ActivityCompat.checkSelfPermission(this, gps_perm) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{gps_perm}, loc_req);
-        } else {
-
-            initGoogleApiClient();
-            if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                Intent intent = new Intent(this, LocationService.class);
-                startService(intent);
-            }
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -513,92 +491,8 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        if (requestCode == loc_req) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initGoogleApiClient();
-                if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                    Intent intent = new Intent(this, LocationService.class);
-                    startService(intent);
-                }
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
-    private void initLocationRequest() {
-        locationRequest = LocationRequest.create();
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setInterval(60000);
-        LocationSettingsRequest.Builder request = new LocationSettingsRequest.Builder();
-        request.addLocationRequest(locationRequest);
-        request.setAlwaysShow(false);
-
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, request.build());
-
-        result.setResultCallback(result1 -> {
-
-            Status status = result1.getStatus();
-            switch (status.getStatusCode()) {
-                case LocationSettingsStatusCodes.SUCCESS:
-                    startLocationUpdate();
-                    break;
-                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                    try {
-                        status.startResolutionForResult(HomeActivity.this, 1255);
-                    } catch (Exception e) {
-                    }
-                    break;
-                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                    Log.e("not available", "not available");
-                    break;
-            }
-        });
-
-    }
-
-    @SuppressLint("MissingPermission")
-    private void startLocationUpdate() {
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                onLocationChanged(locationResult.getLastLocation());
-            }
-        };
-        LocationServices.getFusedLocationProviderClient(this)
-                .requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        initLocationRequest();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        if (googleApiClient != null) {
-            googleApiClient.connect();
-        }
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
-        binding.flLoading.setVisibility(View.GONE);
-        displayFragmentMain();
-
-        if (googleApiClient != null) {
-            googleApiClient.disconnect();
-        }
-        if (locationCallback != null) {
-            LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -607,13 +501,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         for (Fragment fragment : fragments) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
-        if (requestCode == 1255 && resultCode == RESULT_OK) {
-            startLocationUpdate();
-            if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                Intent intent = new Intent(this, LocationService.class);
-                startService(intent);
-            }
-        }
+
     }
 
     public void navigateToLoginActivity(boolean hasData) {
@@ -713,19 +601,6 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         } else {
             displayFragmentMain();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (locationCallback != null) {
-            LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
-
-        }
-        if (googleApiClient != null) {
-            googleApiClient.disconnect();
-        }
-
     }
 
 

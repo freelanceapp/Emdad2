@@ -17,6 +17,7 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
+import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.databinding.ActivityConfirmCodeSuccessBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.UserModel;
@@ -88,7 +89,8 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
                                         binding.tvStatus.setTextColor(ContextCompat.getColor(ConfirmCodeSuccessActivity.this,R.color.colorPrimary));
                                         binding.tvStatus.setText(getString(R.string.confirmed));
                                         if (fromSplash){
-                                            navigateToHomeActivity();
+
+                                            navigateToSplashLoading();
 
                                         }else {
                                             finish();
@@ -146,6 +148,7 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
                 });
     }
 
+
     private void navigateToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -153,8 +156,8 @@ public class ConfirmCodeSuccessActivity extends AppCompatActivity {
     }
 
 
-    private void navigateToHomeActivity() {
-        Intent intent = new Intent(this, HomeActivity.class);
+    private void navigateToSplashLoading() {
+        Intent intent = new Intent(this, SplashLoadingActivity.class);
         startActivity(intent);
         finish();
 

@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.databinding.ActivitySignUpBinding;
 import com.apps.emdad.databinding.DialogAlertBinding;
 import com.apps.emdad.databinding.DialogYearBinding;
@@ -336,11 +337,14 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                         {
                             preferences.create_update_userdata(SignUpActivity.this,response.body());
                             if (fromSplash){
-                                navigateToHomeActivity();
 
-                            }else {
-                                finish();
+                                Intent intent = new Intent(SignUpActivity.this, SplashLoadingActivity.class);
+                                startActivity(intent);
+
+                                //navigateToHomeActivity();
+
                             }
+                            finish();
                         }else
                         {
                             if (response.code()==500)
@@ -416,7 +420,17 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             preferences.create_update_userdata(SignUpActivity.this,response.body());
-                            //navigateToHomeActivity();
+
+                            if (fromSplash){
+
+                                Intent intent = new Intent(SignUpActivity.this, SplashLoadingActivity.class);
+                                startActivity(intent);
+
+                                //navigateToHomeActivity();
+
+                            }
+                            finish();
+
                         }else
                         {
                             if (response.code()==500)

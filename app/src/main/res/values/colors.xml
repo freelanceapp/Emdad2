@@ -46,6 +46,11 @@
 
     </array>
 
+    <array name="dots2">
+        <item>@color/white</item>
+
+    </array>
+
 
 
 </resources>
