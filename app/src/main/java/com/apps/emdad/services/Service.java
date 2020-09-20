@@ -14,6 +14,7 @@ import com.apps.emdad.models.PlaceMapDetailsData;
 import com.apps.emdad.models.ShopDepartmentDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.SliderModel;
+import com.apps.emdad.models.UnReadCountModel;
 import com.apps.emdad.models.UserModel;
 
 import java.util.List;
@@ -234,5 +235,22 @@ public interface Service {
                                          @Query(value = "page") int page,
                                          @Query(value = "pagination") String pagination,
                                          @Query(value = "limit_per_page") int limit_per_page
+    );
+
+    @GET("api/get-one-order")
+    Call<SingleOrderDataModel> getSingleOrder(@Header("Authorization") String user_token,
+                                              @Query(value = "order_id") int order_id
+    );
+
+
+    @GET("api/get-count-unread")
+    Call<UnReadCountModel> getNotificationCount(@Header("Authorization") String user_token,
+                                                @Query(value = "user_id") int user_id
+    );
+
+    @FormUrlEncoded
+    @POST("api/get-read-notifications")
+    Call<ResponseBody> readNotification(@Header("Authorization") String user_token,
+                                        @Field("user_id") int user_id
     );
 }

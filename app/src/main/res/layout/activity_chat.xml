@@ -10,6 +10,10 @@
         <variable
             name="lang"
             type="String" />
+        <variable
+            name="model"
+            type="com.apps.emdad.models.OrderModel" />
+        <import type="android.view.View"/>
 
     </data>
 
@@ -18,9 +22,12 @@
         android:layout_height="match_parent"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".activities_fragments.activity_choose_order_type.ChooseOrderTypeActivity"
+            android:visibility='@{model!=null?View.VISIBLE:View.GONE,default=gone}'
+
 
             >
 
@@ -101,7 +108,7 @@
                                 android:textColor="@color/gray9"
                                 android:lines="1"
                                 android:textSize="15sp"
-                                android:text="ssssssssss"
+                                android:text='@{model.market_name.isEmpty()?model.market_address:model.market_name}'
                                 />
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -112,14 +119,13 @@
                                 android:gravity="center_vertical"
                                 >
                                 <TextView
+                                    android:id="@+id/orderStatus"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/white"
                                     android:textSize="9sp"
-                                    android:background="@drawable/pending_bg"
                                     android:paddingStart="8dp"
                                     android:paddingEnd="8dp"
-                                    android:text="@string/pending"
                                     tools:ignore="SmallSp" />
                                 <View
                                     android:layout_width="1px"
@@ -134,7 +140,7 @@
                                     android:textSize="12sp"
                                     android:textColor="@color/gray9"
                                     android:lines="1"
-                                    android:text="#22222222"
+                                    android:text='@{"#"+model.id}'
                                     />
                             </LinearLayout>
                         </LinearLayout>
@@ -142,12 +148,14 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <FrameLayout
+                        android:id="@+id/btnResend"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:background="@color/colorPrimary"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="10dp"
+                        android:visibility="gone"
 
                         >
                         <LinearLayout
@@ -285,7 +293,8 @@
                         >
                         <EditText
                             android:id="@+id/edtMessage"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:background="@color/transparent"
                             android:textColor="@color/black"
@@ -297,6 +306,16 @@
                             android:inputType="textMultiLine"
                             android:maxLines="5"
 
+                            />
+                        <ImageView
+                            android:id="@+id/imageMore"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_more"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:tint="@color/gray6"
                             />
                     </LinearLayout>
                     <TextView
@@ -407,6 +426,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/trans_black2"
+            android:visibility='@{model!=null?(model.order_status.equals("new_order")?View.VISIBLE:View.GONE):View.GONE,default=gone}'
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -485,5 +505,12 @@
                     android:background="@drawable/small_rounded_rose"/>
             </LinearLayout>
         </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/progBarData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
     </FrameLayout>
 </layout>

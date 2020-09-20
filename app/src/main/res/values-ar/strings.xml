@@ -261,5 +261,6 @@
     <string name="resend_order">إعادة الطلب</string>
     <string name="waiting_n_offers">في إنتظار \n العروض...</string>
     <string name="order_sent_wait_offers">طلبك تم إرسالة بنجاح,سوف يقوم \n مندوبونا بإرسال عروض التوصيل \n بعد قليل وعليك إختيار العرض \n الانسب لك, الطلب لن يبدأ حتى تقوم \n بقبول احد العروض!</string>
+    <string name="inv_url">رابط غير صحيح</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package com.apps.emdad.activities_fragments.activity_home.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
 import com.apps.emdad.adapters.OrdersAdapter;
 import com.apps.emdad.databinding.FragmentOrdersBinding;
 import com.apps.emdad.models.OrderModel;
@@ -81,9 +85,13 @@ public class Fragment_Order extends Fragment {
                 }
             }
         });
+
+        binding.flOldOrders.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, OldOrdersActivity.class);
+            startActivityForResult(intent,100);
+        });
         getOrders();
     }
-
     private void getOrders() {
 
         Api.getService(Tags.base_url).getClientOrder(userModel.getUser().getToken(), userModel.getUser().getId(), "current", 1, "on", 20)
@@ -202,5 +210,19 @@ public class Fragment_Order extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void setItemData(OrderModel orderModel1) {
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra("order_id",orderModel1.getId());
+        startActivityForResult(intent,100);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==100&&resultCode== Activity.RESULT_OK){
+            getOrders();
+        }
     }
 }

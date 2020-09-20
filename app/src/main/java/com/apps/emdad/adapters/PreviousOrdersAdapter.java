@@ -12,26 +12,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Order;
+import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
 import com.apps.emdad.databinding.CurrentOrderRowBinding;
 import com.apps.emdad.databinding.LoadMoreRowBinding;
+import com.apps.emdad.databinding.PreviousOrderRowBinding;
 import com.apps.emdad.models.OrderModel;
 
 import java.util.List;
 
-public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PreviousOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int DATA = 1;
     private final int LOAD = 2;
     private List<OrderModel> list;
     private Context context;
     private LayoutInflater inflater;
-    private Fragment_Order fragment;
+    private OldOrdersActivity activity;
 
-    public OrdersAdapter(List<OrderModel> list, Context context,Fragment_Order fragment) {
+    public PreviousOrdersAdapter(List<OrderModel> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        this.fragment = fragment;
-
+        activity = (OldOrdersActivity) context;
     }
 
 
@@ -40,7 +41,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (viewType==DATA){
-            CurrentOrderRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.current_order_row, parent, false);
+            PreviousOrderRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.previous_order_row, parent, false);
             return new MyHolder(binding);
         }else {
             LoadMoreRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.load_more_row, parent, false);
@@ -57,23 +58,19 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             OrderModel orderModel = list.get(position);
             myHolder.binding.setModel(orderModel);
 
-            if (orderModel.getOrder_status().equals("new_order")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
-                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.rate_color));
-                myHolder.binding.tvState.setText(context.getString(R.string.pending));
-            }else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
+            if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
                 myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
                 myHolder.binding.tvState.setText(context.getString(R.string.done));
-            }else if (orderModel.getOrder_status().equals("client_cancel")){
+            }if (orderModel.getOrder_status().equals("client_cancel")){
                 myHolder.binding.icon.setImageResource(R.drawable.ic_error);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.color_red));
                 myHolder.binding.tvState.setText(context.getString(R.string.cancel));
             }
 
-            myHolder.itemView.setOnClickListener(v -> {
+            myHolder.binding.flResend.setOnClickListener(v -> {
                 OrderModel orderModel1 = list.get(holder.getAdapterPosition());
-                fragment.setItemData(orderModel1);
+                activity.resendOrder(orderModel1);
             });
 
         }else if (holder instanceof LoadMoreHolder){
@@ -90,9 +87,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class MyHolder extends RecyclerView.ViewHolder {
-        private CurrentOrderRowBinding binding;
+        private PreviousOrderRowBinding binding;
 
-        public MyHolder(CurrentOrderRowBinding binding) {
+        public MyHolder(PreviousOrderRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

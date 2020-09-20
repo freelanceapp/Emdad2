@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,6 +27,13 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.databinding.ActivityChatBinding;
+import com.apps.emdad.models.OrderModel;
+import com.apps.emdad.models.OrdersDataModel;
+import com.apps.emdad.models.SingleOrderDataModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.remote.Api;
+import com.apps.emdad.share.Common;
 import com.apps.emdad.tags.Tags;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
@@ -34,6 +42,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
     private ActivityChatBinding binding;
@@ -49,16 +61,29 @@ public class ChatActivity extends AppCompatActivity {
     private String audio_path = "";
     private Handler handler;
     private Runnable runnable;
+    private Preferences preferences;
+    private UserModel userModel;
+    private int order_id;
+    private OrderModel orderModel;
+    private boolean isDataChanged = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_chat);
+        getDataFromIntent();
         initView();
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        order_id = intent.getIntExtra("order_id",0);
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
-
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         binding.imageChooser.setOnClickListener(v -> {
             if (binding.expandedLayout.isExpanded()) {
                 binding.expandedLayout.collapse(true);
@@ -109,9 +134,93 @@ public class ChatActivity extends AppCompatActivity {
             return true;
         });
 
+        binding.llBack.setOnClickListener(v -> onBackPressed());
+        getOrderById();
 
     }
 
+    private void getOrderById() {
+        Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(),order_id)
+                .enqueue(new Callback<SingleOrderDataModel>() {
+                    @Override
+                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
+                        binding.progBarData.setVisibility(View.GONE);
+
+                        if (response.isSuccessful()) {
+                            orderModel = response.body().getOrder();
+                            binding.setModel(orderModel);
+                            updateUi(orderModel);
+
+                        } else {
+                            binding.progBarData.setVisibility(View.GONE);
+
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
+                        try {
+                            binding.progBarData.setVisibility(View.GONE);
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    private void updateUi(OrderModel orderModel) {
+        Log.e("order_status",orderModel.getOrder_status()+"__");
+        if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("driver_end_rate")||orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("order_driver_back")){
+            binding.imageRecord.setVisibility(View.GONE);
+            binding.imageChooser.setVisibility(View.GONE);
+            binding.imageSend.setVisibility(View.GONE);
+            binding.msgContent.setVisibility(View.GONE);
+        }else {
+            binding.imageRecord.setVisibility(View.VISIBLE);
+            binding.imageChooser.setVisibility(View.VISIBLE);
+            binding.imageSend.setVisibility(View.VISIBLE);
+            binding.msgContent.setVisibility(View.VISIBLE);
+        }
+
+
+        if (orderModel.getOrder_status().equals("new_order")){
+            binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
+            binding.orderStatus.setText(getString(R.string.pending));
+        }else if (orderModel.getOrder_status().equals("client_cancel")){
+            binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
+            binding.orderStatus.setText(getString(R.string.cancel));
+            binding.btnResend.setVisibility(View.VISIBLE);
+        }else if (orderModel.getOrder_status().equals("driver_end_rate")||orderModel.getOrder_status().equals("client_end_and_rate")){
+            binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
+            binding.orderStatus.setText(getString(R.string.done));
+            binding.btnResend.setVisibility(View.VISIBLE);
+
+        }
+    }
+    private void resendOrder(){
+        isDataChanged = true;
+        binding.btnResend.setVisibility(View.GONE);
+    }
     private void sendAttachment(String file_uri, String attachment_type) {
         /*Intent intent = new Intent(this, ServiceUploadAttachment.class);
         intent.putExtra("file_uri", file_uri);
@@ -334,5 +443,14 @@ public class ChatActivity extends AppCompatActivity {
 
         return String.format(Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes, second);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isDataChanged){
+            setResult(RESULT_OK);
+        }
+
+        finish();
     }
 }

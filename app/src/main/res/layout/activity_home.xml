@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="notCount"
+            type="Integer" />
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -78,7 +83,8 @@
                             android:layout_height="wrap_content"
                             android:text="@string/stores"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="11sp" />
+                            android:textSize="11sp"
+                            tools:ignore="SmallSp" />
                     </LinearLayout>
 
 
@@ -115,33 +121,54 @@
                         android:layout_width="20dp"
                         android:layout_height="0dp"
                         />
-                    <LinearLayout
-                        android:id="@+id/llNotification"
-
+                    <FrameLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:background="@color/transparent"
-
                         >
+                        <LinearLayout
+                            android:id="@+id/llNotification"
 
-                        <ImageView
-                            android:id="@+id/iconNotification"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/mega_phone2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:background="@color/transparent"
+
+                            >
+
+                            <ImageView
+                                android:id="@+id/iconNotification"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/mega_phone2"
+                                />
+
+                            <TextView
+                                android:id="@+id/tvNotification"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/notifications"
+                                android:textColor="@color/gray11"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="end"
+                            android:background="@drawable/circle_primary"
+                            android:textSize="9sp"
+                            android:textColor="@color/white"
+                            android:gravity="center"
+                            android:padding="3dp"
+                            android:text='@{String.valueOf(notCount),default="0"}'
+                            android:lines="1"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
                             />
 
-                        <TextView
-                            android:id="@+id/tvNotification"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/notifications"
-                            android:textColor="@color/gray11"
-                            android:textSize="11sp" />
-                    </LinearLayout>
+
+                    </FrameLayout>
 
                     <LinearLayout
                         android:id="@+id/llProfile"
@@ -211,12 +238,13 @@
             app:layout_constraintVertical_bias=".947"
            />
 
+        <!--_______________________loading____________________-->
         <FrameLayout
             android:id="@+id/flLoading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/gray1"
-            android:visibility="visible"
+            android:visibility="gone"
             >
             <LinearLayout
                 android:layout_width="wrap_content"

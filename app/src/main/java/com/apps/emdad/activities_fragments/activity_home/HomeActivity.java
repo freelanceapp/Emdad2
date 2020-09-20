@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Notifications;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Profile;
@@ -38,6 +39,8 @@ import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.databinding.ActivityHomeBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.location_service.LocationService;
+import com.apps.emdad.models.SingleOrderDataModel;
+import com.apps.emdad.models.UnReadCountModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -199,8 +202,58 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
                 Picasso.get().load(R.drawable.image_avatar).into(binding.imageProfile);
 
             }
+            getNotificationCount();
             updateFirbaseToken();
         }
+
+    }
+
+    public void getNotificationCount() {
+        Api.getService(Tags.base_url).getNotificationCount(userModel.getUser().getToken(),userModel.getUser().getId())
+                .enqueue(new Callback<UnReadCountModel>() {
+                    @Override
+                    public void onResponse(Call<UnReadCountModel> call, Response<UnReadCountModel> response) {
+
+                        if (response.isSuccessful()) {
+                            int count = response.body().getCount_unread();
+                            updateNotificationCount(count);
+                        } else {
+
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<UnReadCountModel> call, Throwable t) {
+                        try {
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    public void updateNotificationCount(int count) {
+        binding.setNotCount(count);
 
     }
 
@@ -394,7 +447,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone1);
-        binding.iconOrder.setImageResource(R.drawable.truck1);
+        binding.iconOrder.setImageResource(R.drawable.truck2);
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this, R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
@@ -408,7 +461,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
-        binding.iconOrder.setImageResource(R.drawable.truck2);
+        binding.iconOrder.setImageResource(R.drawable.truck1);
 
         binding.tvStore.setTextColor(ContextCompat.getColor(this, R.color.gray11));
         binding.tvNotification.setTextColor(ContextCompat.getColor(this, R.color.gray11));
@@ -563,7 +616,7 @@ public class HomeActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    private void navigateToLoginActivity(boolean hasData) {
+    public void navigateToLoginActivity(boolean hasData) {
 
         Intent intent = new Intent(this, LoginActivity.class);
         if (hasData) {

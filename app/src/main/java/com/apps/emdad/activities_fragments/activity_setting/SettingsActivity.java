@@ -23,6 +23,8 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_intro_slider.IntroSliderActivity;
 import com.apps.emdad.activities_fragments.activity_language.LanguageActivity;
+import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.databinding.ActivitySettingsBinding;
 import com.apps.emdad.interfaces.Listeners;
@@ -31,7 +33,9 @@ import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
+import com.apps.emdad.share.Common;
 import com.apps.emdad.tags.Tags;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,6 +67,14 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         initView();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        userModel = preferences.getUserData(this);
+
+
+    }
+
     private void initView() {
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
@@ -89,6 +101,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         if (userModel!=null){
             getUserData();
         }
+
 
 
 
@@ -148,7 +161,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-        startActivityForResult(intent, 100);
+        startActivityForResult(intent, 200);
     }
 
     @Override
@@ -164,7 +177,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
     @Override
     public void onLanguageSetting() {
         Intent intent = new Intent(this, LanguageActivity.class);
-        startActivityForResult(intent, 200);
+        startActivityForResult(intent, 300);
     }
 
     @Override
@@ -222,7 +235,21 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     @Override
     public void onDelegate() {
+        if (userModel!=null){
+            if (userModel.getUser().getRegister_link()!=null&&!userModel.getUser().getRegister_link().isEmpty()){
 
+            }else {
+                Common.CreateDialogAlert(this,getString(R.string.inv_url));
+            }
+
+            Intent intent = new Intent(this, SignUpDelegateActivity.class);
+            intent.putExtra("url",Tags.base_url);
+            startActivityForResult(intent,100);
+        }else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra("from", false);
+            startActivity(intent);
+        }
     }
 
 
@@ -252,6 +279,10 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
             setResult(RESULT_OK);
             finish();
+        }
+
+        else if (requestCode == 300 && resultCode == RESULT_OK ) {
+            getUserData();
         }
     }
 }

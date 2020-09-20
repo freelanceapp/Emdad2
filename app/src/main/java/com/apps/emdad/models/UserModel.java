@@ -25,6 +25,7 @@ public class UserModel implements Serializable {
         private String address;
         private String user_type;
         private String gender;
+        private String register_link;
         private String receive_notifications;
         private String date_of_birth;
         private String fireBaseToken;
@@ -97,6 +98,10 @@ public class UserModel implements Serializable {
 
         public String getRate() {
             return rate;
+        }
+
+        public String getRegister_link() {
+            return register_link;
         }
 
         public CountryModel getCountry() {

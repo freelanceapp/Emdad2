@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+
     <application
         android:name=".share.App"
         android:allowBackup="true"
@@ -25,10 +26,11 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
-        <activity android:name=".activities_fragments.activity_chat.ChatActivity"
+        <activity android:name=".activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity"></activity>
+        <activity
+            android:name=".activities_fragments.activity_chat.ChatActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -158,10 +160,9 @@
 
         <service
             android:name=".notifications.FireBaseMessaging"
-            android:exported="false"
             android:enabled="true"
-            android:stopWithTask="false"
-            >
+            android:exported="false"
+            android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
