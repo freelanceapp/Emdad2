@@ -262,5 +262,10 @@
     <string name="waiting_n_offers">في إنتظار \n العروض...</string>
     <string name="order_sent_wait_offers">طلبك تم إرسالة بنجاح,سوف يقوم \n مندوبونا بإرسال عروض التوصيل \n بعد قليل وعليك إختيار العرض \n الانسب لك, الطلب لن يبدأ حتى تقوم \n بقبول احد العروض!</string>
     <string name="inv_url">رابط غير صحيح</string>
+    <string name="waiting_n_client">بإنتظار \n العميل...</string>
+    <string name="your_offer_of">تم إرسال عرضك بقيمة </string>
+    <string name="sent_to_the_client_please_wait_until_he_accepts_your_offer_thank_you"> للعميل الرجاء الانتظار حتى يقوم \n بقبول عرضك وشكرا \n</string>
+    <string name="cancel2">سحب العرض</string>
+    <string name="ready_to_deliver_order">انا مستعد لتوصيل الطلب</string>
 
 </resources>

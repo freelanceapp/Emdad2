@@ -261,6 +261,11 @@
     <string name="waiting_n_offers">Waiting \n offers...</string>
     <string name="order_sent_wait_offers">Your order successfully sent,our Courier \n will send the delivery offers shortly \n and you have to choose the offer \n that best suits you. \n The request will not start \n until you accept one of the offers!</string>
     <string name="inv_url">Invalid URL</string>
+    <string name="waiting_n_client">Waiting \n client...</string>
+    <string name="your_offer_of">Your offer of</string>
+    <string name="sent_to_the_client_please_wait_until_he_accepts_your_offer_thank_you">sent to the client \n Please wait until  he accepts \n your offer Thank you</string>
+    <string name="cancel2">Cancel</string>
+    <string name="ready_to_deliver_order">Ready to deliver order</string>
 
 
 </resources>

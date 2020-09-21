@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".activities_fragments.activity_choose_order_type.ChooseOrderTypeActivity"
-            android:visibility='@{model!=null?View.VISIBLE:View.GONE,default=gone}'
+            android:visibility='@{model!=null?View.VISIBLE:View.GONE,default=v}'
 
 
             >
@@ -212,6 +212,7 @@
                     android:visibility="gone"
                     />
             </FrameLayout>
+
 
 
             <ImageView
@@ -426,7 +427,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/trans_black2"
-            android:visibility='@{model!=null?(model.order_status.equals("new_order")?View.VISIBLE:View.GONE):View.GONE,default=gone}'
+            android:visibility="gone"
+            android:layout_marginTop="56dp"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -506,6 +508,100 @@
             </LinearLayout>
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/flDriverOffers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/trans_black2"
+            android:layout_marginTop="56dp"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    >
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            >
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                >
+                                <com.github.ybq.android.spinkit.SpinKitView
+                                    android:id="@+id/progBarWait2"
+                                    android:layout_width="170dp"
+                                    android:layout_height="170dp"
+                                    app:SpinKit_Style="FadingCircle"
+                                    app:SpinKit_Color="@color/colorPrimaryDark"
+                                    style="@style/SpinKitView.Small"
+                                    />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:textSize="13sp"
+                                    android:textColor="@color/white"
+                                    android:text="@string/waiting_n_client"
+                                    android:gravity="center"
+                                    />
+                            </FrameLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:layout_marginStart="30dp"
+                                android:layout_marginEnd="30dp"
+                                android:text="@string/sent_to_the_client_please_wait_until_he_accepts_your_offer_thank_you"
+                                />
+                        </LinearLayout>
+
+                    </FrameLayout>
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btnDriverCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:minWidth="130dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="40dp"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:text="@string/cancel2"
+                    android:background="@drawable/small_rounded_rose"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvReadyDeliverOrder"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/ready_to_deliver_order"
+            android:gravity="center"
+            android:visibility="gone"
+            />
         <ProgressBar
             android:id="@+id/progBarData"
             android:layout_width="wrap_content"

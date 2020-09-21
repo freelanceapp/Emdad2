@@ -189,7 +189,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void updateUi(OrderModel orderModel) {
-        Log.e("order_status",orderModel.getOrder_status()+"__");
         if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("driver_end_rate")||orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("order_driver_back")){
             binding.imageRecord.setVisibility(View.GONE);
             binding.imageChooser.setVisibility(View.GONE);
@@ -216,6 +215,22 @@ public class ChatActivity extends AppCompatActivity {
             binding.btnResend.setVisibility(View.VISIBLE);
 
         }
+
+        if (orderModel.getOrder_status().equals("new_order")){
+            if (userModel.getUser().getUser_type().equals("driver")){
+                if (userModel.getUser().getId()==orderModel.getClient().getId()){
+                    binding.flOffers.setVisibility(View.VISIBLE);
+
+                }else {
+                    binding.flDriverOffers.setVisibility(View.VISIBLE);
+
+                }
+            }else {
+                binding.flOffers.setVisibility(View.VISIBLE);
+            }
+        }
+
+
     }
     private void resendOrder(){
         isDataChanged = true;
