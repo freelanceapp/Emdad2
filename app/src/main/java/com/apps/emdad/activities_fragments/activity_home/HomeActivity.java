@@ -35,6 +35,7 @@ import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Notifications;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Profile;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Order;
+import com.apps.emdad.activities_fragments.activity_home.fragments.fragment_driver_order.Fragment_Driver_Order;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.databinding.ActivityHomeBinding;
 import com.apps.emdad.language.Language;
@@ -77,9 +78,11 @@ public class HomeActivity extends AppCompatActivity {
     private Fragment_Order fragment_order;
     private Fragment_Notifications fragment_notifications;
     private Fragment_Profile fragment_profile;
+    private Fragment_Driver_Order fragment_driver_order;
     private UserModel userModel;
     private Preferences preferences;
     private double user_lat =0.0,user_lng=0.0;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -159,7 +162,12 @@ public class HomeActivity extends AppCompatActivity {
             if (userModel == null) {
                 navigateToLoginActivity(true);
             } else {
-                displayFragmentOrder();
+                if (userModel.getUser().getUser_type().equals("client")){
+                    displayFragmentOrder();
+
+                }else {
+                    displayFragmentDriverOrder();
+                }
 
             }
         });
@@ -325,6 +333,10 @@ public class HomeActivity extends AppCompatActivity {
         if (fragment_order != null && fragment_order.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_order).commit();
         }
+        if (fragment_driver_order!=null&&fragment_driver_order.isAdded()){
+            fragmentManager.beginTransaction().hide(fragment_driver_order).commit();
+
+        }
 
         if (fragment_notifications != null && fragment_notifications.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_notifications).commit();
@@ -354,6 +366,10 @@ public class HomeActivity extends AppCompatActivity {
 
         if (fragment_order != null && fragment_order.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_order).commit();
+        }
+        if (fragment_driver_order!=null&&fragment_driver_order.isAdded()){
+            fragmentManager.beginTransaction().hide(fragment_driver_order).commit();
+
         }
 
         if (fragment_main != null && fragment_main.isAdded()) {
@@ -401,6 +417,38 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    private void displayFragmentDriverOrder() {
+        updateOrderUi();
+
+        if (fragment_driver_order == null) {
+            fragment_driver_order = Fragment_Driver_Order.newInstance();
+        }
+
+        if (fragment_main != null && fragment_main.isAdded()) {
+            fragmentManager.beginTransaction().hide(fragment_main).commit();
+        }
+
+        if (fragment_order != null && fragment_order.isAdded()) {
+            fragmentManager.beginTransaction().hide(fragment_order).commit();
+        }
+
+        if (fragment_notifications != null && fragment_notifications.isAdded()) {
+            fragmentManager.beginTransaction().hide(fragment_notifications).commit();
+        }
+
+        if (fragment_profile != null && fragment_profile.isAdded()) {
+            fragmentManager.beginTransaction().hide(fragment_profile).commit();
+        }
+
+
+        if (fragment_driver_order.isAdded()) {
+            fragmentManager.beginTransaction().show(fragment_driver_order).commit();
+        } else {
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_driver_order, "fragment_driver_order").addToBackStack("fragment_driver_order").commit();
+        }
+
+    }
+
     private void displayFragmentProfile() {
         updateProfileUi();
 
@@ -410,6 +458,11 @@ public class HomeActivity extends AppCompatActivity {
 
         if (fragment_order != null && fragment_order.isAdded()) {
             fragmentManager.beginTransaction().hide(fragment_order).commit();
+        }
+
+        if (fragment_driver_order!=null&&fragment_driver_order.isAdded()){
+            fragmentManager.beginTransaction().hide(fragment_driver_order).commit();
+
         }
 
         if (fragment_notifications != null && fragment_notifications.isAdded()) {

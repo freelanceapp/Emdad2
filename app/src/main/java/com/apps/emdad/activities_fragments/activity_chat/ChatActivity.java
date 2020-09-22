@@ -231,6 +231,26 @@ public class ChatActivity extends AppCompatActivity {
         }
 
 
+        if (userModel.getUser().getUser_type().equals("driver")){
+            if (userModel.getUser().getId()==orderModel.getClient().getId()){
+
+                binding.tvMsgRight.setText(orderModel.getDetails());
+                binding.tvMsgRight.setVisibility(View.VISIBLE);
+            }else {
+                binding.tvMsgLeft.setText(orderModel.getDetails());
+                binding.tvMsgLeft.setVisibility(View.VISIBLE);
+
+            }
+        }else {
+
+
+            binding.tvMsgRight.setText(orderModel.getDetails());
+            binding.tvMsgRight.setVisibility(View.VISIBLE);
+
+        }
+
+
+
     }
     private void resendOrder(){
         isDataChanged = true;

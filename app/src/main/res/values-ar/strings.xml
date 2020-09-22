@@ -269,5 +269,6 @@
     <string name="ready_to_deliver_order">انا مستعد لتوصيل الطلب</string>
     <string name="client_reject_order">قام العميل برفض طلب عرض \n التوصيل الذي قدمتة بإمكانك عرض \n توصيل آخر اذا رغبت!</string>
     <string name="send_offer">عرض آخر</string>
+    <string name="delivery_order">التوصيل</string>
 
 </resources>

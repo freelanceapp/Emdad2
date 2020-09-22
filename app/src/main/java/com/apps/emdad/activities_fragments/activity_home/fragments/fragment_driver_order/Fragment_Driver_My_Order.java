@@ -1,4 +1,4 @@
-package com.apps.emdad.activities_fragments.activity_home.fragments;
+package com.apps.emdad.activities_fragments.activity_home.fragments.fragment_driver_order;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +20,10 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
+import com.apps.emdad.adapters.DriverOrdersAdapter;
 import com.apps.emdad.adapters.OrdersAdapter;
+import com.apps.emdad.databinding.FragmentDriverMyDeliverOrdersBinding;
+import com.apps.emdad.databinding.FragmentDriverOrdersBinding;
 import com.apps.emdad.databinding.FragmentOrdersBinding;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
@@ -37,10 +40,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Fragment_Order extends Fragment {
-    private FragmentOrdersBinding binding;
+public class Fragment_Driver_My_Order extends Fragment {
+    private FragmentDriverMyDeliverOrdersBinding binding;
     private HomeActivity activity;
-    private OrdersAdapter adapter;
+    private DriverOrdersAdapter adapter;
     private List<OrderModel> orderModelList;
     private int current_page = 1;
     private boolean isLoading = false;
@@ -49,14 +52,14 @@ public class Fragment_Order extends Fragment {
 
 
 
-    public static Fragment_Order newInstance(){
-        return new Fragment_Order();
+    public static Fragment_Driver_My_Order newInstance(){
+        return new Fragment_Driver_My_Order();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_orders,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_driver_my_deliver_orders,container,false);
         initView();
         return binding.getRoot();
 
@@ -68,7 +71,7 @@ public class Fragment_Order extends Fragment {
         userModel = preferences.getUserData(activity);
         orderModelList = new ArrayList<>();
         binding.recView.setLayoutManager(new LinearLayoutManager(activity));
-        adapter = new OrdersAdapter(orderModelList, activity, this);
+        adapter = new DriverOrdersAdapter(orderModelList, activity, this);
         binding.recView.setAdapter(adapter);
         binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -86,10 +89,7 @@ public class Fragment_Order extends Fragment {
             }
         });
 
-        binding.flOldOrders.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, OldOrdersActivity.class);
-            startActivityForResult(intent,100);
-        });
+
         getOrders();
     }
     private void getOrders() {

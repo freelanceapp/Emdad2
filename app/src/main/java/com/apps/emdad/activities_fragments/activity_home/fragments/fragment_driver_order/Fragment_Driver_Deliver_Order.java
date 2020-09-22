@@ -1,13 +1,11 @@
-package com.apps.emdad.activities_fragments.activity_home.fragments;
+package com.apps.emdad.activities_fragments.activity_home.fragments.fragment_driver_order;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,27 +18,20 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
-import com.apps.emdad.adapters.OrdersAdapter;
+import com.apps.emdad.adapters.DriverOrdersAdapter;
+import com.apps.emdad.databinding.FragmentDriverMyDeliverOrdersBinding;
 import com.apps.emdad.databinding.FragmentOrdersBinding;
 import com.apps.emdad.models.OrderModel;
-import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
-import com.apps.emdad.remote.Api;
-import com.apps.emdad.tags.Tags;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class Fragment_Order extends Fragment {
-    private FragmentOrdersBinding binding;
+public class Fragment_Driver_Deliver_Order extends Fragment {
+    private FragmentDriverMyDeliverOrdersBinding binding;
     private HomeActivity activity;
-    private OrdersAdapter adapter;
+    private DriverOrdersAdapter adapter;
     private List<OrderModel> orderModelList;
     private int current_page = 1;
     private boolean isLoading = false;
@@ -49,14 +40,14 @@ public class Fragment_Order extends Fragment {
 
 
 
-    public static Fragment_Order newInstance(){
-        return new Fragment_Order();
+    public static Fragment_Driver_Deliver_Order newInstance(){
+        return new Fragment_Driver_Deliver_Order();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_orders,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_driver_my_deliver_orders,container,false);
         initView();
         return binding.getRoot();
 
@@ -68,7 +59,7 @@ public class Fragment_Order extends Fragment {
         userModel = preferences.getUserData(activity);
         orderModelList = new ArrayList<>();
         binding.recView.setLayoutManager(new LinearLayoutManager(activity));
-        adapter = new OrdersAdapter(orderModelList, activity, this);
+        adapter = new DriverOrdersAdapter(orderModelList, activity, this);
         binding.recView.setAdapter(adapter);
         binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -86,15 +77,12 @@ public class Fragment_Order extends Fragment {
             }
         });
 
-        binding.flOldOrders.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, OldOrdersActivity.class);
-            startActivityForResult(intent,100);
-        });
+
         getOrders();
     }
     private void getOrders() {
 
-        Api.getService(Tags.base_url).getClientOrder(userModel.getUser().getToken(), userModel.getUser().getId(), "current", 1, "on", 20)
+        /*Api.getService(Tags.base_url).getClientOrder(userModel.getUser().getToken(), userModel.getUser().getId(), "current", 1, "on", 20)
                 .enqueue(new Callback<OrdersDataModel>() {
                     @Override
                     public void onResponse(Call<OrdersDataModel> call, Response<OrdersDataModel> response) {
@@ -146,11 +134,11 @@ public class Fragment_Order extends Fragment {
 
                         }
                     }
-                });
+                });*/
 
     }
     private void loadMore(int page){
-        orderModelList.add(null);
+       /* orderModelList.add(null);
         adapter.notifyItemInserted(orderModelList.size()-1);
         isLoading = true;
 
@@ -214,7 +202,7 @@ public class Fragment_Order extends Fragment {
 
                         }
                     }
-                });
+                });*/
     }
 
     public void setItemData(OrderModel orderModel1) {

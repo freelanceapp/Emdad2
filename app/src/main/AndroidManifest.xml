@@ -26,7 +26,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
-        <activity android:name=".activities_fragments.activity_splash_loading.SplashLoadingActivity"></activity>
+        <activity android:name=".activities_fragments.activity_splash_loading.SplashLoadingActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
         <activity
             android:name=".activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
