@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
 import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActivity;
 import com.apps.emdad.adapters.AddOrderImagesAdapter;
@@ -201,7 +202,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             Toast.makeText(AddOrderTextActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            AddOrderTextActivity.super.onBackPressed();
+                            Intent intent =new Intent(AddOrderTextActivity.this, ChatActivity.class);
+                            intent.putExtra("order_id",response.body().getOrder().getId());
+                            startActivity(intent);
                         }else
                         {
                             if (response.code()==500)
@@ -280,7 +283,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             Toast.makeText(AddOrderTextActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            AddOrderTextActivity.super.onBackPressed();
+                            Intent intent =new Intent(AddOrderTextActivity.this, ChatActivity.class);
+                            intent.putExtra("order_id",response.body().getOrder().getId());
+                            startActivity(intent);
                         }else
                         {
                             if (response.code()==500)

@@ -22,8 +22,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_products.AddOrderProductActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.adapters.AdditionProductAdapter;
 import com.apps.emdad.adapters.CustomHoursAdapter;
@@ -688,7 +690,11 @@ public class ShopProductActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==100&&resultCode==RESULT_OK){
+        if (requestCode==100&&resultCode==RESULT_OK&&data!=null){
+            int order_id = data.getIntExtra("order_id",0);
+            Intent intent =new Intent(this, ChatActivity.class);
+            intent.putExtra("order_id",order_id);
+            startActivity(intent);
             finish();
 
         }

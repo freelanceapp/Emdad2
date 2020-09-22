@@ -267,5 +267,7 @@
     <string name="sent_to_the_client_please_wait_until_he_accepts_your_offer_thank_you"> للعميل الرجاء الانتظار حتى يقوم \n بقبول عرضك وشكرا \n</string>
     <string name="cancel2">سحب العرض</string>
     <string name="ready_to_deliver_order">انا مستعد لتوصيل الطلب</string>
+    <string name="client_reject_order">قام العميل برفض طلب عرض \n التوصيل الذي قدمتة بإمكانك عرض \n توصيل آخر اذا رغبت!</string>
+    <string name="send_offer">عرض آخر</string>
 
 </resources>

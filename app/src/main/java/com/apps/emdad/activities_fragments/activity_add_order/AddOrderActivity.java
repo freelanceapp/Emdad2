@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.activities_fragments.activity_package_map.PackageMapActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
@@ -536,7 +537,10 @@ public class AddOrderActivity extends AppCompatActivity {
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             Toast.makeText(AddOrderActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            AddOrderActivity.super.onBackPressed();
+                            Intent intent =new Intent(AddOrderActivity.this, ChatActivity.class);
+                            intent.putExtra("order_id",response.body().getOrder().getId());
+                            startActivity(intent);
+
                         }else
                         {
                             if (response.code()==500)

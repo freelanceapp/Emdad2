@@ -29,7 +29,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
+import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity;
 import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.adapters.AddOrderImagesAdapter;
@@ -239,7 +241,9 @@ public class AddOrderProductActivity extends AppCompatActivity {
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             Toast.makeText(AddOrderProductActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            setResult(RESULT_OK);
+                            Intent intent = getIntent();
+                            intent.putExtra("order_id",response.body().getOrder().getId());
+                            setResult(RESULT_OK,intent);
                             finish();
                         }else
                         {
@@ -314,7 +318,9 @@ public class AddOrderProductActivity extends AppCompatActivity {
                         if (response.isSuccessful()&&response.body()!=null)
                         {
                             Toast.makeText(AddOrderProductActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            AddOrderProductActivity.super.onBackPressed();
+                            Intent intent =new Intent(AddOrderProductActivity.this, ChatActivity.class);
+                            intent.putExtra("order_id",response.body().getOrder().getId());
+                            startActivity(intent);
                         }else
                         {
                             if (response.code()==500)
