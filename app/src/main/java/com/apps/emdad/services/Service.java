@@ -6,11 +6,13 @@ import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.OfferSettingModel;
+import com.apps.emdad.models.OffersDataModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
+import com.apps.emdad.models.RangeOfferModel;
 import com.apps.emdad.models.ShopDepartmentDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.SliderModel;
@@ -239,7 +241,9 @@ public interface Service {
 
     @GET("api/get-one-order")
     Call<SingleOrderDataModel> getSingleOrder(@Header("Authorization") String user_token,
-                                              @Query(value = "order_id") int order_id
+                                              @Query(value = "order_id") int order_id,
+                                              @Query(value = "driver_id") int driver_id
+
     );
 
 
@@ -253,4 +257,52 @@ public interface Service {
     Call<ResponseBody> readNotification(@Header("Authorization") String user_token,
                                         @Field("user_id") int user_id
     );
+
+    @GET("api/get-driver-new-orders")
+    Call<OrdersDataModel> getDriverDeliveryOrder(@Header("Authorization") String user_token,
+                                                 @Query(value = "user_id") int user_id,
+                                                 @Query(value = "page") int page,
+                                                 @Query(value = "pagination") String pagination,
+                                                 @Query(value = "limit_per_page") int limit_per_page
+    );
+
+    @GET("api/show-driver-offers")
+    Call<OffersDataModel> getClientOffers(@Header("Authorization") String user_token,
+                                          @Query(value = "user_id") int user_id,
+                                          @Query(value = "order_id") int order_id,
+                                          @Query(value = "page") int page,
+                                          @Query(value = "pagination") String pagination,
+                                          @Query(value = "limit_per_page") int limit_per_page
+    );
+
+    @FormUrlEncoded
+    @POST("api/range-offer")
+    Call<RangeOfferModel> getOfferRange(@Header("Authorization") String user_token,
+                                        @Field("client_id") int client_id,
+                                        @Field("driver_id") int driver_id,
+                                        @Field("order_id") int order_id,
+                                        @Field("distance") double distance
+
+    );
+
+    @GET("api/get-driver-new-orders")
+    Call<OrdersDataModel> getDriverComingOrder(@Header("Authorization") String user_token,
+                                               @Query(value = "user_id") int user_id,
+                                               @Query(value = "page") int page,
+                                               @Query(value = "pagination") String pagination,
+                                               @Query(value = "limit_per_page") int limit_per_page
+    );
+
+    @FormUrlEncoded
+    @POST("api/create-offer")
+    Call<ResponseBody> sendDriverOffer(@Header("Authorization") String user_token,
+                                       @Field("client_id") int client_id,
+                                       @Field("driver_id") int driver_id,
+                                       @Field("order_id") int order_id,
+                                       @Field("offer_value") String offer_value,
+                                       @Field("action") String action
+
+
+    );
+
 }

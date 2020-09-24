@@ -237,14 +237,15 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
     public void onDelegate() {
         if (userModel!=null){
             if (userModel.getUser().getRegister_link()!=null&&!userModel.getUser().getRegister_link().isEmpty()){
-
+                Intent intent = new Intent(this, SignUpDelegateActivity.class);
+                String url = Tags.base_url+userModel.getUser().getRegister_link();
+                intent.putExtra("url",url);
+                startActivityForResult(intent,100);
             }else {
                 Common.CreateDialogAlert(this,getString(R.string.inv_url));
             }
 
-            Intent intent = new Intent(this, SignUpDelegateActivity.class);
-            intent.putExtra("url",Tags.base_url);
-            startActivityForResult(intent,100);
+
         }else {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.putExtra("from", false);

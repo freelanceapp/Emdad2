@@ -31,13 +31,21 @@ public class OrderModel implements Serializable {
     private String coupon_id;
     private String details;
     private String notes;
+    private String offers_count;
+
     private CountryModel coupon;
     private MarketModel market;
     private UserModel.User client;
     private UserModel.User driver;
+    private String pick_up_distance="0.0";
+    private String drop_off_distance = "0.0";
+    private DriverLastOffer driver_last_offer;
 
     private List<OrderImages>order_images;
 
+    public String getOffers_count() {
+        return offers_count;
+    }
 
     public int getId() {
         return id;
@@ -49,6 +57,10 @@ public class OrderModel implements Serializable {
 
     public String getOrder_status() {
         return order_status;
+    }
+
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
     }
 
     public String getOrder_type() {
@@ -167,6 +179,27 @@ public class OrderModel implements Serializable {
         return order_images;
     }
 
+
+    public DriverLastOffer getDriver_last_offer() {
+        return driver_last_offer;
+    }
+
+    public String getPick_up_distance() {
+        return pick_up_distance;
+    }
+
+    public void setPick_up_distance(String pick_up_distance) {
+        this.pick_up_distance = pick_up_distance;
+    }
+
+    public String getDrop_off_distance() {
+        return drop_off_distance;
+    }
+
+    public void setDrop_off_distance(String drop_off_distance) {
+        this.drop_off_distance = drop_off_distance;
+    }
+
     public static class OrderImages implements Serializable{
         private int id;
         private String image;
@@ -185,6 +218,49 @@ public class OrderModel implements Serializable {
 
         public void setImage(String image) {
             this.image = image;
+        }
+    }
+
+    public static class DriverLastOffer implements Serializable{
+        private int id;
+        private String driver_id;
+        private String user_id;
+        private String order_id;
+        private String offer_value;
+        private String tax_value;
+        private String status;
+        private String offer_time;
+
+        public int getId() {
+            return id;
+        }
+
+        public String getDriver_id() {
+            return driver_id;
+        }
+
+        public String getUser_id() {
+            return user_id;
+        }
+
+        public String getOrder_id() {
+            return order_id;
+        }
+
+        public String getOffer_value() {
+            return offer_value;
+        }
+
+        public String getTax_value() {
+            return tax_value;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public String getOffer_time() {
+            return offer_time;
         }
     }
 }

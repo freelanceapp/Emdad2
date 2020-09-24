@@ -4,14 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -26,7 +31,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
+import com.apps.emdad.adapters.OffersAdapter;
 import com.apps.emdad.databinding.ActivityChatBinding;
+import com.apps.emdad.language.Language;
+import com.apps.emdad.models.FromToLocationModel;
+import com.apps.emdad.models.OffersDataModel;
+import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
@@ -37,12 +48,18 @@ import com.apps.emdad.share.Common;
 import com.apps.emdad.tags.Tags;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,24 +83,65 @@ public class ChatActivity extends AppCompatActivity {
     private int order_id;
     private OrderModel orderModel;
     private boolean isDataChanged = false;
+    private int offer_current_page = 1;
+    private boolean offer_isLoading = false;
+    private List<OffersModel> offersModelList;
+    private OffersAdapter offersAdapter;
+    private String currency = "";
+    private String lang;
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Paper.init(newBase);
+        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_chat);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         getDataFromIntent();
         initView();
     }
 
     private void getDataFromIntent() {
         Intent intent = getIntent();
-        order_id = intent.getIntExtra("order_id",0);
+        order_id = intent.getIntExtra("order_id", 0);
 
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
+        Paper.init(this);
+        lang = Paper.book().read("lang", "ar");
+        offersModelList = new ArrayList<>();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
+        binding.setLang(lang);
+        currency = getString(R.string.sar);
+        if (userModel != null) {
+            currency = userModel.getUser().getCountry().getWord().getCurrency();
+        }
+        binding.recViewOffers.setLayoutManager(new LinearLayoutManager(this));
+        offersAdapter = new OffersAdapter(offersModelList, this, currency);
+        binding.recViewOffers.setAdapter(offersAdapter);
+        binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    LinearLayoutManager manager = (LinearLayoutManager) binding.recView.getLayoutManager();
+                    int last_item_pos = manager.findLastCompletelyVisibleItemPosition();
+                    int total_items_count = binding.recView.getAdapter().getItemCount();
+                    if (last_item_pos == (total_items_count - 2) && !offer_isLoading) {
+                        int page = offer_current_page + 1;
+                        loadMoreOffer(page);
+                    }
+                }
+            }
+        });
+
         binding.imageChooser.setOnClickListener(v -> {
             if (binding.expandedLayout.isExpanded()) {
                 binding.expandedLayout.collapse(true);
@@ -97,7 +155,6 @@ public class ChatActivity extends AppCompatActivity {
         binding.btnHide.setOnClickListener(v -> {
             binding.expandedLayout.collapse(true);
         });
-
 
         binding.imgGallery.setOnClickListener(v -> {
             checkGalleryPermission();
@@ -135,12 +192,26 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         binding.llBack.setOnClickListener(v -> onBackPressed());
+        binding.tvReadyDeliverOrder.setOnClickListener(v -> {
+            Intent intent = new Intent(this, DelegateAddOfferActivity.class);
+            double pick_up_distance = getDistance(new LatLng(Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude())), new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude())));
+            double drop_off_distance = getDistance(new LatLng(Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude())), new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude())));
+
+            double from_loc_to_loc_distance = getDistance(new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude())), new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude())));
+            FromToLocationModel fromToLocationModel = new FromToLocationModel(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude()), orderModel.getMarket_address(), pick_up_distance, Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude()), orderModel.getClient_address(), drop_off_distance, from_loc_to_loc_distance, Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude()));
+            intent.putExtra("data", fromToLocationModel);
+            intent.putExtra("user_token", userModel.getUser().getToken());
+            intent.putExtra("client_id", orderModel.getClient().getId());
+            intent.putExtra("order_id", order_id);
+            intent.putExtra("driver_id", userModel.getUser().getId());
+            startActivityForResult(intent, 100);
+        });
         getOrderById();
 
     }
 
     private void getOrderById() {
-        Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(),order_id)
+        Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(), order_id, userModel.getUser().getId())
                 .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
                     public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
@@ -189,59 +260,88 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void updateUi(OrderModel orderModel) {
-        if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("driver_end_rate")||orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("order_driver_back")){
+
+        Log.e("order_status", orderModel.getOrder_status());
+        if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("have_offer") || orderModel.getOrder_status().equals("driver_end_rate") || orderModel.getOrder_status().equals("client_end_and_rate") || orderModel.getOrder_status().equals("order_driver_back") || orderModel.getOrder_status().equals("client_cancel") || orderModel.getOrder_status().equals("cancel_for_late")) {
             binding.imageRecord.setVisibility(View.GONE);
             binding.imageChooser.setVisibility(View.GONE);
             binding.imageSend.setVisibility(View.GONE);
             binding.msgContent.setVisibility(View.GONE);
-        }else {
+        } else if (orderModel.getOrder_status().equals("accept_driver")) {
             binding.imageRecord.setVisibility(View.VISIBLE);
             binding.imageChooser.setVisibility(View.VISIBLE);
             binding.imageSend.setVisibility(View.VISIBLE);
             binding.msgContent.setVisibility(View.VISIBLE);
+        } else {
+            binding.imageRecord.setVisibility(View.GONE);
+            binding.imageChooser.setVisibility(View.GONE);
+            binding.imageSend.setVisibility(View.GONE);
+            binding.msgContent.setVisibility(View.GONE);
         }
 
 
-        if (orderModel.getOrder_status().equals("new_order")){
+        if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("pennding") || orderModel.getOrder_status().equals("have_offer")) {
             binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
             binding.orderStatus.setText(getString(R.string.pending));
-        }else if (orderModel.getOrder_status().equals("client_cancel")){
+            binding.btnResend.setVisibility(View.GONE);
+        } else if (orderModel.getOrder_status().equals("client_cancel") || orderModel.getOrder_status().equals("cancel_for_late")) {
             binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
             binding.orderStatus.setText(getString(R.string.cancel));
             binding.btnResend.setVisibility(View.VISIBLE);
-        }else if (orderModel.getOrder_status().equals("driver_end_rate")||orderModel.getOrder_status().equals("client_end_and_rate")){
+        } else if (orderModel.getOrder_status().equals("driver_end_rate") || orderModel.getOrder_status().equals("client_end_and_rate")) {
             binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
             binding.orderStatus.setText(getString(R.string.done));
             binding.btnResend.setVisibility(View.VISIBLE);
 
+        } else if (orderModel.getOrder_status().equals("accept_driver")) {
+            binding.orderStatus.setVisibility(View.INVISIBLE);
+            binding.btnResend.setVisibility(View.GONE);
+            binding.consUserData.setVisibility(View.VISIBLE);
+            updateUserUi();
+
         }
 
-        if (orderModel.getOrder_status().equals("new_order")){
-            if (userModel.getUser().getUser_type().equals("driver")){
-                if (userModel.getUser().getId()==orderModel.getClient().getId()){
-                    binding.flOffers.setVisibility(View.VISIBLE);
 
-                }else {
-                    binding.flDriverOffers.setVisibility(View.VISIBLE);
-
-                }
-            }else {
+        if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+            if (orderModel.getOrder_status().equals("new_order")) {
                 binding.flOffers.setVisibility(View.VISIBLE);
+                binding.llOfferData.setVisibility(View.VISIBLE);
+                binding.llComingOffer.setVisibility(View.GONE);
+
+            } else if (orderModel.getOrder_status().equals("have_offer")) {
+                binding.flOffers.setVisibility(View.VISIBLE);
+                binding.llOfferData.setVisibility(View.GONE);
+                binding.llComingOffer.setVisibility(View.VISIBLE);
+                getOffers();
+            } else {
+                binding.flOffers.setVisibility(View.GONE);
+                binding.llOfferData.setVisibility(View.GONE);
+
+
             }
+        } else {
+            if (orderModel.getDriver_last_offer() == null) {
+                binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvReadyDeliverOrder.setVisibility(View.GONE);
+                binding.flDriverOffers.setVisibility(View.VISIBLE);
+                binding.tvDriverOfferPrice.setText(String.format(Locale.ENGLISH, "%s %s %s %s", getString(R.string.your_offer_of), orderModel.getDriver_last_offer().getOffer_value(), currency, getString(R.string.sent_to_the_client_please_wait_until_he_accepts_your_offer_thank_you)));
+            }
+
         }
 
 
-        if (userModel.getUser().getUser_type().equals("driver")){
-            if (userModel.getUser().getId()==orderModel.getClient().getId()){
+        if (userModel.getUser().getUser_type().equals("driver")) {
+            if (userModel.getUser().getId() == orderModel.getClient().getId()) {
 
                 binding.tvMsgRight.setText(orderModel.getDetails());
                 binding.tvMsgRight.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 binding.tvMsgLeft.setText(orderModel.getDetails());
                 binding.tvMsgLeft.setVisibility(View.VISIBLE);
 
             }
-        }else {
+        } else {
 
 
             binding.tvMsgRight.setText(orderModel.getDetails());
@@ -250,12 +350,43 @@ public class ChatActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void updateUserUi() {
+        if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+orderModel.getDriver().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
+            binding.tvName.setText(orderModel.getDriver().getName());
+            binding.rateBar.setRating(Float.parseFloat(orderModel.getDriver().getRate()));
+            binding.flCall.setVisibility(View.VISIBLE);
+            binding.llBill.setVisibility(View.GONE);
+            double offer_value = 0.0;
+            if (orderModel.getDriver_last_offer()!=null){
+                offer_value = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value())+Double.parseDouble(orderModel.getDriver_last_offer().getTax_value());
+            }
+            binding.tvOfferValue.setText(String.format(Locale.ENGLISH,"%.2f %s",offer_value,currency));
+        } else {
+
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+orderModel.getClient().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
+            binding.tvName.setText(orderModel.getClient().getName());
+            binding.rateBar.setRating(Float.parseFloat(orderModel.getClient().getRate()));
+            binding.flCall.setVisibility(View.GONE);
+            binding.llBill.setVisibility(View.VISIBLE);
+
+            double offer_value = 0.0;
+            if (orderModel.getDriver_last_offer()!=null){
+                offer_value = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
+            }
+            binding.tvOfferValue.setText(String.format(Locale.ENGLISH,"%.2f %s",offer_value,currency));
+        }
+
 
     }
-    private void resendOrder(){
+
+    private void resendOrder() {
         isDataChanged = true;
         binding.btnResend.setVisibility(View.GONE);
     }
+
     private void sendAttachment(String file_uri, String attachment_type) {
         /*Intent intent = new Intent(this, ServiceUploadAttachment.class);
         intent.putExtra("file_uri", file_uri);
@@ -266,6 +397,156 @@ public class ChatActivity extends AppCompatActivity {
         startService(intent);*/
 
 
+    }
+
+
+    private void getOffers() {
+
+        Api.getService(Tags.base_url).getClientOffers(userModel.getUser().getToken(), userModel.getUser().getId(), order_id, 1, "on", 10)
+                .enqueue(new Callback<OffersDataModel>() {
+                    @Override
+                    public void onResponse(Call<OffersDataModel> call, Response<OffersDataModel> response) {
+
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+
+                                if (response.body().getData().size() > 0) {
+                                    offer_current_page = response.body().getCurrent_page();
+                                    binding.llOfferData.setVisibility(View.GONE);
+                                    updateDataDistance(response.body().getData(), false);
+                                }
+
+
+                            }
+                        } else {
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<OffersDataModel> call, Throwable t) {
+                        try {
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+    private void loadMoreOffer(int page) {
+        offersModelList.add(null);
+        offersAdapter.notifyItemInserted(offersModelList.size() - 1);
+        offer_isLoading = true;
+
+        Api.getService(Tags.base_url).getClientOffers(userModel.getUser().getToken(), userModel.getUser().getId(), order_id, page, "on", 10)
+                .enqueue(new Callback<OffersDataModel>() {
+                    @Override
+                    public void onResponse(Call<OffersDataModel> call, Response<OffersDataModel> response) {
+                        offer_isLoading = false;
+                        if (offersModelList.get(offersModelList.size() - 1) == null) {
+                            offersModelList.remove(offersModelList.size() - 1);
+                            offersAdapter.notifyItemRemoved(offersModelList.size() - 1);
+                        }
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+
+                                if (response.body().getData().size() > 0) {
+                                    offer_current_page = response.body().getCurrent_page();
+                                    updateDataDistance(response.body().getData(), true);
+                                }
+
+
+                            }
+                        } else {
+                            offer_isLoading = false;
+                            if (offersModelList.get(offersModelList.size() - 1) == null) {
+                                offersModelList.remove(offersModelList.size() - 1);
+                                offersAdapter.notifyItemRemoved(offersModelList.size() - 1);
+                            }
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<OffersDataModel> call, Throwable t) {
+                        offer_isLoading = false;
+                        if (offersModelList.get(offersModelList.size() - 1) == null) {
+                            offersModelList.remove(offersModelList.size() - 1);
+                            offersAdapter.notifyItemRemoved(offersModelList.size() - 1);
+                        }
+                        try {
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    private void updateDataDistance(List<OffersModel> data, boolean isLoadMore) {
+        LatLng place_location = new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude()));
+        for (int index = 0; index < data.size(); index++) {
+            OffersModel offersModel = data.get(index);
+            offersModel.setDistance(calculateDistance(place_location, new LatLng(Double.parseDouble(offersModel.getDriver().getLatitude()), Double.parseDouble(offersModel.getDriver().getLongitude()))));
+            offersModel.setOrder_time(orderModel.getOrder_time_arrival());
+            data.set(index, offersModel);
+        }
+
+        if (!isLoadMore) {
+            offersModelList.clear();
+            offersModelList.addAll(data);
+            offersAdapter.notifyDataSetChanged();
+        } else {
+            int old_pos = offersModelList.size() - 1;
+            offersModelList.addAll(data);
+            int new_pos = offersModelList.size();
+            offersAdapter.notifyItemRangeInserted(old_pos, new_pos);
+        }
+    }
+
+    private String calculateDistance(LatLng latLng1, LatLng latLng2) {
+        return String.format(Locale.ENGLISH, "%s %s", String.format(Locale.ENGLISH, "%.2f", (SphericalUtil.computeDistanceBetween(latLng1, latLng2) / 1000)), getString(R.string.km));
+
+    }
+
+    private double getDistance(LatLng latLng1, LatLng latLng2) {
+        return SphericalUtil.computeDistanceBetween(latLng1, latLng2) / 1000;
     }
 
     private void createMediaRecorder() {
@@ -333,7 +614,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-
     private void checkGalleryPermission() {
         if (ActivityCompat.checkSelfPermission(this, READ_PERM) == PackageManager.PERMISSION_GRANTED) {
             selectImage(IMG_REQ);
@@ -344,7 +624,6 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
-
 
     private void checkMicPermission() {
         if (ActivityCompat.checkSelfPermission(this, MIC_PERM) != PackageManager.PERMISSION_GRANTED ||
@@ -393,7 +672,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -432,6 +710,9 @@ public class ChatActivity extends AppCompatActivity {
             Uri uri = getUriFromBitmap(bitmap);
             sendAttachment(uri.toString(), "img");
 
+        } else if (requestCode == 100 && resultCode == RESULT_OK) {
+            orderModel.setOrder_status("have_offer");
+            getOrderById();
         }
 
     }
@@ -482,7 +763,7 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isDataChanged){
+        if (isDataChanged) {
             setResult(RESULT_OK);
         }
 

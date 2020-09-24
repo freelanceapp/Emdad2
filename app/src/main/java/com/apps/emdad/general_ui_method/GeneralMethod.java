@@ -2,6 +2,7 @@ package com.apps.emdad.general_ui_method;
 
 import android.net.Uri;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import androidx.databinding.BindingAdapter;
 import com.apps.emdad.R;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.tags.Tags;
+import com.google.android.gms.common.util.DataUtils;
 import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
@@ -177,6 +179,41 @@ public class GeneralMethod {
 
     }
 
+    @BindingAdapter("order_image")
+    public static void order_image(View view, String endPoint) {
+        if (view instanceof CircleImageView) {
+            CircleImageView imageView = (CircleImageView) view;
+            if (endPoint != null) {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.image_delivery_scooter).into(imageView);
+            } else {
+                Picasso.get().load(R.drawable.image_delivery_scooter).into(imageView);
+
+            }
+        } else if (view instanceof RoundedImageView) {
+            RoundedImageView imageView = (RoundedImageView) view;
+
+            if (endPoint != null) {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.image_delivery_scooter).into(imageView);
+            } else {
+                Picasso.get().load(R.drawable.image_delivery_scooter).into(imageView);
+
+            }
+        } else if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+
+            if (endPoint != null) {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).placeholder(R.drawable.image_delivery_scooter).into(imageView);
+            } else {
+                Picasso.get().load(R.drawable.image_delivery_scooter).into(imageView);
+
+            }
+        }
+
+    }
+
     @BindingAdapter("menuImage")
     public static void menuImage(View view, String endPoint) {
         if (view instanceof CircleImageView) {
@@ -185,7 +222,7 @@ public class GeneralMethod {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).into(imageView);
             } else {
-                Picasso.get().load(R.drawable.image_avatar).into(imageView);
+                Picasso.get().load(R.drawable.image_delivery_scooter).into(imageView);
 
             }
         } else if (view instanceof RoundedImageView) {
@@ -195,7 +232,7 @@ public class GeneralMethod {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).into(imageView);
             } else {
-                Picasso.get().load(R.drawable.image_avatar).into(imageView);
+                Picasso.get().load(R.drawable.image_delivery_scooter).into(imageView);
 
             }
         } else if (view instanceof ImageView) {
@@ -205,7 +242,7 @@ public class GeneralMethod {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + endPoint)).into(imageView);
             } else {
-                Picasso.get().load(R.drawable.image_avatar).into(imageView);
+                Picasso.get().load(R.drawable.image_delivery_scooter).into(imageView);
 
             }
         }
@@ -217,6 +254,7 @@ public class GeneralMethod {
         ratingBar.setRating((float) rate);
 
     }
+
 
     @BindingAdapter("day")
     public static void getDay(TextView textView,int day) {
@@ -247,6 +285,40 @@ public class GeneralMethod {
 
     }
 
+
+    @BindingAdapter("delivery_time")
+    public static void getDeliveryTime(TextView textView,String delivery_time) {
+
+        switch (delivery_time){
+            case "1":
+                textView.setText(String.format(Locale.ENGLISH,"%s %s",textView.getContext().getString(R.string.within2),textView.getContext().getString(R.string.hour1)));
+                break;
+            case "2":
+                textView.setText(String.format(Locale.ENGLISH,"%s %s",textView.getContext().getString(R.string.within2),textView.getContext().getString(R.string.hour2)));
+
+                break;
+            case "3":
+                textView.setText(String.format(Locale.ENGLISH,"%s %s",textView.getContext().getString(R.string.within2),textView.getContext().getString(R.string.hour3)));
+                break;
+            case "4":
+                textView.setText(String.format(Locale.ENGLISH,"%s %s",textView.getContext().getString(R.string.within2),textView.getContext().getString(R.string.day1)));
+                break;
+            case "5":
+                textView.setText(String.format(Locale.ENGLISH,"%s %s",textView.getContext().getString(R.string.within2),textView.getContext().getString(R.string.day2)));
+                break;
+            case "6":
+                textView.setText(String.format(Locale.ENGLISH,"%s %s",textView.getContext().getString(R.string.within2),textView.getContext().getString(R.string.day3)));
+                break;
+
+        }
+
+    }
+
+    @BindingAdapter({"driver_lat","driver_lng","place_lat","place_lng"})
+    public static void distance(TextView textView,double driver_lat,double driver_lng,double place_lat,double place_lng){
+       double distance = SphericalUtil.computeDistanceBetween(new LatLng(driver_lat,driver_lng), new LatLng(place_lat,place_lng)) / 1000;
+       textView.setText(String.format(Locale.ENGLISH,"%s %s",String.format(Locale.ENGLISH,"%.2f",distance),textView.getContext().getString(R.string.km)));
+    }
 }
 
 

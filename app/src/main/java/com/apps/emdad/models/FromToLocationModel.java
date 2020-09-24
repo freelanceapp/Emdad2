@@ -12,12 +12,12 @@ public class FromToLocationModel implements Serializable {
     private double toLng;
     private String toAddress;
     private double distance_me_drop_off_location;
-
+    private double from_location_to_location_distance;
     private double userLat;
     private double userLng;
 
 
-    public FromToLocationModel(double fromLat, double fromLng, String fromAddress, double distance_me_pick_up_location, double toLat, double toLng, String toAddress, double distance_me_drop_off_location,double userLat, double userLng) {
+    public FromToLocationModel(double fromLat, double fromLng, String fromAddress, double distance_me_pick_up_location, double toLat, double toLng, String toAddress, double distance_me_drop_off_location, double from_location_to_location_distance, double userLat, double userLng) {
         this.fromLat = fromLat;
         this.fromLng = fromLng;
         this.fromAddress = fromAddress;
@@ -26,6 +26,7 @@ public class FromToLocationModel implements Serializable {
         this.toLng = toLng;
         this.toAddress = toAddress;
         this.distance_me_drop_off_location = distance_me_drop_off_location;
+        this.from_location_to_location_distance = from_location_to_location_distance;
         this.userLat = userLat;
         this.userLng = userLng;
     }
@@ -108,5 +109,9 @@ public class FromToLocationModel implements Serializable {
 
     public void setUserLng(double userLng) {
         this.userLng = userLng;
+    }
+
+    public double getFrom_location_to_location_distance() {
+        return from_location_to_location_distance;
     }
 }

@@ -14,28 +14,27 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Order;
 import com.apps.emdad.databinding.CurrentOrderRowBinding;
 import com.apps.emdad.databinding.LoadMoreRowBinding;
+import com.apps.emdad.databinding.OfferRowBinding;
+import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
 
 import java.util.List;
+import java.util.Locale;
 
-import io.paperdb.Paper;
-
-public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int DATA = 1;
     private final int LOAD = 2;
-    private List<OrderModel> list;
+    private List<OffersModel> list;
     private Context context;
     private LayoutInflater inflater;
-    private Fragment_Order fragment;
-    private String lang;
+    private String currency;
 
-    public OrdersAdapter(List<OrderModel> list, Context context,Fragment_Order fragment) {
+
+    public OffersAdapter(List<OffersModel> list, Context context,String currency) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        this.fragment = fragment;
-        Paper.init(context);
-        lang = Paper.book().read("lang","ar");
+        this.currency = currency;
 
     }
 
@@ -45,7 +44,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (viewType==DATA){
-            CurrentOrderRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.current_order_row, parent, false);
+            OfferRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.offer_row, parent, false);
             return new MyHolder(binding);
         }else {
             LoadMoreRowBinding binding = DataBindingUtil.inflate(inflater, R.layout.load_more_row, parent, false);
@@ -59,27 +58,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         if (holder instanceof MyHolder){
             MyHolder myHolder = (MyHolder) holder;
-            OrderModel orderModel = list.get(position);
-            myHolder.binding.setModel(orderModel);
-            myHolder.binding.setLang(lang);
-
-            if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("pennding")||orderModel.getOrder_status().equals("have_offer")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
-                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.rate_color));
-                myHolder.binding.tvState.setText(context.getString(R.string.pending));
-            }else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
-                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
-                myHolder.binding.tvState.setText(context.getString(R.string.done));
-            }else if (orderModel.getOrder_status().equals("client_cancel")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_error);
-                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.color_red));
-                myHolder.binding.tvState.setText(context.getString(R.string.cancel));
-            }
-
+            OffersModel offersModel = list.get(position);
+            myHolder.binding.setModel(offersModel);
+            double cost = Double.parseDouble(offersModel.getOffer_value())+Double.parseDouble(offersModel.getTax_value());
+            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s",String.format(Locale.ENGLISH,"%.2f",cost),currency));
             myHolder.itemView.setOnClickListener(v -> {
-                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
-                fragment.setItemData(orderModel1);
+
             });
 
         }else if (holder instanceof LoadMoreHolder){
@@ -96,9 +80,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class MyHolder extends RecyclerView.ViewHolder {
-        private CurrentOrderRowBinding binding;
+        private OfferRowBinding binding;
 
-        public MyHolder(CurrentOrderRowBinding binding) {
+        public MyHolder(OfferRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

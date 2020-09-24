@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.models.LocationModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -33,6 +34,8 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Place;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -134,12 +137,19 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onLocationChanged(Location location) {
+
+        LocationModel locationModel = new LocationModel(location.getLatitude(),location.getLongitude());
+        EventBus.getDefault().post(locationModel);
+
         Api.getService(Tags.base_url)
                 .updateLocation(userModel.getUser().getToken(), userModel.getUser().getId(),location.getLatitude(),location.getLongitude())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful() && response.body() != null) {
+                            userModel.getUser().setLatitude(String.valueOf(location.getLatitude()));
+                            userModel.getUser().setLongitude(String.valueOf(location.getLongitude()));
+                            preferences.create_update_userdata(LocationService.this,userModel);
 
                         } else {
                             try {

@@ -40,6 +40,7 @@ import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
 import com.apps.emdad.databinding.ActivityHomeBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.location_service.LocationService;
+import com.apps.emdad.models.LocationModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UnReadCountModel;
 import com.apps.emdad.models.UserModel;
@@ -62,6 +63,10 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -81,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
     private Fragment_Driver_Order fragment_driver_order;
     private UserModel userModel;
     private Preferences preferences;
-    private double user_lat =0.0,user_lng=0.0;
+    public double user_lat =0.0,user_lng=0.0;
 
 
     @Override
@@ -208,6 +213,11 @@ public class HomeActivity extends AppCompatActivity {
 
 
         if (userModel != null) {
+
+            if (userModel.getUser().getUser_type().equals("driver")){
+                EventBus.getDefault().register(this);
+            }
+
             if (userModel.getUser().getLogo() != null) {
 
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.imageProfile);
@@ -533,6 +543,12 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvOrder.setTextColor(ContextCompat.getColor(this, R.color.gray11));
         binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void driverLocationUpdate(LocationModel locationModel){
+        user_lat = locationModel.getLat();
+        user_lng = locationModel.getLng();
     }
 
     @Override

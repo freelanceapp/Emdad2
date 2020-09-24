@@ -7,6 +7,9 @@
             name="model"
             type="com.apps.emdad.models.OrderModel" />
 
+        <variable
+            name="lang"
+            type="String" />
     <import type="android.view.View"/>
     </data>
 
@@ -75,7 +78,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:civ_border_width="2dp"
                     app:civ_border_color="@color/colorPrimary"
-                    menuImage='@{model.market!=null?model.market.logo:""}'
+                    order_image='@{model.market!=null?model.market.logo:""}'
                     />
                 <TextView
                     android:id="@+id/tvName"
@@ -143,18 +146,57 @@
                     android:text="@{model.details}"
                     />
 
-                <com.bhargavms.dotloader.DotLoader
-                    android:id="@+id/tvTyping"
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:dot_radius="3dp"
-                    app:number_of_dots="3"
-                    app:color_array="@array/dots"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvOrderText"
-                    android:visibility='@{model.order_status.equals("new_order")?(model.driver==null?View.VISIBLE:View.INVISIBLE):View.INVISIBLE,default=invisible}'
+                    >
+                    <com.bhargavms.dotloader.DotLoader
+                        android:id="@+id/tvTyping"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:dot_radius="3dp"
+                        app:number_of_dots="3"
+                        app:color_array="@array/dots"
+                        android:visibility='@{model.order_status.equals("new_order")?(model.driver==null?View.VISIBLE:View.INVISIBLE):View.INVISIBLE,default=invisible}'
+                        android:layout_gravity="center"
+                        android:rotation='@{lang.equals("ar")?180:0}'
+                        />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/rounded_primary"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:visibility='@{model.order_status.equals("have_offer")?View.VISIBLE:View.GONE,default=gone}'
 
-                    />
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="13sp"
+                            android:textColor="@color/white"
+                            android:text='@{model.offers_count+" "+@string/offer}'
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_right_arrow"
+                            android:tint="@color/white"
+                            android:padding="2dp"
+                            />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <TextView

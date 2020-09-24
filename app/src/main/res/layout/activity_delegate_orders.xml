@@ -113,23 +113,28 @@
             android:layout_height="match_parent"
             android:background="@color/white"
             >
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recView"
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             <ProgressBar
                 android:id="@+id/prgBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
+                android:visibility='@{model==null?View.INVISIBLE:(model.user.receive_notifications.equals("yes")?View.VISIBLE:View.GONE),default=invisible}'
                 />
 
 
             <LinearLayout
-                android:id="@+id/llNoOrder"
+                android:id="@+id/llAlertOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -194,6 +199,33 @@
                     />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llNoOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="gone"
+                >
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/ic_delivery_truck2"
+                    android:tint="@color/gray6"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/gray6"
+                    android:textSize="25sp"
+                    android:text="@string/no_orders_found"
+                    />
+
+            </LinearLayout>
+
         </FrameLayout>
 
     </LinearLayout>

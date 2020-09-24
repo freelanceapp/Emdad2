@@ -269,6 +269,20 @@
     <string name="client_reject_order">The Client rejected your delivery \n offer request . You can offer\n another delivery \n if you wish!</string>
     <string name="send_offer">Send Offer</string>
     <string name="delivery_order">Delivery Order</string>
+    <string name="delivery_time">Delivery Time</string>
+    <string name="you">You</string>
+    <string name="within2">Within</string>
+    <string name="best_offer">Best Offer</string>
+    <string name="away">Away</string>
+    <string name="delivery_cost">Delivery Cost</string>
+    <string name="coming_offers">Coming Offers</string>
+    <string name="min_value">Min value</string>
+    <string name="max_value">Max value</string>
+    <string name="inv_offer">Invalid offer</string>
+    <string name="accept2">Accept</string>
+    <string name="offer">Offer</string>
+    <string name="make_a_bill_for_client">Make a bill for client</string>
+    <string name="make_a_bill">Make A Bill</string>
 
 
 </resources>

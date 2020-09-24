@@ -2,6 +2,7 @@ package com.apps.emdad.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -81,6 +82,7 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
                     fragment_driver_my_order.setItemData(orderModel1);
                 }else if (fragment instanceof Fragment_Driver_Deliver_Order){
+                    Log.e("11","111");
                     Fragment_Driver_Deliver_Order fragment_driver_deliver_order = (Fragment_Driver_Deliver_Order) fragment;
                     fragment_driver_deliver_order.setItemData(orderModel1);
 

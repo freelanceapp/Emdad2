@@ -270,5 +270,19 @@
     <string name="client_reject_order">قام العميل برفض طلب عرض \n التوصيل الذي قدمتة بإمكانك عرض \n توصيل آخر اذا رغبت!</string>
     <string name="send_offer">عرض آخر</string>
     <string name="delivery_order">التوصيل</string>
+    <string name="delivery_time">وقت التوصيل</string>
+    <string name="you">أنت</string>
+    <string name="within2">خلال</string>
+    <string name="best_offer">أفضل عرض</string>
+    <string name="away">يبعد</string>
+    <string name="delivery_cost">تكلفة التوصيل</string>
+    <string name="coming_offers">عروض قادمة</string>
+    <string name="min_value">حد ادنى</string>
+    <string name="max_value">حد اقصى</string>
+    <string name="inv_offer">عرض غير صالح</string>
+    <string name="accept2">قبول</string>
+    <string name="offer">عرض</string>
+    <string name="make_a_bill_for_client">إصدر فاتورة للعميل بعد الطلب</string>
+    <string name="make_a_bill">اصدر فاتورة</string>
 
 </resources>
