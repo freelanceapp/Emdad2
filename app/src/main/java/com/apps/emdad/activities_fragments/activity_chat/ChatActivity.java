@@ -28,18 +28,23 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
+import com.apps.emdad.adapters.ChatActionAdapter;
 import com.apps.emdad.adapters.OffersAdapter;
 import com.apps.emdad.databinding.ActivityChatBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.ChatActionModel;
 import com.apps.emdad.models.FromToLocationModel;
 import com.apps.emdad.models.OffersDataModel;
 import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
+import com.apps.emdad.models.RangeOfferModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
@@ -60,6 +65,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.paperdb.Paper;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,30 +95,36 @@ public class ChatActivity extends AppCompatActivity {
     private OffersAdapter offersAdapter;
     private String currency = "";
     private String lang;
-
+    private List<ChatActionModel> actionReasonList;
+    private ChatActionAdapter chatActionAdapter;
+    private ChatActionModel chatActionModel = null;
+    private OffersModel offersModel = null;
+    private int reasonType = 0;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
+    protected void attachBaseContext(Context newBase)
+    {
         Paper.init(newBase);
         super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         getDataFromIntent();
         initView();
     }
-
-    private void getDataFromIntent() {
+    private void getDataFromIntent()
+    {
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 0);
 
     }
-
     @SuppressLint("ClickableViewAccessibility")
-    private void initView() {
+    private void initView()
+    {
+        actionReasonList = new ArrayList<>();
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         offersModelList = new ArrayList<>();
@@ -141,7 +153,6 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
-
         binding.imageChooser.setOnClickListener(v -> {
             if (binding.expandedLayout.isExpanded()) {
                 binding.expandedLayout.collapse(true);
@@ -151,20 +162,16 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-
         binding.btnHide.setOnClickListener(v -> {
             binding.expandedLayout.collapse(true);
         });
-
         binding.imgGallery.setOnClickListener(v -> {
             checkGalleryPermission();
 
         });
-
         binding.imageCamera.setOnClickListener(v -> {
             checkCameraPermission();
         });
-
         binding.imageRecord.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (isMicReady()) {
@@ -190,7 +197,6 @@ public class ChatActivity extends AppCompatActivity {
 
             return true;
         });
-
         binding.llBack.setOnClickListener(v -> onBackPressed());
         binding.tvReadyDeliverOrder.setOnClickListener(v -> {
             Intent intent = new Intent(this, DelegateAddOfferActivity.class);
@@ -206,11 +212,32 @@ public class ChatActivity extends AppCompatActivity {
             intent.putExtra("driver_id", userModel.getUser().getId());
             startActivityForResult(intent, 100);
         });
+        chatActionAdapter = new ChatActionAdapter(actionReasonList,this);
+        binding.recViewAction.setLayoutManager(new LinearLayoutManager(this));
+        binding.recViewAction.setAdapter(chatActionAdapter);
+
+        binding.btnActionOk.setOnClickListener(v ->
+        {
+            if (chatActionModel!=null){
+                closeSheet();
+            }
+        });
+        binding.btnActionCancel.setOnClickListener(v ->
+        {
+            closeSheet();
+        });
+        binding.btnDriverCancel.setOnClickListener(v -> {
+            driverLeaveOrderActions();
+        });
+        binding.btnCancel.setOnClickListener(v -> finish());
+        binding.imageMore.setOnClickListener(v -> {
+            changeDriverActions();
+        });
         getOrderById();
 
     }
-
-    private void getOrderById() {
+    private void getOrderById()
+    {
         Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(), order_id, userModel.getUser().getId())
                 .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
@@ -258,8 +285,8 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void updateUi(OrderModel orderModel) {
+    private void updateUi(OrderModel orderModel)
+    {
 
         Log.e("order_status", orderModel.getOrder_status());
         if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("have_offer") || orderModel.getOrder_status().equals("driver_end_rate") || orderModel.getOrder_status().equals("client_end_and_rate") || orderModel.getOrder_status().equals("order_driver_back") || orderModel.getOrder_status().equals("client_cancel") || orderModel.getOrder_status().equals("cancel_for_late")) {
@@ -303,6 +330,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+            binding.imageMore.setVisibility(View.VISIBLE);
             if (orderModel.getOrder_status().equals("new_order")) {
                 binding.flOffers.setVisibility(View.VISIBLE);
                 binding.llOfferData.setVisibility(View.VISIBLE);
@@ -320,6 +348,8 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         } else {
+            binding.imageMore.setVisibility(View.GONE);
+
             if (orderModel.getDriver_last_offer() == null) {
                 binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
             } else {
@@ -351,8 +381,8 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
-
-    private void updateUserUi() {
+    private void updateUserUi()
+    {
         if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
             Picasso.get().load(Uri.parse(Tags.IMAGE_URL+orderModel.getDriver().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
             binding.tvName.setText(orderModel.getDriver().getName());
@@ -382,9 +412,378 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void resendOrder() {
+    private void driverLeaveOrderActions()
+    {
+        reasonType = 1;
+        binding.tvActionType.setText(R.string.withdraw_order);
+        actionReasonList.clear();
+        ChatActionModel chatActionModel1 = new ChatActionModel("موقع المتجر بعيد");
+        actionReasonList.add(chatActionModel1);
+        ChatActionModel chatActionModel2 = new ChatActionModel("لا أرغب في توصيل الطلب");
+        actionReasonList.add(chatActionModel2);
+        chatActionAdapter.notifyDataSetChanged();
+
+    }
+    private void changeDriverActions()
+    {
+        reasonType = 2;
+        binding.tvActionType.setText(R.string.change_driver);
+        actionReasonList.clear();
+        ChatActionModel chatActionModel1 = new ChatActionModel("المرسول غير مناسب");
+        actionReasonList.add(chatActionModel1);
+        ChatActionModel chatActionModel2 = new ChatActionModel("المرسول طلب التواصل خارج التطبيق");
+        actionReasonList.add(chatActionModel2);
+        ChatActionModel chatActionModel3 = new ChatActionModel("المرسول لم يقبل الدفع الالكتروني");
+        actionReasonList.add(chatActionModel3);
+        ChatActionModel chatActionModel4 = new ChatActionModel("سبب آخر");
+        actionReasonList.add(chatActionModel4);
+        chatActionAdapter.notifyDataSetChanged();
+        openSheet();
+    }
+    public void deleteOrderActions(OffersModel offersModel)
+    {
+        this.offersModel = offersModel;
+        reasonType = 3;
+        binding.tvActionType.setText(R.string.delete_order);
+        actionReasonList.clear();
+        ChatActionModel chatActionModel1 = new ChatActionModel("الطلب متأخر والمرسول لا يجيب");
+        actionReasonList.add(chatActionModel1);
+        ChatActionModel chatActionModel2 = new ChatActionModel("المرسول طلب التواصل خارج التطبيق");
+        actionReasonList.add(chatActionModel2);
+        ChatActionModel chatActionModel3 = new ChatActionModel("المرسول غير جاد");
+        actionReasonList.add(chatActionModel3);
+        ChatActionModel chatActionModel4 = new ChatActionModel("المرسول طلب الإلغاء");
+        actionReasonList.add(chatActionModel4);
+        ChatActionModel chatActionModel5 = new ChatActionModel("المرسول لم يقبل الدفع الالكتروني");
+        actionReasonList.add(chatActionModel5);
+        ChatActionModel chatActionModel6 = new ChatActionModel("سعر التوصيل مرتفع");
+        actionReasonList.add(chatActionModel6);
+        ChatActionModel chatActionModel7 = new ChatActionModel("لم اعد احتاج الطلب");
+        actionReasonList.add(chatActionModel7);
+        ChatActionModel chatActionModel8 = new ChatActionModel("سبب آخر");
+        actionReasonList.add(chatActionModel8);
+        chatActionAdapter.notifyDataSetChanged();
+        openSheet();
+    }
+    private void resendOrder()
+    {
         isDataChanged = true;
         binding.btnResend.setVisibility(View.GONE);
+    }
+    public void setReason(ChatActionModel chatActionModel) {
+        switch (reasonType){
+            case 1:
+                leaveOrder(chatActionModel);
+                break;
+            case 2:
+                changeDriver(chatActionModel);
+                break;
+            case 3:
+                if (chatActionModel.getAction().equals("سعر التوصيل مرتفع")){
+                    reSendOffer(offersModel.getOffer_value());
+                }else if (chatActionModel.getAction().equals("لم اعد احتاج الطلب")){
+                    deleteOrder(chatActionModel);
+
+                }
+                break;
+        }
+    }
+
+    private void leaveOrder(ChatActionModel chatActionModel) {
+
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(),orderModel.getClient().getId(),Integer.parseInt(orderModel.getDriver_id()),order_id,chatActionModel.getAction())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                finish();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    private void changeDriver(ChatActionModel chatActionModel) {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).changeDriver(userModel.getUser().getToken(),orderModel.getClient().getId(),order_id,chatActionModel.getAction())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    private void deleteOrder(ChatActionModel chatActionModel) {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).clientDeleteOrder(userModel.getUser().getToken(),orderModel.getClient().getId(),order_id,chatActionModel.getAction())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    public void clientAcceptOffer(OffersModel offersModel)
+    {
+
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).clientAcceptOffer(userModel.getUser().getToken(),orderModel.getClient().getId(),Integer.parseInt(orderModel.getDriver_id()),order_id,offersModel.getId())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                getOrderById();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+    private void reSendOffer(String offer_value){
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).sendDriverOffer(userModel.getUser().getToken(),orderModel.getClient().getId(),Integer.parseInt(orderModel.getDriver_id()),order_id,offer_value,"make_offer")
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                getOrderById();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
+    private void openSheet()
+    {
+        binding.flAction.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        binding.flAction.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                binding.flAction.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+    private void closeSheet()
+    {
+
+        binding.flAction.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        binding.flAction.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                binding.flAction.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     private void sendAttachment(String file_uri, String attachment_type) {
@@ -398,7 +797,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
-
 
     private void getOffers() {
 
@@ -645,7 +1043,8 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void selectImage(int req) {
+    private void selectImage(int req)
+    {
 
         Intent intent = new Intent();
         if (req == IMG_REQ) {
@@ -671,7 +1070,6 @@ public class ChatActivity extends AppCompatActivity {
         startActivityForResult(intent, req);
 
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -694,7 +1092,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -717,14 +1114,12 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-
     private Uri getUriFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
         return Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "", ""));
 
     }
-
 
     private void startTimer() {
         handler = new Handler();
@@ -769,4 +1164,7 @@ public class ChatActivity extends AppCompatActivity {
 
         finish();
     }
+
+
+
 }

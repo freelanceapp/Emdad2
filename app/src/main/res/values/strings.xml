@@ -283,6 +283,9 @@
     <string name="offer">Offer</string>
     <string name="make_a_bill_for_client">Make a bill for client</string>
     <string name="make_a_bill">Make A Bill</string>
+    <string name="withdraw_order">Withdraw from this order?</string>
+    <string name="change_driver">Change driver?</string>
+    <string name="delete_order">Delete order?</string>
 
 
 </resources>

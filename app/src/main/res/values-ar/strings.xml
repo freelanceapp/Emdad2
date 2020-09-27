@@ -284,5 +284,8 @@
     <string name="offer">عرض</string>
     <string name="make_a_bill_for_client">إصدر فاتورة للعميل بعد الطلب</string>
     <string name="make_a_bill">اصدر فاتورة</string>
+    <string name="withdraw_order">هل فعلا تريد الإنسحاب من هذا الطلب؟</string>
+    <string name="change_driver">هل تريد فعلا تغيير المندوب؟</string>
+    <string name="delete_order">هل تريد فعلا حذف الطلب؟</string>
 
 </resources>

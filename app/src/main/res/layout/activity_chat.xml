@@ -741,7 +741,6 @@
                     android:textSize="15sp" />
             </LinearLayout>
         </FrameLayout>
-
         <FrameLayout
             android:id="@+id/flDriverOffers"
             android:layout_width="match_parent"
@@ -824,7 +823,6 @@
                     android:textSize="15sp" />
             </LinearLayout>
         </FrameLayout>
-
         <FrameLayout
             android:id="@+id/flClientRefuseOffer"
             android:layout_width="match_parent"
@@ -914,8 +912,76 @@
                 </LinearLayout>
             </LinearLayout>
         </FrameLayout>
+        <FrameLayout
+            android:id="@+id/flAction"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/trans_black2"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                android:paddingTop="10dp"
+                >
+                <TextView
+                    android:id="@+id/tvActionType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/gray9"
+                    android:textSize="16sp"
+                    android:lines="1"
+                    />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recViewAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/gray4"
+                    android:layout_marginTop="10dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <Button
+                        android:id="@+id/btnActionOk"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:textColor="@color/color_red"
+                        android:textSize="14sp"
+                        android:text="@string/ok"
+                        />
+                    <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="@color/gray4"
+                        />
+                    <Button
+                        android:id="@+id/btnActionCancel"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:textColor="@color/gray9"
+                        android:textSize="14sp"
+                        android:text="@string/cancel"
 
-
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
         <TextView
             android:id="@+id/tvReadyDeliverOrder"
             android:layout_width="match_parent"
@@ -927,11 +993,11 @@
             android:textColor="@color/white"
             android:textSize="15sp"
             android:visibility="gone" />
-
         <ProgressBar
             android:id="@+id/progBarData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+
     </FrameLayout>
 </layout>

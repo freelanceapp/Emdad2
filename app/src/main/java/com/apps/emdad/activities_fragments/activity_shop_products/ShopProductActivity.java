@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -81,6 +83,7 @@ public class ShopProductActivity extends AppCompatActivity {
     private List<ShopDepartments> shopDepartmentsList;
     private AddOrderProductsModel addOrderProductsModel;
     private List<AdditionModel> selectedAdditionList;
+    private SparseArray<AdditionModel> sparseArray;
 
 
     @Override
@@ -112,6 +115,7 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        sparseArray = new SparseArray<>();
         selectedAdditionList = new ArrayList<>();
         addOrderProductsModel = new AddOrderProductsModel();
         shopDepartmentsList = new ArrayList<>();
@@ -289,7 +293,7 @@ public class ShopProductActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(this, AddOrderProductActivity.class);
                     intent.putExtra("data", addOrderProductsModel);
-                    startActivityForResult(intent,100);
+                    startActivityForResult(intent, 100);
                 }
             } else {
                 Intent intent = new Intent(this, LoginActivity.class);
@@ -557,20 +561,38 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
     public void setAdditionItem(AdditionModel additionModel, int pos, boolean isSelected) {
+        Log.e("add_price",additionModel.getPrice());
         if (isSelected) {
-
             selectedAdditionList.add(additionModel);
         } else {
-            selectedAdditionList.remove(pos);
+            int additionPos = getAdditionPosition(additionModel);
+            if (additionPos!=-1){
+                selectedAdditionList.remove(additionPos);
+
+            }
 
 
         }
+
+        Log.e("ssssizzzeee", selectedAdditionList.size() + "___");
         selectedProduct.setSelectedAdditions(selectedAdditionList);
         double total = getTotalItemCost(selectedProduct) * count;
         binding.tvTotalCost.setText(String.format("%s %s", total, currency));
 
     }
+    private int getAdditionPosition(AdditionModel additionModel){
+        int pos = -1;
+        for (int index = 0;index<selectedProduct.getSelectedAdditions().size();index++){
+            AdditionModel model = selectedProduct.getSelectedAdditions().get(index);
+            if (model.getId()==additionModel.getId()){
+                pos = index;
+                return pos;
+            }
+        }
 
+        return pos;
+
+    }
     public void deleteSelectedItem(int parentPos, int childPos, ProductModel model) {
 
         List<ProductModel> productModelList = addOrderProductsModel.getProductModelList();
@@ -580,7 +602,6 @@ public class ShopProductActivity extends AppCompatActivity {
         departments.setCount(0);
         shopDepartmentsList.set(parentPos, departments);
         productSectionAdapter.notifyItemChanged(parentPos);
-
 
 
         int pos = isSelectedProductListHasItem(productModelList, model);
@@ -682,7 +703,6 @@ public class ShopProductActivity extends AppCompatActivity {
         double cost = 0.0;
         for (AdditionModel additionModel : productModel.getSelectedAdditions()) {
             cost += Double.parseDouble(additionModel.getPrice());
-            Log.e("cost", cost + "__");
         }
         return cost;
     }
@@ -690,10 +710,10 @@ public class ShopProductActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==100&&resultCode==RESULT_OK&&data!=null){
-            int order_id = data.getIntExtra("order_id",0);
-            Intent intent =new Intent(this, ChatActivity.class);
-            intent.putExtra("order_id",order_id);
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            int order_id = data.getIntExtra("order_id", 0);
+            Intent intent = new Intent(this, ChatActivity.class);
+            intent.putExtra("order_id", order_id);
             startActivity(intent);
             finish();
 

@@ -62,20 +62,18 @@ public class AdditionProductAdapter extends RecyclerView.Adapter<AdditionProduct
         }
 
         holder.binding.checkbox.setOnClickListener(v -> {
-            new Handler().postDelayed(()->{
-                int pos = holder.getAdapterPosition();
-                if (holder.binding.checkbox.isChecked()){
-                    sparseBooleanArray.put(pos,true);
-                    activity.setAdditionItem(list.get(pos),pos,true);
 
-                }else {
-                    sparseBooleanArray.put(pos,false);
-                    activity.setAdditionItem(list.get(pos),pos,false);
+            int pos = holder.getAdapterPosition();
+            if (holder.binding.checkbox.isChecked()){
+                sparseBooleanArray.put(pos,true);
+                activity.setAdditionItem(list.get(pos),pos,true);
 
-                }
-                notifyItemChanged(pos);
+            }else {
+                sparseBooleanArray.put(pos,false);
+                activity.setAdditionItem(list.get(pos),pos,false);
 
-            },2000);
+            }
+            notifyItemChanged(pos);
 
         });
 

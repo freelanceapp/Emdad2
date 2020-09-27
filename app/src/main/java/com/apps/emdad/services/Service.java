@@ -305,4 +305,42 @@ public interface Service {
 
     );
 
+    @FormUrlEncoded
+    @POST("api/driver-leave-order")
+    Call<ResponseBody> driverLeaveOrder(@Header("Authorization") String user_token,
+                                        @Field("client_id") int client_id,
+                                        @Field("driver_id") int driver_id,
+                                        @Field("order_id") int order_id,
+                                        @Field("reason_driver") String reason_driver
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/client-accept-offer")
+    Call<ResponseBody> clientAcceptOffer(@Header("Authorization") String user_token,
+                                         @Field("client_id") int client_id,
+                                         @Field("driver_id") int driver_id,
+                                         @Field("order_id") int order_id,
+                                         @Field("offer_id") int offer_id
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/client-cancel-order")
+    Call<ResponseBody> clientDeleteOrder(@Header("Authorization") String user_token,
+                                         @Field("client_id") int client_id,
+                                         @Field("order_id") int order_id,
+                                         @Field("reason") String reason
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/send-order-to-other-drivers")
+    Call<ResponseBody> changeDriver(@Header("Authorization") String user_token,
+                                    @Field("client_id") int client_id,
+                                    @Field("order_id") int order_id,
+                                    @Field("reason") String reason
+
+    );
+
 }

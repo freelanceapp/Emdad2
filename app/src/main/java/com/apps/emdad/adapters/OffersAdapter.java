@@ -11,12 +11,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
-import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Order;
-import com.apps.emdad.databinding.CurrentOrderRowBinding;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.databinding.LoadMoreRowBinding;
 import com.apps.emdad.databinding.OfferRowBinding;
 import com.apps.emdad.models.OffersModel;
-import com.apps.emdad.models.OrderModel;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +26,7 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context context;
     private LayoutInflater inflater;
     private String currency;
+    private ChatActivity activity;
 
 
     public OffersAdapter(List<OffersModel> list, Context context,String currency) {
@@ -35,6 +34,7 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.currency = currency;
+        this.activity = (ChatActivity) context;
 
     }
 
@@ -62,8 +62,13 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             myHolder.binding.setModel(offersModel);
             double cost = Double.parseDouble(offersModel.getOffer_value())+Double.parseDouble(offersModel.getTax_value());
             myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s",String.format(Locale.ENGLISH,"%.2f",cost),currency));
-            myHolder.itemView.setOnClickListener(v -> {
-
+            myHolder.binding.btnCancel.setOnClickListener(v -> {
+                OffersModel offersModel1 = list.get(holder.getAdapterPosition());
+                activity.deleteOrderActions(offersModel1);
+            });
+            myHolder.binding.btnAccept.setOnClickListener(v -> {
+                OffersModel offersModel1 = list.get(holder.getAdapterPosition());
+                activity.clientAcceptOffer(offersModel1);
             });
 
         }else if (holder instanceof LoadMoreHolder){
