@@ -118,6 +118,8 @@ public class Fragment_Driver_Deliver_Order extends Fragment {
                                     updateDataDistance(response.body().getData(), false);
                                     current_page = response.body().getCurrent_page();
                                 } else {
+                                    orderModelList.clear();
+                                    adapter.notifyDataSetChanged();
                                     binding.llNoOrder.setVisibility(View.VISIBLE);
 
                                 }
@@ -262,6 +264,7 @@ public class Fragment_Driver_Deliver_Order extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            Log.e("rr","rr");
             getOrders();
         }
     }

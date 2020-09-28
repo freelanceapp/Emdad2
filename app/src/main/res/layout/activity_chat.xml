@@ -982,6 +982,82 @@
                 </LinearLayout>
             </LinearLayout>
         </FrameLayout>
+        <FrameLayout
+            android:id="@+id/flDriverAction"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/trans_black2"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                android:paddingTop="10dp"
+                >
+                <TextView
+                    android:id="@+id/tvShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray9"
+                    android:lines="1"
+                    android:textSize="14sp"
+                    android:text="@string/share"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/gray4"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    />
+
+                <TextView
+                    android:id="@+id/tvEndOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray9"
+                    android:lines="1"
+                    android:textSize="14sp"
+                    android:text="@string/end_order"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/gray4"
+                    android:layout_marginTop="10dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <Button
+                        android:id="@+id/btnDriverActionCancel"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:textColor="@color/gray9"
+                        android:textSize="14sp"
+                        android:text="@string/cancel"
+
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
         <TextView
             android:id="@+id/tvReadyDeliverOrder"
             android:layout_width="match_parent"

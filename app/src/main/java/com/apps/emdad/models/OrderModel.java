@@ -40,6 +40,7 @@ public class OrderModel implements Serializable {
     private String pick_up_distance="0.0";
     private String drop_off_distance = "0.0";
     private DriverLastOffer driver_last_offer;
+    private DriverLastOffer order_offer;
 
     private List<OrderImages>order_images;
 
@@ -175,6 +176,10 @@ public class OrderModel implements Serializable {
         return driver;
     }
 
+    public DriverLastOffer getOrder_offer() {
+        return order_offer;
+    }
+
     public List<OrderImages> getOrder_images() {
         return order_images;
     }
@@ -262,5 +267,7 @@ public class OrderModel implements Serializable {
         public String getOffer_time() {
             return offer_time;
         }
+
+
     }
 }

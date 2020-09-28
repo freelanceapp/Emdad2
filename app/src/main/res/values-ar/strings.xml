@@ -287,5 +287,10 @@
     <string name="withdraw_order">هل فعلا تريد الإنسحاب من هذا الطلب؟</string>
     <string name="change_driver">هل تريد فعلا تغيير المندوب؟</string>
     <string name="delete_order">هل تريد فعلا حذف الطلب؟</string>
+    <string name="other_delegate_accept_order">تم قبول الطلب من مندوب آخر</string>
+    <string name="order_canceled2">لقد تم إلغاء الطلب</string>
+    <string name="order_accepted">تم الموافقة على طلبك </string>
+    <string name="share">مشاركة</string>
+    <string name="end_order">إنهاء الطلب</string>
 
 </resources>

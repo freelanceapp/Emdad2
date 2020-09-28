@@ -113,17 +113,18 @@ public class Fragment_Driver_My_Order extends Fragment {
 
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
+                                orderModelList.clear();
 
                                 if (response.body().getData().size() > 0) {
                                     binding.llNoOrder.setVisibility(View.GONE);
-                                    orderModelList.clear();
                                     orderModelList.addAll(response.body().getData());
-                                    adapter.notifyDataSetChanged();
                                     current_page = response.body().getCurrent_page();
                                 } else {
                                     binding.llNoOrder.setVisibility(View.VISIBLE);
 
                                 }
+                                adapter.notifyDataSetChanged();
+
 
 
                             }
@@ -185,8 +186,6 @@ public class Fragment_Driver_My_Order extends Fragment {
                         int new_pos = orderModelList.size();
                         adapter.notifyItemRangeInserted(old_pos, new_pos);
 
-                    } else {
-                        binding.llNoOrder.setVisibility(View.VISIBLE);
                     }
                 } else {
                     isLoading = false;
@@ -241,6 +240,8 @@ public class Fragment_Driver_My_Order extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            Log.e("tt","tt");
+
             getOrders();
         }
     }

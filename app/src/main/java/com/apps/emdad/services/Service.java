@@ -5,6 +5,7 @@ import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.NotificationDataModel;
 import com.apps.emdad.models.OfferSettingModel;
 import com.apps.emdad.models.OffersDataModel;
 import com.apps.emdad.models.OrderModel;
@@ -341,6 +342,14 @@ public interface Service {
                                     @Field("order_id") int order_id,
                                     @Field("reason") String reason
 
+    );
+
+    @GET("api/get-notifications")
+    Call<NotificationDataModel> getNotification(@Header("Authorization") String user_token,
+                                                @Query(value = "user_id") int user_id,
+                                                @Query(value = "page") int page,
+                                                @Query(value = "pagination") String pagination,
+                                                @Query(value = "limit_per_page") int limit_per_page
     );
 
 }

@@ -1,7 +1,9 @@
 package com.apps.emdad.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -54,6 +56,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
@@ -67,7 +70,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.rate_color));
                 myHolder.binding.tvState.setText(context.getString(R.string.pending));
-            }else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
+            }else if (orderModel.getOrder_status().equals("accept_driver"))
+            {
+                myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
+                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
+                myHolder.binding.tvState.setText(R.string.order_accepted);
+            }
+            else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
                 myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
                 myHolder.binding.tvState.setText(context.getString(R.string.done));

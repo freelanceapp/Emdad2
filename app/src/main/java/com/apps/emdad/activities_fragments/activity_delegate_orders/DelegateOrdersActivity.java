@@ -202,8 +202,6 @@ public class DelegateOrdersActivity extends AppCompatActivity {
                         updateDataDistance(response.body().getData(),true);
 
 
-                    } else {
-                        binding.llNoOrder.setVisibility(View.VISIBLE);
                     }
                 } else {
                     isLoading = false;

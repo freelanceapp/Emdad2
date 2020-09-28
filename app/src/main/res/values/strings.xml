@@ -286,6 +286,11 @@
     <string name="withdraw_order">Withdraw from this order?</string>
     <string name="change_driver">Change driver?</string>
     <string name="delete_order">Delete order?</string>
+    <string name="other_delegate_accept_order">Other delegate accept order</string>
+    <string name="order_canceled2">Order canceled</string>
+    <string name="order_accepted">Order accepted</string>
+    <string name="share">Share</string>
+    <string name="end_order">End Order</string>
 
 
 </resources>

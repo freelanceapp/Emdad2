@@ -166,8 +166,6 @@ public class OldOrdersActivity extends AppCompatActivity {
                                 int new_pos = orderModelList.size();
                                 adapter.notifyItemRangeInserted(old_pos,new_pos);
 
-                            }else {
-                                binding.llNoOrder.setVisibility(View.VISIBLE);
                             }
                         } else {
                             isLoading =false;

@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
+import com.apps.emdad.activities_fragments.activity_delegate_orders.DelegateOrdersActivity;
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
 import com.apps.emdad.adapters.HoursAdapter;
 import com.apps.emdad.databinding.ActivityDelegateAddOfferBinding;
@@ -237,6 +238,13 @@ public class DelegateAddOfferActivity extends AppCompatActivity implements OnMap
                                 finish();
                             }
                         } else {
+
+                            if (response.code()==406){
+                                Common.CreateDialogAlert(DelegateAddOfferActivity.this,getString(R.string.other_delegate_accept_order));
+                            }else if (response.code()==409){
+                                Common.CreateDialogAlert(DelegateAddOfferActivity.this,getString(R.string.order_canceled2));
+
+                            }
                             dialog.dismiss();
                             try {
                                 Log.e("error_code", response.code() + response.errorBody().string());

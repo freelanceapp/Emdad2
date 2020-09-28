@@ -102,28 +102,27 @@ public class ChatActivity extends AppCompatActivity {
     private int reasonType = 0;
 
     @Override
-    protected void attachBaseContext(Context newBase)
-    {
+    protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
         super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         getDataFromIntent();
         initView();
     }
-    private void getDataFromIntent()
-    {
+
+    private void getDataFromIntent() {
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 0);
 
     }
+
     @SuppressLint("ClickableViewAccessibility")
-    private void initView()
-    {
+    private void initView() {
         actionReasonList = new ArrayList<>();
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
@@ -212,13 +211,13 @@ public class ChatActivity extends AppCompatActivity {
             intent.putExtra("driver_id", userModel.getUser().getId());
             startActivityForResult(intent, 100);
         });
-        chatActionAdapter = new ChatActionAdapter(actionReasonList,this);
+        chatActionAdapter = new ChatActionAdapter(actionReasonList, this);
         binding.recViewAction.setLayoutManager(new LinearLayoutManager(this));
         binding.recViewAction.setAdapter(chatActionAdapter);
 
         binding.btnActionOk.setOnClickListener(v ->
         {
-            if (chatActionModel!=null){
+            if (chatActionModel != null) {
                 closeSheet();
             }
         });
@@ -231,13 +230,34 @@ public class ChatActivity extends AppCompatActivity {
         });
         binding.btnCancel.setOnClickListener(v -> finish());
         binding.imageMore.setOnClickListener(v -> {
-            changeDriverActions();
+            if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                changeDriverActions();
+
+            } else {
+                openDriverActionSheet();
+            }
+
         });
+        binding.btnDriverActionCancel.setOnClickListener(v -> closeDriverActionSheet());
+
+        binding.tvShare.setOnClickListener(v -> {
+            closeDriverActionSheet();
+            share();
+        });
+        binding.tvEndOrder.setOnClickListener(v -> {
+            closeDriverActionSheet();
+            endOrder();
+        });
+
+
         getOrderById();
 
     }
-    private void getOrderById()
-    {
+
+
+
+    private void getOrderById() {
+
         Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(), order_id, userModel.getUser().getId())
                 .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
@@ -285,135 +305,202 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void updateUi(OrderModel orderModel)
-    {
 
-        Log.e("order_status", orderModel.getOrder_status());
-        if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("have_offer") || orderModel.getOrder_status().equals("driver_end_rate") || orderModel.getOrder_status().equals("client_end_and_rate") || orderModel.getOrder_status().equals("order_driver_back") || orderModel.getOrder_status().equals("client_cancel") || orderModel.getOrder_status().equals("cancel_for_late")) {
-            binding.imageRecord.setVisibility(View.GONE);
-            binding.imageChooser.setVisibility(View.GONE);
-            binding.imageSend.setVisibility(View.GONE);
-            binding.msgContent.setVisibility(View.GONE);
-        } else if (orderModel.getOrder_status().equals("accept_driver")) {
-            binding.imageRecord.setVisibility(View.VISIBLE);
-            binding.imageChooser.setVisibility(View.VISIBLE);
-            binding.imageSend.setVisibility(View.VISIBLE);
-            binding.msgContent.setVisibility(View.VISIBLE);
-        } else {
-            binding.imageRecord.setVisibility(View.GONE);
-            binding.imageChooser.setVisibility(View.GONE);
-            binding.imageSend.setVisibility(View.GONE);
-            binding.msgContent.setVisibility(View.GONE);
-        }
-
-
-        if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("pennding") || orderModel.getOrder_status().equals("have_offer")) {
-            binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
-            binding.orderStatus.setText(getString(R.string.pending));
-            binding.btnResend.setVisibility(View.GONE);
-        } else if (orderModel.getOrder_status().equals("client_cancel") || orderModel.getOrder_status().equals("cancel_for_late")) {
-            binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
-            binding.orderStatus.setText(getString(R.string.cancel));
-            binding.btnResend.setVisibility(View.VISIBLE);
-        } else if (orderModel.getOrder_status().equals("driver_end_rate") || orderModel.getOrder_status().equals("client_end_and_rate")) {
-            binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
-            binding.orderStatus.setText(getString(R.string.done));
-            binding.btnResend.setVisibility(View.VISIBLE);
-
-        } else if (orderModel.getOrder_status().equals("accept_driver")) {
-            binding.orderStatus.setVisibility(View.INVISIBLE);
-            binding.btnResend.setVisibility(View.GONE);
-            binding.consUserData.setVisibility(View.VISIBLE);
-            updateUserUi();
-
-        }
-
+    private void updateUi(OrderModel orderModel) {
 
         if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
             binding.imageMore.setVisibility(View.VISIBLE);
-            if (orderModel.getOrder_status().equals("new_order")) {
-                binding.flOffers.setVisibility(View.VISIBLE);
-                binding.llOfferData.setVisibility(View.VISIBLE);
-                binding.llComingOffer.setVisibility(View.GONE);
 
-            } else if (orderModel.getOrder_status().equals("have_offer")) {
-                binding.flOffers.setVisibility(View.VISIBLE);
-                binding.llOfferData.setVisibility(View.GONE);
-                binding.llComingOffer.setVisibility(View.VISIBLE);
-                getOffers();
-            } else {
-                binding.flOffers.setVisibility(View.GONE);
-                binding.llOfferData.setVisibility(View.GONE);
-
-
-            }
         } else {
-            binding.imageMore.setVisibility(View.GONE);
-
+            binding.imageMore.setVisibility(View.VISIBLE);
             if (orderModel.getDriver_last_offer() == null) {
                 binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
+                binding.tvMsgLeft.setText(orderModel.getDetails());
+                binding.tvMsgLeft.setVisibility(View.VISIBLE);
             } else {
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
-                binding.flDriverOffers.setVisibility(View.VISIBLE);
+                if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("pennding") || orderModel.getOrder_status().equals("have_offer")) {
+                    binding.flDriverOffers.setVisibility(View.VISIBLE);
+                    binding.tvMsgLeft.setText(orderModel.getDetails());
+                    binding.tvMsgLeft.setVisibility(View.VISIBLE);
+
+                } else {
+                    binding.flDriverOffers.setVisibility(View.GONE);
+                    binding.tvMsgLeft.setVisibility(View.GONE);
+
+
+                }
                 binding.tvDriverOfferPrice.setText(String.format(Locale.ENGLISH, "%s %s %s %s", getString(R.string.your_offer_of), orderModel.getDriver_last_offer().getOffer_value(), currency, getString(R.string.sent_to_the_client_please_wait_until_he_accepts_your_offer_thank_you)));
             }
 
         }
 
 
-        if (userModel.getUser().getUser_type().equals("driver")) {
-            if (userModel.getUser().getId() == orderModel.getClient().getId()) {
+        String status = orderModel.getOrder_status();
+        Log.e("status", status);
+        switch (status) {
+            case "new_order":
+                binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
+                binding.orderStatus.setText(getString(R.string.pending));
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
 
-                binding.tvMsgRight.setText(orderModel.getDetails());
-                binding.tvMsgRight.setVisibility(View.VISIBLE);
-            } else {
-                binding.tvMsgLeft.setText(orderModel.getDetails());
-                binding.tvMsgLeft.setVisibility(View.VISIBLE);
 
-            }
-        } else {
+                if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                    binding.tvMsgRight.setText(orderModel.getDetails());
+                    binding.tvMsgRight.setVisibility(View.VISIBLE);
+
+                    binding.flOffers.setVisibility(View.VISIBLE);
+                    binding.llOfferData.setVisibility(View.VISIBLE);
+                    binding.llComingOffer.setVisibility(View.GONE);
+                } else {
+                    binding.tvMsgLeft.setText(orderModel.getDetails());
+                    binding.tvMsgLeft.setVisibility(View.VISIBLE);
+                }
 
 
-            binding.tvMsgRight.setText(orderModel.getDetails());
-            binding.tvMsgRight.setVisibility(View.VISIBLE);
+                break;
+            case "pennding":
+                binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
+                binding.orderStatus.setText(getString(R.string.pending));
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+
+                if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                    binding.tvMsgRight.setText(orderModel.getDetails());
+                    binding.tvMsgRight.setVisibility(View.VISIBLE);
+                } else {
+                    binding.tvMsgLeft.setText(orderModel.getDetails());
+                    binding.tvMsgLeft.setVisibility(View.VISIBLE);
+                }
+
+
+                break;
+
+            case "have_offer":
+                binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
+                binding.orderStatus.setText(getString(R.string.pending));
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+                if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                    binding.tvMsgRight.setText(orderModel.getDetails());
+                    binding.tvMsgRight.setVisibility(View.VISIBLE);
+                    binding.flOffers.setVisibility(View.VISIBLE);
+                    binding.llOfferData.setVisibility(View.GONE);
+                    binding.llComingOffer.setVisibility(View.VISIBLE);
+                    getOffers();
+                } else {
+                    binding.tvMsgLeft.setText(orderModel.getDetails());
+                    binding.tvMsgLeft.setVisibility(View.VISIBLE);
+                }
+
+
+                break;
+            case "accept_driver":
+                binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
+                binding.orderStatus.setText(getString(R.string.order_accepted));
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.VISIBLE);
+                binding.imageChooser.setVisibility(View.VISIBLE);
+                binding.imageSend.setVisibility(View.VISIBLE);
+                binding.msgContent.setVisibility(View.VISIBLE);
+                binding.consUserData.setVisibility(View.VISIBLE);
+                binding.flOffers.setVisibility(View.GONE);
+                binding.llOfferData.setVisibility(View.GONE);
+                binding.llComingOffer.setVisibility(View.GONE);
+                updateUserUi();
+
+
+                break;
+            case "driver_end_rate":
+            case "client_end_and_rate":
+                binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
+                binding.orderStatus.setText(getString(R.string.done));
+                binding.btnResend.setVisibility(View.VISIBLE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+                updateUserUi();
+
+                break;
+
+            case "order_driver_back":
+                binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
+                binding.orderStatus.setText(getString(R.string.cancel));
+                binding.btnResend.setVisibility(View.VISIBLE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+                updateUserUi();
+
+                break;
+            case "client_cancel":
+            case "cancel_for_late":
+                binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
+                binding.orderStatus.setText(getString(R.string.cancel));
+                binding.btnResend.setVisibility(View.VISIBLE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+                break;
+
 
         }
 
 
+        Log.e("order_status", orderModel.getOrder_status());
+
+
     }
-    private void updateUserUi()
-    {
+
+    private void updateUserUi() {
+        binding.tvMsgLeft.setVisibility(View.GONE);
+        binding.tvMsgRight.setVisibility(View.GONE);
+
+
         if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
-            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+orderModel.getDriver().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL + orderModel.getDriver().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
             binding.tvName.setText(orderModel.getDriver().getName());
             binding.rateBar.setRating(Float.parseFloat(orderModel.getDriver().getRate()));
             binding.flCall.setVisibility(View.VISIBLE);
             binding.llBill.setVisibility(View.GONE);
             double offer_value = 0.0;
-            if (orderModel.getDriver_last_offer()!=null){
-                offer_value = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value())+Double.parseDouble(orderModel.getDriver_last_offer().getTax_value());
+            if (orderModel.getOrder_offer() != null) {
+                offer_value = Double.parseDouble(orderModel.getOrder_offer().getOffer_value()) + Double.parseDouble(orderModel.getOrder_offer().getTax_value());
+
             }
-            binding.tvOfferValue.setText(String.format(Locale.ENGLISH,"%.2f %s",offer_value,currency));
+            binding.tvOfferValue.setText(String.format(Locale.ENGLISH, "%.2f %s", offer_value, currency));
         } else {
 
-            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+orderModel.getClient().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL + orderModel.getClient().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
             binding.tvName.setText(orderModel.getClient().getName());
             binding.rateBar.setRating(Float.parseFloat(orderModel.getClient().getRate()));
             binding.flCall.setVisibility(View.GONE);
             binding.llBill.setVisibility(View.VISIBLE);
 
             double offer_value = 0.0;
-            if (orderModel.getDriver_last_offer()!=null){
+            if (orderModel.getDriver_last_offer() != null) {
                 offer_value = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
             }
-            binding.tvOfferValue.setText(String.format(Locale.ENGLISH,"%.2f %s",offer_value,currency));
+            binding.tvOfferValue.setText(String.format(Locale.ENGLISH, "%.2f %s", offer_value, currency));
         }
 
 
     }
 
-    private void driverLeaveOrderActions()
-    {
+    private void driverLeaveOrderActions() {
         reasonType = 1;
         binding.tvActionType.setText(R.string.withdraw_order);
         actionReasonList.clear();
@@ -422,10 +509,11 @@ public class ChatActivity extends AppCompatActivity {
         ChatActionModel chatActionModel2 = new ChatActionModel("لا أرغب في توصيل الطلب");
         actionReasonList.add(chatActionModel2);
         chatActionAdapter.notifyDataSetChanged();
+        openSheet();
 
     }
-    private void changeDriverActions()
-    {
+
+    private void changeDriverActions() {
         reasonType = 2;
         binding.tvActionType.setText(R.string.change_driver);
         actionReasonList.clear();
@@ -440,8 +528,9 @@ public class ChatActivity extends AppCompatActivity {
         chatActionAdapter.notifyDataSetChanged();
         openSheet();
     }
-    public void deleteOrderActions(OffersModel offersModel)
-    {
+
+    public void deleteOrderActions(OffersModel offersModel) {
+
         this.offersModel = offersModel;
         reasonType = 3;
         binding.tvActionType.setText(R.string.delete_order);
@@ -463,15 +552,17 @@ public class ChatActivity extends AppCompatActivity {
         ChatActionModel chatActionModel8 = new ChatActionModel("سبب آخر");
         actionReasonList.add(chatActionModel8);
         chatActionAdapter.notifyDataSetChanged();
+
         openSheet();
     }
-    private void resendOrder()
-    {
+
+    private void resendOrder() {
         isDataChanged = true;
         binding.btnResend.setVisibility(View.GONE);
     }
+
     public void setReason(ChatActionModel chatActionModel) {
-        switch (reasonType){
+        switch (reasonType) {
             case 1:
                 leaveOrder(chatActionModel);
                 break;
@@ -479,9 +570,9 @@ public class ChatActivity extends AppCompatActivity {
                 changeDriver(chatActionModel);
                 break;
             case 3:
-                if (chatActionModel.getAction().equals("سعر التوصيل مرتفع")){
+                if (chatActionModel.getAction().equals("سعر التوصيل مرتفع")) {
                     reSendOffer(offersModel.getOffer_value());
-                }else if (chatActionModel.getAction().equals("لم اعد احتاج الطلب")){
+                } else if (chatActionModel.getAction().equals("لم اعد احتاج الطلب")) {
                     deleteOrder(chatActionModel);
 
                 }
@@ -491,17 +582,18 @@ public class ChatActivity extends AppCompatActivity {
 
     private void leaveOrder(ChatActionModel chatActionModel) {
 
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(),orderModel.getClient().getId(),Integer.parseInt(orderModel.getDriver_id()),order_id,chatActionModel.getAction())
+        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), Integer.parseInt(orderModel.getDriver_id()), order_id, chatActionModel.getAction())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
+                                setResult(RESULT_OK);
                                 finish();
                             }
                         } else {
@@ -540,11 +632,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void changeDriver(ChatActionModel chatActionModel) {
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).changeDriver(userModel.getUser().getToken(),orderModel.getClient().getId(),order_id,chatActionModel.getAction())
+        Api.getService(Tags.base_url).changeDriver(userModel.getUser().getToken(), orderModel.getClient().getId(), order_id, chatActionModel.getAction())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -590,11 +682,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void deleteOrder(ChatActionModel chatActionModel) {
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).clientDeleteOrder(userModel.getUser().getToken(),orderModel.getClient().getId(),order_id,chatActionModel.getAction())
+        Api.getService(Tags.base_url).clientDeleteOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), order_id, chatActionModel.getAction())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -639,20 +731,20 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
-    public void clientAcceptOffer(OffersModel offersModel)
-    {
+    public void clientAcceptOffer(OffersModel offersModel) {
 
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).clientAcceptOffer(userModel.getUser().getToken(),orderModel.getClient().getId(),Integer.parseInt(orderModel.getDriver_id()),order_id,offersModel.getId())
+        Api.getService(Tags.base_url).clientAcceptOffer(userModel.getUser().getToken(), orderModel.getClient().getId(), Integer.parseInt(offersModel.getDriver_id()), order_id, offersModel.getId())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
+                                isDataChanged = true;
                                 getOrderById();
                             }
                         } else {
@@ -691,18 +783,20 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void reSendOffer(String offer_value){
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+    private void reSendOffer(String offer_value) {
+
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).sendDriverOffer(userModel.getUser().getToken(),orderModel.getClient().getId(),Integer.parseInt(orderModel.getDriver_id()),order_id,offer_value,"make_offer")
+        Api.getService(Tags.base_url).sendDriverOffer(userModel.getUser().getToken(), orderModel.getClient().getId(), Integer.parseInt(offersModel.getDriver_id()), order_id, offer_value, "make_offer")
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
+                                isDataChanged = true;
                                 getOrderById();
                             }
                         } else {
@@ -740,8 +834,15 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
-    private void openSheet()
-    {
+    private void share() {
+
+    }
+
+    private void endOrder() {
+
+
+    }
+    private void openSheet() {
         binding.flAction.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
         binding.flAction.startAnimation(animation);
@@ -762,8 +863,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-    private void closeSheet()
-    {
+
+    private void closeSheet() {
 
         binding.flAction.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
@@ -776,6 +877,52 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 binding.flAction.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+
+    private void openDriverActionSheet() {
+        binding.flDriverAction.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        binding.flDriverAction.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                binding.flDriverAction.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    private void closeDriverActionSheet() {
+
+        binding.flDriverAction.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        binding.flDriverAction.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                binding.flDriverAction.setVisibility(View.GONE);
 
             }
 
@@ -1043,8 +1190,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void selectImage(int req)
-    {
+    private void selectImage(int req) {
 
         Intent intent = new Intent();
         if (req == IMG_REQ) {
@@ -1070,6 +1216,7 @@ public class ChatActivity extends AppCompatActivity {
         startActivityForResult(intent, req);
 
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -1092,6 +1239,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1164,7 +1312,6 @@ public class ChatActivity extends AppCompatActivity {
 
         finish();
     }
-
 
 
 }
