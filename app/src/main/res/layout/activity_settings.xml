@@ -473,6 +473,7 @@
                     android:background="@color/gray2" />
 
                 <LinearLayout
+                    android:id="@+id/llBeDriver"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:gravity="center_vertical"
@@ -506,6 +507,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/viewBeDriver"
                     android:layout_width="match_parent"
                     android:layout_height="1px"
                     android:layout_marginStart="20dp"

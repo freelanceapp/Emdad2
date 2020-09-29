@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.apps.emdad.BuildConfig;
@@ -100,6 +101,13 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
         if (userModel!=null){
             getUserData();
+            if (userModel.getUser().getUser_type().equals("driver")){
+                binding.llBeDriver.setVisibility(View.GONE);
+                binding.viewBeDriver.setVisibility(View.GONE);
+            }else {
+                binding.llBeDriver.setVisibility(View.VISIBLE);
+                binding.viewBeDriver.setVisibility(View.VISIBLE);
+            }
         }
 
 
