@@ -73,6 +73,11 @@ public class PreviousOrdersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 activity.resendOrder(orderModel1);
             });
 
+            myHolder.itemView.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                activity.setItemData(orderModel1);
+            });
+
         }else if (holder instanceof LoadMoreHolder){
             LoadMoreHolder loadMoreHolder = (LoadMoreHolder) holder;
             loadMoreHolder.binding.prgBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary), PorterDuff.Mode.SRC_IN);

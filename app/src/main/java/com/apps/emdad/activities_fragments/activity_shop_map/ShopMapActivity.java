@@ -359,7 +359,7 @@ public class ShopMapActivity extends AppCompatActivity implements OnMapReadyCall
 
 
                 mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).position(new LatLng(placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng())));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng()),20.0f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(placeModel.getGeometry().getLocation().getLat(),placeModel.getGeometry().getLocation().getLng()),20.0f));
 
             }
 

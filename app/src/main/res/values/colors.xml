@@ -29,6 +29,8 @@
 
     <color name="transparent">#00000000</color>
     <color name="color_red">#ef0607</color>
+    <color name="color_red_trans">#55ef0607</color>
+
     <color name="color_blue">#0000ff</color>
     <color name="trans_black">#55000000</color>
     <color name="trans_black2">#bb000000</color>

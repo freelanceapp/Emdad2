@@ -154,75 +154,78 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     private void startChat()
     {
+        try {
+            shopListPos =-1;
+            write_order_details_pos = -1;
+            order_details_pos = -1;
+            drop_off_pos = -1;
+            share_location_pos = -1;
+            coupon_pos = -1;
+            isPackageOrder = false;
+            mapLocation = false;
+            binding.cardRestart.setVisibility(View.GONE);
+            binding.edtDetails.setText(null);
+            chatBotModelList.clear();
+            adapter.notifyDataSetChanged();
+            addOrderTextModel = null;
+            addOrderTextModel = new AddOrderTextModel();
 
-        shopListPos =-1;
-        write_order_details_pos = -1;
-        order_details_pos = -1;
-        drop_off_pos = -1;
-        share_location_pos = -1;
-        coupon_pos = -1;
-        isPackageOrder = false;
-        mapLocation = false;
-        binding.cardRestart.setVisibility(View.GONE);
-        binding.edtDetails.setText(null);
-        chatBotModelList.clear();
-        adapter.notifyDataSetChanged();
-        addOrderTextModel = null;
-        addOrderTextModel = new AddOrderTextModel();
+            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.empty);
+            chatBotModelList.add(chatBotModel);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
 
-        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.empty);
-        chatBotModelList.add(chatBotModel);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-
-        chatBotModelList.add(null);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            chatBotModelList.add(null);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
 
 
-        new Handler()
-                .postDelayed(() -> {
-                    chatBotModelList.remove(chatBotModelList.size() - 1);
-                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-                    ChatBotModel chatBotModel1 = createInstance(ChatBotAdapter.greeting);
-                    chatBotModelList.add(chatBotModel1);
-                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            new Handler()
+                    .postDelayed(() -> {
+                        chatBotModelList.remove(chatBotModelList.size() - 1);
+                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+                        ChatBotModel chatBotModel1 = createInstance(ChatBotAdapter.greeting);
+                        chatBotModelList.add(chatBotModel1);
+                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
 
-                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-                    new Handler().postDelayed(() -> {
+                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
                         new Handler().postDelayed(() -> {
 
-                            chatBotModelList.add(null);
-                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-
                             new Handler().postDelayed(() -> {
 
-                                chatBotModelList.remove(chatBotModelList.size() - 1);
-                                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-                                ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.welcome);
-                                chatBotModelList.add(chatBotModel2);
+                                chatBotModelList.add(null);
                                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
 
                                 new Handler().postDelayed(() -> {
 
-                                    chatBotModelList.add(null);
+                                    chatBotModelList.remove(chatBotModelList.size() - 1);
+                                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                                    ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.welcome);
+                                    chatBotModelList.add(chatBotModel2);
                                     adapter.notifyItemInserted(chatBotModelList.size() - 1);
                                     binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
 
                                     new Handler().postDelayed(() -> {
-                                        chatBotModelList.remove(chatBotModelList.size() - 1);
-                                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
-                                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.help);
-                                        chatBotModelList.add(chatBotModel3);
+                                        chatBotModelList.add(null);
                                         adapter.notifyItemInserted(chatBotModelList.size() - 1);
                                         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                                        new Handler().postDelayed(() -> {
+                                            chatBotModelList.remove(chatBotModelList.size() - 1);
+                                            adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                                            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.help);
+                                            chatBotModelList.add(chatBotModel3);
+                                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                                        }, 1000);
 
 
                                     }, 1000);
@@ -237,10 +240,11 @@ public class AddOrderActivity extends AppCompatActivity {
                         }, 1000);
 
 
-                    }, 1000);
+                    }, 3000);
+        }catch (Exception e){
 
+        }
 
-                }, 3000);
     }
     private ChatBotModel createInstance(int type)
     {
@@ -250,146 +254,155 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     public void addOrder_Package(String action, int adapterPosition)
     {
-        binding.cardRestart.setVisibility(View.VISIBLE);
-        ChatBotModel chatBotModel1 = chatBotModelList.get(adapterPosition);
-        chatBotModel1.setEnabled(false);
-        chatBotModelList.set(adapterPosition, chatBotModel1);
-        adapter.notifyItemChanged(adapterPosition);
+        try {
+            binding.cardRestart.setVisibility(View.VISIBLE);
+            ChatBotModel chatBotModel1 = chatBotModelList.get(adapterPosition);
+            chatBotModel1.setEnabled(false);
+            chatBotModelList.set(adapterPosition, chatBotModel1);
+            adapter.notifyItemChanged(adapterPosition);
 
 
-        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.new_order);
-        chatBotModel.setText(action);
-        chatBotModelList.add(chatBotModel);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-
-        new Handler().postDelayed(() -> {
-            chatBotModelList.add(null);
+            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.new_order);
+            chatBotModel.setText(action);
+            chatBotModelList.add(chatBotModel);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
+
             new Handler().postDelayed(() -> {
-                chatBotModelList.remove(chatBotModelList.size() - 1);
-                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-                ChatBotModel chatBotModel2;
-                if (action.equals(getString(R.string.new_order))) {
-
-                    chatBotModel2 = createInstance(ChatBotAdapter.store);
-
-                } else {
-                    chatBotModel2 = createInstance(ChatBotAdapter.share_location);
-                    addOrderTextModel.setOrder_type("tard_emdad");
-
-
-                }
-
-                chatBotModelList.add(chatBotModel2);
+                chatBotModelList.add(null);
                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
+                new Handler().postDelayed(() -> {
+                    chatBotModelList.remove(chatBotModelList.size() - 1);
+                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
+                    ChatBotModel chatBotModel2;
+                    if (action.equals(getString(R.string.new_order))) {
+
+                        chatBotModel2 = createInstance(ChatBotAdapter.store);
+
+                    } else {
+                        chatBotModel2 = createInstance(ChatBotAdapter.share_location);
+                        addOrderTextModel.setOrder_type("tard_emdad");
+
+
+                    }
+
+                    chatBotModelList.add(chatBotModel2);
+                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                }, 1000);
             }, 1000);
-        }, 1000);
+        }catch (Exception e){}
+
 
     }
     public void openShops_Maps(int adapterPosition, String action)
     {
-        shopListPos = adapterPosition;
+        try {
+            shopListPos = adapterPosition;
 
-        if (action.equals(getString(R.string.shop_list))) {
-            Intent intent = new Intent(this, ShopsActivity.class);
-            intent.putExtra("lat", user_lat);
-            intent.putExtra("lng", user_lng);
-            startActivityForResult(intent, 100);
-        } else {
-            navigateToMapSearch(500);
+            if (action.equals(getString(R.string.shop_list))) {
+                Intent intent = new Intent(this, ShopsActivity.class);
+                intent.putExtra("lat", user_lat);
+                intent.putExtra("lng", user_lng);
+                startActivityForResult(intent, 100);
+            } else {
+                navigateToMapSearch(500);
 
-        }
+            }
+        }catch (Exception e){}
+
 
 
     }
     private void addOrderDetails(String details)
     {
-        addOrderTextModel.setOrder_text(details);
-        Common.CloseKeyBoard(this, binding.edtDetails);
-        closeSheet();
+        try {
+            addOrderTextModel.setOrder_text(details);
+            Common.CloseKeyBoard(this, binding.edtDetails);
+            closeSheet();
 
-        if (order_details_pos == -1) {
-            ChatBotModel chatBotModel2 = chatBotModelList.get(write_order_details_pos);
-            chatBotModel2.setEnabled(false);
-            chatBotModelList.set(write_order_details_pos, chatBotModel2);
-            adapter.notifyItemChanged(write_order_details_pos);
-
-
-            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.order_details);
-            chatBotModel.setText(details);
-
-            chatBotModelList.add(chatBotModel);
-            adapter.notifyItemInserted(chatBotModelList.size() - 1);
-            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-            new Handler()
-                    .postDelayed(() -> {
-                        chatBotModelList.add(null);
-                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-                        new Handler()
-                                .postDelayed(() -> {
-                                    chatBotModelList.remove(chatBotModelList.size() - 1);
-                                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-                                    if (isPackageOrder){
-
-                                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.use_coupon);
-                                        chatBotModelList.add(chatBotModel3);
-                                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+            if (order_details_pos == -1) {
+                ChatBotModel chatBotModel2 = chatBotModelList.get(write_order_details_pos);
+                chatBotModel2.setEnabled(false);
+                chatBotModelList.set(write_order_details_pos, chatBotModel2);
+                adapter.notifyItemChanged(write_order_details_pos);
 
 
-                                        new Handler().postDelayed(() -> {
-                                            chatBotModelList.add(null);
+                ChatBotModel chatBotModel = createInstance(ChatBotAdapter.order_details);
+                chatBotModel.setText(details);
+
+                chatBotModelList.add(chatBotModel);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                new Handler()
+                        .postDelayed(() -> {
+                            chatBotModelList.add(null);
+                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                            new Handler()
+                                    .postDelayed(() -> {
+                                        chatBotModelList.remove(chatBotModelList.size() - 1);
+                                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                                        if (isPackageOrder){
+
+                                            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.use_coupon);
+                                            chatBotModelList.add(chatBotModel3);
                                             adapter.notifyItemInserted(chatBotModelList.size() - 1);
                                             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
+
                                             new Handler().postDelayed(() -> {
-                                                chatBotModelList.remove(chatBotModelList.size() - 1);
-                                                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-
-                                                ChatBotModel chatBotModel4 = createInstance(ChatBotAdapter.add_coupon);
-                                                chatBotModelList.add(chatBotModel4);
+                                                chatBotModelList.add(null);
                                                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                                                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                                                new Handler().postDelayed(() -> {
+                                                    chatBotModelList.remove(chatBotModelList.size() - 1);
+                                                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+
+                                                    ChatBotModel chatBotModel4 = createInstance(ChatBotAdapter.add_coupon);
+                                                    chatBotModelList.add(chatBotModel4);
+                                                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                                                }, 1000);
 
 
                                             }, 1000);
 
+                                        }else {
+                                            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.drop_off_location);
+                                            chatBotModelList.add(chatBotModel3);
+                                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-                                        }, 1000);
-
-                                    }else {
-                                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.drop_off_location);
-                                        chatBotModelList.add(chatBotModel3);
-                                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-                                    }
+                                        }
 
 
-                                }, 1000);
+                                    }, 1000);
 
 
-                    }, 1000);
-        } else {
-            ChatBotModel chatBotModel = chatBotModelList.get(order_details_pos);
-            chatBotModel.setText(details);
-            chatBotModelList.set(order_details_pos, chatBotModel);
-            adapter.notifyItemChanged(order_details_pos);
+                        }, 1000);
+            } else {
+                ChatBotModel chatBotModel = chatBotModelList.get(order_details_pos);
+                chatBotModel.setText(details);
+                chatBotModelList.set(order_details_pos, chatBotModel);
+                adapter.notifyItemChanged(order_details_pos);
 
-        }
+            }
+        }catch (Exception e){}
+
 
     }
     public void openDropOffLocationMap(int adapterPosition)
@@ -411,18 +424,55 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     private void updateCouponAction(String coupon)
     {
-        ChatBotModel chatBotModel2 = chatBotModelList.get(coupon_pos);
-        chatBotModel2.setEnabled(false);
-        chatBotModelList.set(coupon_pos, chatBotModel2);
-        adapter.notifyItemChanged(coupon_pos);
+        try {
+            ChatBotModel chatBotModel2 = chatBotModelList.get(coupon_pos);
+            chatBotModel2.setEnabled(false);
+            chatBotModelList.set(coupon_pos, chatBotModel2);
+            adapter.notifyItemChanged(coupon_pos);
 
-        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.coupon_details);
-        chatBotModel.setText(coupon);
-        chatBotModelList.add(chatBotModel);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.coupon_details);
+            chatBotModel.setText(coupon);
+            chatBotModelList.add(chatBotModel);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-        new Handler().postDelayed(() -> {
+            new Handler().postDelayed(() -> {
+                chatBotModelList.add(null);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                new Handler().postDelayed(() -> {
+                    chatBotModelList.remove(chatBotModelList.size() - 1);
+                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                    ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.payment);
+                    chatBotModelList.add(chatBotModel3);
+                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                }, 1000);
+            }, 1000);
+        }catch (Exception e){}
+
+    }
+    public void payment(int adapterPosition)
+    {
+
+        try {
+            addOrderTextModel.setPayment("cash");
+            ChatBotModel chatBotModel = chatBotModelList.get(adapterPosition);
+            chatBotModel.setEnabled(false);
+            chatBotModelList.set(adapterPosition, chatBotModel);
+            adapter.notifyItemChanged(adapterPosition);
+
+            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.payment_details);
+            chatBotModel2.setText(getString(R.string.cash));
+            chatBotModelList.add(chatBotModel2);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
             chatBotModelList.add(null);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
@@ -431,60 +481,32 @@ public class AddOrderActivity extends AppCompatActivity {
                 chatBotModelList.remove(chatBotModelList.size() - 1);
                 adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
-                ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.payment);
+                ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.finish_order);
                 chatBotModelList.add(chatBotModel3);
                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-
             }, 1000);
-        }, 1000);
-    }
-    public void payment(int adapterPosition)
-    {
+        }catch (Exception e){}
 
-        addOrderTextModel.setPayment("cash");
-        ChatBotModel chatBotModel = chatBotModelList.get(adapterPosition);
-        chatBotModel.setEnabled(false);
-        chatBotModelList.set(adapterPosition, chatBotModel);
-        adapter.notifyItemChanged(adapterPosition);
-
-        ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.payment_details);
-        chatBotModel2.setText(getString(R.string.cash));
-        chatBotModelList.add(chatBotModel2);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-
-        chatBotModelList.add(null);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-        new Handler().postDelayed(() -> {
-            chatBotModelList.remove(chatBotModelList.size() - 1);
-            adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.finish_order);
-            chatBotModelList.add(chatBotModel3);
-            adapter.notifyItemInserted(chatBotModelList.size() - 1);
-            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-        }, 1000);
 
     }
     private void updateSelectedShopListUi()
     {
-        ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
-        chatBotModel1.setEnabled(false);
-        chatBotModelList.set(shopListPos, chatBotModel1);
-        adapter.notifyItemChanged(shopListPos);
+        try {
+            ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
+            chatBotModel1.setEnabled(false);
+            chatBotModelList.set(shopListPos, chatBotModel1);
+            adapter.notifyItemChanged(shopListPos);
 
 
-        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.store_details);
-        chatBotModel.setText(getString(R.string.shop_list));
-        chatBotModelList.add(chatBotModel);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.store_details);
+            chatBotModel.setText(getString(R.string.shop_list));
+            chatBotModelList.add(chatBotModel);
+            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+        }catch (Exception e){}
+
     }
     public void shareLocation(int adapterPosition)
     {
@@ -494,90 +516,95 @@ public class AddOrderActivity extends AppCompatActivity {
     }
     public void cancelOrder()
     {
-        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.new_order);
-        chatBotModel.setText(getString(R.string.order_canceled));
-        chatBotModelList.add(chatBotModel);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-
-        new Handler().postDelayed(() -> {
-            chatBotModelList.add(null);
+        try {
+            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.new_order);
+            chatBotModel.setText(getString(R.string.order_canceled));
+            chatBotModelList.add(chatBotModel);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
+
             new Handler().postDelayed(() -> {
-                chatBotModelList.remove(chatBotModelList.size() - 1);
-                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-                ChatBotModel chatBotModel2;
-                chatBotModel2 = createInstance(ChatBotAdapter.new_order);
-
-
-                chatBotModelList.add(chatBotModel2);
+                chatBotModelList.add(null);
                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-                startChat();
+
+                new Handler().postDelayed(() -> {
+                    chatBotModelList.remove(chatBotModelList.size() - 1);
+                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                    ChatBotModel chatBotModel2;
+                    chatBotModel2 = createInstance(ChatBotAdapter.new_order);
+
+
+                    chatBotModelList.add(chatBotModel2);
+                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+                    startChat();
+                }, 1000);
             }, 1000);
-        }, 1000);
+        }catch (Exception e){}
+
 
     }
     public void submitOrder() {
 
-
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
-        dialog.setCancelable(false);
-        dialog.show();
-        Api.getService(Tags.base_url)
-                .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),"0",addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),"1",addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
-                .enqueue(new Callback<SingleOrderDataModel>() {
-                    @Override
-                    public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful()&&response.body()!=null)
-                        {
-                            Toast.makeText(AddOrderActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
-                            Intent intent =new Intent(AddOrderActivity.this, ChatActivity.class);
-                            intent.putExtra("order_id",response.body().getOrder().getId());
-                            startActivity(intent);
-
-                        }else
-                        {
-                            if (response.code()==500)
-                            {
-                                Toast.makeText(AddOrderActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            } else
-                            {
-                                Toast.makeText(AddOrderActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                            }
-
-                            try {
-                                Log.e("error",response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
-                        try {
+        try {
+            ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+            dialog.setCancelable(false);
+            dialog.show();
+            Api.getService(Tags.base_url)
+                    .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),"0",addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),"1",addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
+                    .enqueue(new Callback<SingleOrderDataModel>() {
+                        @Override
+                        public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                             dialog.dismiss();
-                            if (t.getMessage() != null) {
-                                Log.e("msg_category_error", t.getMessage() + "__");
+                            if (response.isSuccessful()&&response.body()!=null)
+                            {
+                                Toast.makeText(AddOrderActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
+                                Intent intent =new Intent(AddOrderActivity.this, ChatActivity.class);
+                                intent.putExtra("order_id",response.body().getOrder().getId());
+                                startActivity(intent);
 
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(AddOrderActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(AddOrderActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }else
+                            {
+                                if (response.code()==500)
+                                {
+                                    Toast.makeText(AddOrderActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                } else
+                                {
+                                    Toast.makeText(AddOrderActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+
+                                try {
+                                    Log.e("error",response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             }
-                        }catch (Exception e)
-                        {
-                            Log.e("Error",e.getMessage()+"__");
                         }
-                    }
-                });
+
+                        @Override
+                        public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
+                            try {
+                                dialog.dismiss();
+                                if (t.getMessage() != null) {
+                                    Log.e("msg_category_error", t.getMessage() + "__");
+
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(AddOrderActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(AddOrderActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }catch (Exception e)
+                            {
+                                Log.e("Error",e.getMessage()+"__");
+                            }
+                        }
+                    });
+        }catch (Exception e){}
+
     }
 
     private void navigateToPackageMapActivity(int req)
@@ -596,91 +623,98 @@ public class AddOrderActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK && data != null)
         {
-            NearbyModel.Result result = (NearbyModel.Result) data.getSerializableExtra("data");
-            addOrderTextModel.setPlace_id(result.getPlace_id());
-            if (result.getCustomPlaceModel()!=null){
-                addOrderTextModel.setOrder_type("emdad_market");
-                addOrderTextModel.setMarket_id(result.getCustomPlaceModel().getId());
-            }else {
-                addOrderTextModel.setOrder_type("google_market");
-                addOrderTextModel.setMarket_id(0);
+            try {
+                NearbyModel.Result result = (NearbyModel.Result) data.getSerializableExtra("data");
+                addOrderTextModel.setPlace_id(result.getPlace_id());
+                if (result.getCustomPlaceModel()!=null){
+                    addOrderTextModel.setOrder_type("emdad_market");
+                    addOrderTextModel.setMarket_id(result.getCustomPlaceModel().getId());
+                }else {
+                    addOrderTextModel.setOrder_type("google_market");
+                    addOrderTextModel.setMarket_id(0);
 
-            }
-            addOrderTextModel.setPlace_name(result.getName());
-            addOrderTextModel.setPlace_address(result.getVicinity());
-            addOrderTextModel.setPlace_lat(result.getGeometry().getLocation().getLat());
-            addOrderTextModel.setPlace_lng(result.getGeometry().getLocation().getLng());
+                }
+                addOrderTextModel.setPlace_name(result.getName());
+                addOrderTextModel.setPlace_address(result.getVicinity());
+                addOrderTextModel.setPlace_lat(result.getGeometry().getLocation().getLat());
+                addOrderTextModel.setPlace_lng(result.getGeometry().getLocation().getLng());
 
 
-            updateSelectedShopUI(result);
+                updateSelectedShopUI(result);
+            }catch (Exception e){}
+
 
         } else if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
 
-            FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
-            ChatBotModel chatBotModel1 = chatBotModelList.get(drop_off_pos);
-            chatBotModel1.setEnabled(false);
-            chatBotModelList.set(drop_off_pos, chatBotModel1);
-            adapter.notifyItemChanged(drop_off_pos);
+            try {
+                FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
+                ChatBotModel chatBotModel1 = chatBotModelList.get(drop_off_pos);
+                chatBotModel1.setEnabled(false);
+                chatBotModelList.set(drop_off_pos, chatBotModel1);
+                adapter.notifyItemChanged(drop_off_pos);
 
-            ChatBotModel chatBotModel2;
-            if (mapLocation){
-                addOrderTextModel.setTo_address(favoriteLocationModel.getAddress());
-                addOrderTextModel.setTo_lat(favoriteLocationModel.getLat());
-                addOrderTextModel.setTo_lng(favoriteLocationModel.getLng());
+                ChatBotModel chatBotModel2;
+                if (mapLocation){
+                    addOrderTextModel.setTo_address(favoriteLocationModel.getAddress());
+                    addOrderTextModel.setTo_lat(favoriteLocationModel.getLat());
+                    addOrderTextModel.setTo_lng(favoriteLocationModel.getLng());
 
-                chatBotModel2 = createInstance(ChatBotAdapter.drop_location_details);
-                chatBotModel2.setTo_address(favoriteLocationModel.getAddress());
-                chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
-                chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
-            }else {
-
-
-                addOrderTextModel.setTo_address(favoriteLocationModel.getAddress());
-                addOrderTextModel.setTo_lat(favoriteLocationModel.getLat());
-                addOrderTextModel.setTo_lng(favoriteLocationModel.getLng());
+                    chatBotModel2 = createInstance(ChatBotAdapter.drop_location_details);
+                    chatBotModel2.setTo_address(favoriteLocationModel.getAddress());
+                    chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
+                    chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
+                }else {
 
 
-                chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
-                chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
-                chatBotModel2.setFrom_lat(favoriteLocationModel.getLat());
-                chatBotModel2.setFrom_lng(favoriteLocationModel.getLng());
-            }
+                    addOrderTextModel.setTo_address(favoriteLocationModel.getAddress());
+                    addOrderTextModel.setTo_lat(favoriteLocationModel.getLat());
+                    addOrderTextModel.setTo_lng(favoriteLocationModel.getLng());
 
 
-            chatBotModelList.add(chatBotModel2);
-            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                    chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
+                    chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
+                    chatBotModel2.setFrom_lat(favoriteLocationModel.getLat());
+                    chatBotModel2.setFrom_lng(favoriteLocationModel.getLng());
+                }
 
 
-            chatBotModelList.add(null);
-            adapter.notifyItemInserted(chatBotModelList.size() - 1);
-            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-            new Handler()
-                    .postDelayed(() -> {
-                        chatBotModelList.remove(chatBotModelList.size() - 1);
-                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+                chatBotModelList.add(chatBotModel2);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
 
 
-                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.use_coupon);
-                        chatBotModelList.add(chatBotModel3);
-                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+                chatBotModelList.add(null);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                new Handler()
+                        .postDelayed(() -> {
+                            chatBotModelList.remove(chatBotModelList.size() - 1);
+                            adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
 
-                        new Handler().postDelayed(() -> {
-                            chatBotModelList.add(null);
+                            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.use_coupon);
+                            chatBotModelList.add(chatBotModel3);
                             adapter.notifyItemInserted(chatBotModelList.size() - 1);
                             binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
+
                             new Handler().postDelayed(() -> {
-                                chatBotModelList.remove(chatBotModelList.size() - 1);
-                                adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-
-                                ChatBotModel chatBotModel4 = createInstance(ChatBotAdapter.add_coupon);
-                                chatBotModelList.add(chatBotModel4);
+                                chatBotModelList.add(null);
                                 adapter.notifyItemInserted(chatBotModelList.size() - 1);
                                 binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                                new Handler().postDelayed(() -> {
+                                    chatBotModelList.remove(chatBotModelList.size() - 1);
+                                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+
+                                    ChatBotModel chatBotModel4 = createInstance(ChatBotAdapter.add_coupon);
+                                    chatBotModelList.add(chatBotModel4);
+                                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                                }, 1000);
 
 
                             }, 1000);
@@ -688,93 +722,147 @@ public class AddOrderActivity extends AppCompatActivity {
 
                         }, 1000);
 
+            }catch (Exception e){
 
-                    }, 1000);
+            }
 
 
         } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
-            isPackageOrder = true;
-            fromLocation = (FavoriteLocationModel) data.getSerializableExtra("data1");
-            toLocation = (FavoriteLocationModel) data.getSerializableExtra("data2");
+
+            try {
+                isPackageOrder = true;
+                fromLocation = (FavoriteLocationModel) data.getSerializableExtra("data1");
+                toLocation = (FavoriteLocationModel) data.getSerializableExtra("data2");
 
 
-            addOrderTextModel.setPlace_id("0");
-            addOrderTextModel.setMarket_id(0);
-            addOrderTextModel.setPlace_name("");
-            addOrderTextModel.setPlace_address(fromLocation.getAddress());
-            addOrderTextModel.setPlace_lat(fromLocation.getLat());
-            addOrderTextModel.setPlace_lng(fromLocation.getLng());
+                addOrderTextModel.setPlace_id("0");
+                addOrderTextModel.setMarket_id(0);
+                addOrderTextModel.setPlace_name("");
+                addOrderTextModel.setPlace_address(fromLocation.getAddress());
+                addOrderTextModel.setPlace_lat(fromLocation.getLat());
+                addOrderTextModel.setPlace_lng(fromLocation.getLng());
 
-            addOrderTextModel.setTo_address(toLocation.getAddress());
-            addOrderTextModel.setTo_lat(toLocation.getLat());
-            addOrderTextModel.setTo_lng(toLocation.getLng());
-
-
-
-            ChatBotModel chatBotModel1 = chatBotModelList.get(share_location_pos);
-            chatBotModel1.setEnabled(false);
-            chatBotModelList.set(share_location_pos, chatBotModel1);
-            adapter.notifyItemChanged(share_location_pos);
-
-            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.share_location_details);
-            chatBotModel2.setFrom_address(fromLocation.getAddress());
-            chatBotModel2.setFrom_lat(fromLocation.getLat());
-            chatBotModel2.setFrom_lng(fromLocation.getLng());
-            chatBotModel2.setTo_address(toLocation.getAddress());
-            chatBotModel2.setTo_lat(toLocation.getLat());
-            chatBotModel2.setTo_lng(toLocation.getLng());
-            chatBotModel2.setDistance(calculateDistance(new LatLng(fromLocation.getLat(), fromLocation.getLng()), new LatLng(toLocation.getLat(), toLocation.getLng())));
-
-
-            chatBotModelList.add(chatBotModel2);
-            adapter.notifyItemInserted(chatBotModelList.size() - 1);
-            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-
-            chatBotModelList.add(null);
-            adapter.notifyItemInserted(chatBotModelList.size() - 1);
-            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-            new Handler()
-                    .postDelayed(() -> {
-                        chatBotModelList.remove(chatBotModelList.size() - 1);
-                        adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.needs);
-                        chatBotModelList.add(chatBotModel3);
-                        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+                addOrderTextModel.setTo_address(toLocation.getAddress());
+                addOrderTextModel.setTo_lat(toLocation.getLat());
+                addOrderTextModel.setTo_lng(toLocation.getLng());
 
 
 
-                    }, 1000);
+                ChatBotModel chatBotModel1 = chatBotModelList.get(share_location_pos);
+                chatBotModel1.setEnabled(false);
+                chatBotModelList.set(share_location_pos, chatBotModel1);
+                adapter.notifyItemChanged(share_location_pos);
+
+                ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.share_location_details);
+                chatBotModel2.setFrom_address(fromLocation.getAddress());
+                chatBotModel2.setFrom_lat(fromLocation.getLat());
+                chatBotModel2.setFrom_lng(fromLocation.getLng());
+                chatBotModel2.setTo_address(toLocation.getAddress());
+                chatBotModel2.setTo_lat(toLocation.getLat());
+                chatBotModel2.setTo_lng(toLocation.getLng());
+                chatBotModel2.setDistance(calculateDistance(new LatLng(fromLocation.getLat(), fromLocation.getLng()), new LatLng(toLocation.getLat(), toLocation.getLng())));
+
+
+                chatBotModelList.add(chatBotModel2);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+                chatBotModelList.add(null);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                new Handler()
+                        .postDelayed(() -> {
+                            chatBotModelList.remove(chatBotModelList.size() - 1);
+                            adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+                            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.needs);
+                            chatBotModelList.add(chatBotModel3);
+                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+
+                        }, 1000);
+            }catch (Exception e){}
+
+
         }else if (requestCode == 400 && resultCode == RESULT_OK && data != null) {
            addOrderTextModel.setCoupon_id("0");
             updateCouponAction("تم حصولك على خصم 10%");
 
         }else if (requestCode==500 && resultCode==RESULT_OK && data!=null){
-            mapLocation = true;
+            try {
+                mapLocation = true;
 
-            FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
+                FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
 
-            addOrderTextModel.setPlace_id("0");
-            addOrderTextModel.setPlace_name("");
-            addOrderTextModel.setPlace_address(favoriteLocationModel.getAddress());
-            addOrderTextModel.setPlace_lat(favoriteLocationModel.getLat());
-            addOrderTextModel.setPlace_lng(favoriteLocationModel.getLng());
+                addOrderTextModel.setPlace_id("0");
+                addOrderTextModel.setPlace_name("");
+                addOrderTextModel.setPlace_address(favoriteLocationModel.getAddress());
+                addOrderTextModel.setPlace_lat(favoriteLocationModel.getLat());
+                addOrderTextModel.setPlace_lng(favoriteLocationModel.getLng());
 
-            ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
-            chatBotModel1.setEnabled(false);
-            chatBotModelList.set(shopListPos, chatBotModel1);
-            adapter.notifyItemChanged(shopListPos);
+                ChatBotModel chatBotModel1 = chatBotModelList.get(shopListPos);
+                chatBotModel1.setEnabled(false);
+                chatBotModelList.set(shopListPos, chatBotModel1);
+                adapter.notifyItemChanged(shopListPos);
 
-            ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
-            chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
-            chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
-            chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
-            chatBotModelList.add(chatBotModel2);
+                ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.pick_up_location_details);
+                chatBotModel2.setFrom_address(favoriteLocationModel.getAddress());
+                chatBotModel2.setTo_lat(favoriteLocationModel.getLat());
+                chatBotModel2.setTo_lng(favoriteLocationModel.getLng());
+                chatBotModelList.add(chatBotModel2);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+
+
+                chatBotModelList.add(null);
+                adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+                new Handler()
+                        .postDelayed(() -> {
+                            chatBotModelList.remove(chatBotModelList.size() - 1);
+                            adapter.notifyItemRemoved(chatBotModelList.size() - 1);
+
+
+                            ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.needs);
+
+                            chatBotModelList.add(chatBotModel3);
+                            adapter.notifyItemInserted(chatBotModelList.size() - 1);
+                            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
+
+
+
+                        }, 1000);
+            }catch (Exception e){}
+
+
+        }
+    }
+    private void updateSelectedShopUI(NearbyModel.Result result)
+    {
+
+        try {
+            updateSelectedShopListUi();
+            ChatBotModel chatBotModel = createInstance(ChatBotAdapter.place_details);
+            chatBotModel.setText(result.getName());
+            chatBotModel.setFrom_lat(result.getGeometry().getLocation().getLat());
+            chatBotModel.setFrom_lng(result.getGeometry().getLocation().getLng());
+            chatBotModel.setDistance(result.getDistance());
+            chatBotModel.setFrom_address(result.getVicinity());
+            chatBotModel.setRate(result.getRating());
+
+            if (result.getPhotos() != null && result.getPhotos().size() > 0) {
+                chatBotModel.setImage_url(result.getPhotos().get(0).getPhoto_reference());
+            } else {
+                chatBotModel.setImage_url(result.getIcon());
+
+            }
+            chatBotModelList.add(chatBotModel);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
-
+            binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
             chatBotModelList.add(null);
             adapter.notifyItemInserted(chatBotModelList.size() - 1);
@@ -786,56 +874,17 @@ public class AddOrderActivity extends AppCompatActivity {
                         adapter.notifyItemRemoved(chatBotModelList.size() - 1);
 
 
-                        ChatBotModel chatBotModel3 = createInstance(ChatBotAdapter.needs);
+                        ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.needs);
 
-                        chatBotModelList.add(chatBotModel3);
+                        chatBotModelList.add(chatBotModel2);
                         adapter.notifyItemInserted(chatBotModelList.size() - 1);
                         binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-
-
                     }, 1000);
-        }
-    }
-    private void updateSelectedShopUI(NearbyModel.Result result)
-    {
-
-        updateSelectedShopListUi();
-        ChatBotModel chatBotModel = createInstance(ChatBotAdapter.place_details);
-        chatBotModel.setText(result.getName());
-        chatBotModel.setFrom_lat(result.getGeometry().getLocation().getLat());
-        chatBotModel.setFrom_lng(result.getGeometry().getLocation().getLng());
-        chatBotModel.setDistance(result.getDistance());
-        chatBotModel.setFrom_address(result.getVicinity());
-        chatBotModel.setRate(result.getRating());
-
-        if (result.getPhotos() != null && result.getPhotos().size() > 0) {
-            chatBotModel.setImage_url(result.getPhotos().get(0).getPhoto_reference());
-        } else {
-            chatBotModel.setImage_url(result.getIcon());
+        }catch (Exception e){
 
         }
-        chatBotModelList.add(chatBotModel);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
 
-        chatBotModelList.add(null);
-        adapter.notifyItemInserted(chatBotModelList.size() - 1);
-        binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-        new Handler()
-                .postDelayed(() -> {
-                    chatBotModelList.remove(chatBotModelList.size() - 1);
-                    adapter.notifyItemRemoved(chatBotModelList.size() - 1);
-
-
-                    ChatBotModel chatBotModel2 = createInstance(ChatBotAdapter.needs);
-
-                    chatBotModelList.add(chatBotModel2);
-                    adapter.notifyItemInserted(chatBotModelList.size() - 1);
-                    binding.recView.smoothScrollToPosition(chatBotModelList.size() - 1);
-
-                }, 1000);
 
 
     }

@@ -198,18 +198,7 @@ public class ChatActivity extends AppCompatActivity {
         });
         binding.llBack.setOnClickListener(v -> onBackPressed());
         binding.tvReadyDeliverOrder.setOnClickListener(v -> {
-            Intent intent = new Intent(this, DelegateAddOfferActivity.class);
-            double pick_up_distance = getDistance(new LatLng(Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude())), new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude())));
-            double drop_off_distance = getDistance(new LatLng(Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude())), new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude())));
-
-            double from_loc_to_loc_distance = getDistance(new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude())), new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude())));
-            FromToLocationModel fromToLocationModel = new FromToLocationModel(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude()), orderModel.getMarket_address(), pick_up_distance, Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude()), orderModel.getClient_address(), drop_off_distance, from_loc_to_loc_distance, Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude()));
-            intent.putExtra("data", fromToLocationModel);
-            intent.putExtra("user_token", userModel.getUser().getToken());
-            intent.putExtra("client_id", orderModel.getClient().getId());
-            intent.putExtra("order_id", order_id);
-            intent.putExtra("driver_id", userModel.getUser().getId());
-            startActivityForResult(intent, 100);
+            navigateToDriverAddOffer();
         });
         chatActionAdapter = new ChatActionAdapter(actionReasonList, this);
         binding.recViewAction.setLayoutManager(new LinearLayoutManager(this));
@@ -218,6 +207,29 @@ public class ChatActivity extends AppCompatActivity {
         binding.btnActionOk.setOnClickListener(v ->
         {
             if (chatActionModel != null) {
+
+                switch (reasonType) {
+                    case 1:
+                        leaveOrder(chatActionModel);
+                        break;
+                    case 2:
+                        changeDriver(chatActionModel);
+                        break;
+                    case 3:
+                        if (chatActionModel.getAction().equals("سعر التوصيل مرتفع")) {
+                            clientRefuseOffer(offersModel, "yes");
+
+                        } else if (chatActionModel.getAction().equals("لم اعد احتاج الطلب") || chatActionModel.getAction().equals("سبب آخر")) {
+                            deleteOrder(chatActionModel);
+
+                        } else {
+                            clientRefuseOffer(offersModel, "no");
+
+                        }
+                        break;
+                }
+
+
                 closeSheet();
             }
         });
@@ -226,9 +238,15 @@ public class ChatActivity extends AppCompatActivity {
             closeSheet();
         });
         binding.btnDriverCancel.setOnClickListener(v -> {
-            driverLeaveOrderActions();
+            driverCancelOffer();
         });
-        binding.btnCancel.setOnClickListener(v -> finish());
+        binding.btnDriverBack.setOnClickListener(v -> {
+            driverCancelOffer();
+        });
+        binding.tvLeaveOrder.setOnClickListener(v -> driverLeaveOrderActions());
+        binding.btnCancel.setOnClickListener(v ->
+                clientCancelOrder()
+        );
         binding.imageMore.setOnClickListener(v -> {
             if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
                 changeDriverActions();
@@ -239,7 +257,9 @@ public class ChatActivity extends AppCompatActivity {
 
         });
         binding.btnDriverActionCancel.setOnClickListener(v -> closeDriverActionSheet());
-
+        binding.btnDriverAnotherOffer.setOnClickListener(v -> {
+            navigateToDriverAddOffer();
+        });
         binding.tvShare.setOnClickListener(v -> {
             closeDriverActionSheet();
             share();
@@ -250,26 +270,30 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-        getOrderById();
+        getOrderById(null);
 
     }
 
 
-
-    private void getOrderById() {
+    private void getOrderById(ProgressDialog dialog) {
 
         Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(), order_id, userModel.getUser().getId())
                 .enqueue(new Callback<SingleOrderDataModel>() {
                     @Override
                     public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
                         binding.progBarData.setVisibility(View.GONE);
-
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
                         if (response.isSuccessful()) {
                             orderModel = response.body().getOrder();
                             binding.setModel(orderModel);
                             updateUi(orderModel);
 
                         } else {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
                             binding.progBarData.setVisibility(View.GONE);
 
                             try {
@@ -285,6 +309,9 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
                         try {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
                             binding.progBarData.setVisibility(View.GONE);
 
                             if (t.getMessage() != null) {
@@ -320,7 +347,6 @@ public class ChatActivity extends AppCompatActivity {
             } else {
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 if (orderModel.getOrder_status().equals("new_order") || orderModel.getOrder_status().equals("pennding") || orderModel.getOrder_status().equals("have_offer")) {
-                    binding.flDriverOffers.setVisibility(View.VISIBLE);
                     binding.tvMsgLeft.setText(orderModel.getDetails());
                     binding.tvMsgLeft.setVisibility(View.VISIBLE);
 
@@ -399,6 +425,17 @@ public class ChatActivity extends AppCompatActivity {
                     binding.llComingOffer.setVisibility(View.VISIBLE);
                     getOffers();
                 } else {
+
+                    if (orderModel.getDriver_last_offer() != null && orderModel.getDriver_last_offer().getStatus().equals("refuse")) {
+                        binding.flClientRefuseOffer.setVisibility(View.VISIBLE);
+                        binding.flOffers.setVisibility(View.GONE);
+                        binding.flDriverOffers.setVisibility(View.GONE);
+
+                    } else {
+                        binding.flDriverOffers.setVisibility(View.VISIBLE);
+                        binding.flClientRefuseOffer.setVisibility(View.GONE);
+
+                    }
                     binding.tvMsgLeft.setText(orderModel.getDetails());
                     binding.tvMsgLeft.setVisibility(View.VISIBLE);
                 }
@@ -430,6 +467,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
+
                 updateUserUi();
 
                 break;
@@ -442,10 +480,29 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
+                binding.tvCanceled.setVisibility(View.VISIBLE);
                 updateUserUi();
 
                 break;
             case "client_cancel":
+                binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
+                binding.orderStatus.setText(getString(R.string.canceled));
+                binding.btnResend.setVisibility(View.VISIBLE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+                binding.tvCanceled.setVisibility(View.VISIBLE);
+
+                if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                    binding.tvMsgRight.setText(orderModel.getDetails());
+                    binding.tvMsgRight.setVisibility(View.VISIBLE);
+
+                } else {
+                    binding.tvMsgLeft.setText(orderModel.getDetails());
+                    binding.tvMsgLeft.setVisibility(View.VISIBLE);
+                }
+                break;
             case "cancel_for_late":
                 binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
                 binding.orderStatus.setText(getString(R.string.cancel));
@@ -454,13 +511,14 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
+                binding.tvCanceled.setVisibility(View.VISIBLE);
+
+
+
                 break;
 
 
         }
-
-
-        Log.e("order_status", orderModel.getOrder_status());
 
 
     }
@@ -499,6 +557,23 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
+
+    private void navigateToDriverAddOffer() {
+
+        Intent intent = new Intent(this, DelegateAddOfferActivity.class);
+        double pick_up_distance = getDistance(new LatLng(Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude())), new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude())));
+        double drop_off_distance = getDistance(new LatLng(Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude())), new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude())));
+
+        double from_loc_to_loc_distance = getDistance(new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude())), new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude())));
+        FromToLocationModel fromToLocationModel = new FromToLocationModel(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude()), orderModel.getMarket_address(), pick_up_distance, Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude()), orderModel.getClient_address(), drop_off_distance, from_loc_to_loc_distance, Double.parseDouble(userModel.getUser().getLatitude()), Double.parseDouble(userModel.getUser().getLongitude()));
+        intent.putExtra("data", fromToLocationModel);
+        intent.putExtra("user_token", userModel.getUser().getToken());
+        intent.putExtra("client_id", orderModel.getClient().getId());
+        intent.putExtra("order_id", order_id);
+        intent.putExtra("driver_id", userModel.getUser().getId());
+        startActivityForResult(intent, 100);
+    }
+
 
     private void driverLeaveOrderActions() {
         reasonType = 1;
@@ -562,22 +637,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void setReason(ChatActionModel chatActionModel) {
-        switch (reasonType) {
-            case 1:
-                leaveOrder(chatActionModel);
-                break;
-            case 2:
-                changeDriver(chatActionModel);
-                break;
-            case 3:
-                if (chatActionModel.getAction().equals("سعر التوصيل مرتفع")) {
-                    reSendOffer(offersModel.getOffer_value());
-                } else if (chatActionModel.getAction().equals("لم اعد احتاج الطلب")) {
-                    deleteOrder(chatActionModel);
+        this.chatActionModel = chatActionModel;
 
-                }
-                break;
-        }
     }
 
     private void leaveOrder(ChatActionModel chatActionModel) {
@@ -586,7 +647,7 @@ public class ChatActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), Integer.parseInt(orderModel.getDriver_id()), order_id, chatActionModel.getAction())
+        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), userModel.getUser().getId(), order_id, chatActionModel.getAction())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -731,6 +792,56 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
+    private void clientCancelOrder() {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).clientCancelOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), order_id)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
     public void clientAcceptOffer(OffersModel offersModel) {
 
         ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
@@ -741,11 +852,10 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 isDataChanged = true;
-                                getOrderById();
+                                getOrderById(dialog);
                             }
                         } else {
                             dialog.dismiss();
@@ -783,6 +893,108 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    public void clientRefuseOffer(OffersModel offersModel, String type) {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).clientRefuseOffer(userModel.getUser().getToken(), orderModel.getClient().getId(), Integer.parseInt(offersModel.getDriver_id()), order_id, offersModel.getId(), type)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                isDataChanged = true;
+                                getOrderById(dialog);
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+    public void driverCancelOffer() {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).driverCancelOffer(userModel.getUser().getToken(), userModel.getUser().getId(), order_id)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                isDataChanged = true;
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+
     private void reSendOffer(String offer_value) {
 
         ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
@@ -793,11 +1005,10 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 isDataChanged = true;
-                                getOrderById();
+                                getOrderById(dialog);
                             }
                         } else {
                             dialog.dismiss();
@@ -842,6 +1053,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
+
     private void openSheet() {
         binding.flAction.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
@@ -951,15 +1163,12 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<OffersDataModel>() {
                     @Override
                     public void onResponse(Call<OffersDataModel> call, Response<OffersDataModel> response) {
-
                         if (response.isSuccessful()) {
+                            offersModelList.clear();
                             if (response.body() != null) {
-
-                                if (response.body().getData().size() > 0) {
-                                    offer_current_page = response.body().getCurrent_page();
-                                    binding.llOfferData.setVisibility(View.GONE);
-                                    updateDataDistance(response.body().getData(), false);
-                                }
+                                offer_current_page = response.body().getCurrent_page();
+                                binding.llOfferData.setVisibility(View.GONE);
+                                updateDataDistance(response.body().getData(), false);
 
 
                             }
@@ -1257,7 +1466,7 @@ public class ChatActivity extends AppCompatActivity {
 
         } else if (requestCode == 100 && resultCode == RESULT_OK) {
             orderModel.setOrder_status("have_offer");
-            getOrderById();
+            getOrderById(null);
         }
 
     }

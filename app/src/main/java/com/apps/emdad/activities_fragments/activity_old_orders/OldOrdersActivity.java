@@ -1,18 +1,21 @@
 package com.apps.emdad.activities_fragments.activity_old_orders;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.adapters.OrdersAdapter;
 import com.apps.emdad.adapters.PreviousOrdersAdapter;
 import com.apps.emdad.databinding.ActivityAddCouponBinding;
@@ -44,6 +47,7 @@ public class OldOrdersActivity extends AppCompatActivity {
     private Preferences preferences;
     private UserModel userModel;
     private boolean isDataChanged = false;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -63,22 +67,22 @@ public class OldOrdersActivity extends AppCompatActivity {
         userModel = preferences.getUserData(this);
 
         Paper.init(this);
-        lang = Paper.book().read("lang","ar");
+        lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
 
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PreviousOrdersAdapter(orderModelList,this);
+        adapter = new PreviousOrdersAdapter(orderModelList, this);
         binding.recView.setAdapter(adapter);
         binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy>0){
+                if (dy > 0) {
                     LinearLayoutManager manager = (LinearLayoutManager) binding.recView.getLayoutManager();
                     int last_item_pos = manager.findLastCompletelyVisibleItemPosition();
                     int total_items_count = binding.recView.getAdapter().getItemCount();
-                    if (last_item_pos==(total_items_count-2)&&!isLoading){
-                        int page = current_page +1;
+                    if (last_item_pos == (total_items_count - 2) && !isLoading) {
+                        int page = current_page + 1;
                         loadMore(page);
                     }
                 }
@@ -86,7 +90,7 @@ public class OldOrdersActivity extends AppCompatActivity {
         });
         getOrders();
 
-        binding.flBack.setOnClickListener(v ->onBackPressed());
+        binding.flBack.setOnClickListener(v -> onBackPressed());
 
 
     }
@@ -99,14 +103,14 @@ public class OldOrdersActivity extends AppCompatActivity {
                     public void onResponse(Call<OrdersDataModel> call, Response<OrdersDataModel> response) {
                         binding.prgBar.setVisibility(View.GONE);
                         if (response.isSuccessful()) {
-                            if (response.body()!=null&&response.body().getData().size()>0){
+                            if (response.body() != null && response.body().getData().size() > 0) {
                                 binding.llNoOrder.setVisibility(View.GONE);
                                 orderModelList.clear();
                                 orderModelList.addAll(response.body().getData());
                                 adapter.notifyDataSetChanged();
                                 current_page = response.body().getCurrent_page();
 
-                            }else {
+                            } else {
                                 binding.llNoOrder.setVisibility(View.VISIBLE);
                             }
                         } else {
@@ -144,9 +148,9 @@ public class OldOrdersActivity extends AppCompatActivity {
 
     }
 
-    private void loadMore(int page){
+    private void loadMore(int page) {
         orderModelList.add(null);
-        adapter.notifyItemInserted(orderModelList.size()-1);
+        adapter.notifyItemInserted(orderModelList.size() - 1);
         isLoading = true;
 
         Api.getService(Tags.base_url).getClientOrder(userModel.getUser().getToken(), userModel.getUser().getId(), "old", page, "on", 20)
@@ -154,24 +158,24 @@ public class OldOrdersActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<OrdersDataModel> call, Response<OrdersDataModel> response) {
                         isLoading = false;
-                        if (orderModelList.get(orderModelList.size()-1)==null){
-                            orderModelList.remove(orderModelList.size()-1);
-                            adapter.notifyItemRemoved(orderModelList.size()-1);
+                        if (orderModelList.get(orderModelList.size() - 1) == null) {
+                            orderModelList.remove(orderModelList.size() - 1);
+                            adapter.notifyItemRemoved(orderModelList.size() - 1);
                         }
                         if (response.isSuccessful()) {
-                            if (response.body()!=null&&response.body().getData().size()>0){
+                            if (response.body() != null && response.body().getData().size() > 0) {
                                 current_page = response.body().getCurrent_page();
-                                int old_pos = orderModelList.size()-1;
+                                int old_pos = orderModelList.size() - 1;
                                 orderModelList.addAll(response.body().getData());
                                 int new_pos = orderModelList.size();
-                                adapter.notifyItemRangeInserted(old_pos,new_pos);
+                                adapter.notifyItemRangeInserted(old_pos, new_pos);
 
                             }
                         } else {
-                            isLoading =false;
-                            if (orderModelList.get(orderModelList.size()-1)==null){
-                                orderModelList.remove(orderModelList.size()-1);
-                                adapter.notifyItemRemoved(orderModelList.size()-1);
+                            isLoading = false;
+                            if (orderModelList.get(orderModelList.size() - 1) == null) {
+                                orderModelList.remove(orderModelList.size() - 1);
+                                adapter.notifyItemRemoved(orderModelList.size() - 1);
                             }
                             try {
                                 Log.e("error_code", response.code() + response.errorBody().string());
@@ -186,9 +190,9 @@ public class OldOrdersActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<OrdersDataModel> call, Throwable t) {
                         isLoading = false;
-                        if (orderModelList.get(orderModelList.size()-1)==null){
-                            orderModelList.remove(orderModelList.size()-1);
-                            adapter.notifyItemRemoved(orderModelList.size()-1);
+                        if (orderModelList.get(orderModelList.size() - 1) == null) {
+                            orderModelList.remove(orderModelList.size() - 1);
+                            adapter.notifyItemRemoved(orderModelList.size() - 1);
                         }
                         try {
                             if (t.getMessage() != null) {
@@ -214,9 +218,25 @@ public class OldOrdersActivity extends AppCompatActivity {
     public void resendOrder(OrderModel orderModel) {
         isDataChanged = true;
     }
+
+    public void setItemData(OrderModel orderModel) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("order_id", orderModel.getId());
+        startActivityForResult(intent, 100);
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            getOrders();
+        }
+    }
+
     @Override
     public void onBackPressed() {
-        if (isDataChanged){
+        if (isDataChanged) {
             setResult(RESULT_OK);
         }
         finish();

@@ -270,7 +270,21 @@
 
                         </LinearLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
+                    <TextView
+                        android:id="@+id/tvCanceled"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="@drawable/rounded_red"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/gray11"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:text="@string/canceled"
+                        android:gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:visibility="gone"
+                        />
                     <FrameLayout
                         android:id="@+id/btnResend"
                         android:layout_width="match_parent"
@@ -1016,6 +1030,28 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     />
+
+                <TextView
+                    android:id="@+id/tvLeaveOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray9"
+                    android:lines="1"
+                    android:textSize="14sp"
+                    android:text="@string/leave_order"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/gray4"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    />
+
+
 
                 <TextView
                     android:id="@+id/tvEndOrder"

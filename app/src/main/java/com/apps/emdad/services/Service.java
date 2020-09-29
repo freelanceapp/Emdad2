@@ -336,6 +336,26 @@ public interface Service {
     );
 
     @FormUrlEncoded
+    @POST("api/client-cancel-order")
+    Call<ResponseBody> clientCancelOrder(@Header("Authorization") String user_token,
+                                         @Field("client_id") int client_id,
+                                         @Field("order_id") int order_id
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/client-refuse-offer")
+    Call<ResponseBody> clientRefuseOffer(@Header("Authorization") String user_token,
+                                         @Field("client_id") int client_id,
+                                         @Field("driver_id") int driver_id,
+                                         @Field("order_id") int order_id,
+                                         @Field("offer_id") int offer_id,
+                                         @Field("get_new_offer") String get_new_offer
+
+    );
+
+
+    @FormUrlEncoded
     @POST("api/send-order-to-other-drivers")
     Call<ResponseBody> changeDriver(@Header("Authorization") String user_token,
                                     @Field("client_id") int client_id,
@@ -351,5 +371,14 @@ public interface Service {
                                                 @Query(value = "pagination") String pagination,
                                                 @Query(value = "limit_per_page") int limit_per_page
     );
+
+
+    @FormUrlEncoded
+    @POST("api/cancel-offer")
+    Call<ResponseBody> driverCancelOffer(@Header("Authorization") String user_token,
+                                         @Field("driver_id") int driver_id,
+                                         @Field("order_id") int order_id
+    );
+
 
 }

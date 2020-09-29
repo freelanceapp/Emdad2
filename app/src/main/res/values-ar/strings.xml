@@ -292,5 +292,6 @@
     <string name="order_accepted">تم الموافقة على طلبك </string>
     <string name="share">مشاركة</string>
     <string name="end_order">إنهاء الطلب</string>
+    <string name="leave_order">انسحاب من الطلب</string>
 
 </resources>

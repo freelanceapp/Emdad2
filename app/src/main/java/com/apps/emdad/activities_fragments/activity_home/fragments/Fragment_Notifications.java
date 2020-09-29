@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
 import com.apps.emdad.adapters.NotificationAdapter;
@@ -265,5 +267,14 @@ public class Fragment_Notifications extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void setItemData(NotificationDataModel.NotificationModel model) {
+        Log.e("ffff",model.getAction());
+        if (model.getAction().equals("resend_offer")){
+            Intent intent =new Intent(activity, ChatActivity.class);
+            intent.putExtra("order_id",Integer.parseInt(model.getOrder_id()));
+            startActivity(intent);
+        }
     }
 }

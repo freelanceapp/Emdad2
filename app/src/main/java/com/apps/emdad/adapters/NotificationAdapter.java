@@ -63,6 +63,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             NotificationDataModel.NotificationModel model = list.get(position);
             myHolder.binding.setModel(model);
             myHolder.binding.tvDate.setText(Time_Ago.getTimeAgo(Long.parseLong(model.getNotification_date())*1000,context));
+            myHolder.itemView.setOnClickListener(v -> {
+                NotificationDataModel.NotificationModel model2 = list.get(myHolder.getAdapterPosition());
+                fragment_notifications.setItemData(model2);
+
+            });
 
         }else if (holder instanceof LoadMoreHolder){
             LoadMoreHolder loadMoreHolder = (LoadMoreHolder) holder;

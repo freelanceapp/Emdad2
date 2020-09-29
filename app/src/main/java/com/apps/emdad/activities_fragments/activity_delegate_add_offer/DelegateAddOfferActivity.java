@@ -136,147 +136,163 @@ public class DelegateAddOfferActivity extends AppCompatActivity implements OnMap
         binding.tvDropOffLocationDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",fromToLocationModel.getDistance_me_drop_off_location(),getString(R.string.km)));
         binding.tvPickUpLocationDistance.setText(String.format(Locale.ENGLISH,"%.2f %s",fromToLocationModel.getDistance_me_pick_up_location(),getString(R.string.km)));
         binding.tvSend.setOnClickListener(v -> {
-            double offer = Double.parseDouble(binding.edtOffer.getText().toString().trim());
-            if (rangeOfferModel!=null){
-                if (rangeOfferModel.getMax_offer().equals("0")){
-                    if (offer >= Double.parseDouble(rangeOfferModel.getMin_offer())){
-                        sendOffer(String.valueOf(offer));
+            try {
+                double offer = Double.parseDouble(binding.edtOffer.getText().toString().trim());
+                if (rangeOfferModel!=null){
+                    if (rangeOfferModel.getMax_offer().equals("0")){
+                        if (offer >= Double.parseDouble(rangeOfferModel.getMin_offer())){
+                            sendOffer(String.valueOf(offer));
+                        }else {
+                            Common.CreateDialogAlert(this,String.format(Locale.ENGLISH,"%s %s %s",getString(R.string.min_value),rangeOfferModel.getMin_offer(),currency));
+                        }
                     }else {
-                        Common.CreateDialogAlert(this,String.format(Locale.ENGLISH,"%s %s %s",getString(R.string.min_value),rangeOfferModel.getMin_offer(),currency));
+
+                        if (offer >= Double.parseDouble(rangeOfferModel.getMin_offer())&& offer <= Double.parseDouble(rangeOfferModel.getMax_offer())){
+                            sendOffer(String.valueOf(offer));
+
+                        }else {
+                            Common.CreateDialogAlert(this,String.format(Locale.ENGLISH,"%s %s %s %s %s %s",getString(R.string.min_value),rangeOfferModel.getMin_offer(),currency,getString(R.string.max_value),rangeOfferModel.getMax_offer(),currency));
+
+                        }
+
+
                     }
                 }else {
-
-                    if (offer >= Double.parseDouble(rangeOfferModel.getMin_offer())&& offer <= Double.parseDouble(rangeOfferModel.getMax_offer())){
-                        sendOffer(String.valueOf(offer));
-
-                    }else {
-                        Common.CreateDialogAlert(this,String.format(Locale.ENGLISH,"%s %s %s %s %s %s",getString(R.string.min_value),rangeOfferModel.getMin_offer(),currency,getString(R.string.max_value),rangeOfferModel.getMax_offer(),currency));
-
-                    }
-
-
+                    Common.CreateDialogAlert(this,getString(R.string.inv_offer));
                 }
-            }else {
-                Common.CreateDialogAlert(this,getString(R.string.inv_offer));
+            }catch (Exception e){
+
             }
+
+
         });
         updateUI();
         getOfferRange();
     }
 
     private void getOfferRange() {
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.show();
-        Api.getService(Tags.base_url).getOfferRange(user_token,client_id,driver_id,order_id, fromToLocationModel.getFrom_location_to_location_distance())
-                .enqueue(new Callback<RangeOfferModel>() {
-                    @Override
-                    public void onResponse(Call<RangeOfferModel> call, Response<RangeOfferModel> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                rangeOfferModel = response.body();
+        try {
+            ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.show();
+            Api.getService(Tags.base_url).getOfferRange(user_token,client_id,driver_id,order_id, fromToLocationModel.getFrom_location_to_location_distance())
+                    .enqueue(new Callback<RangeOfferModel>() {
+                        @Override
+                        public void onResponse(Call<RangeOfferModel> call, Response<RangeOfferModel> response) {
+                            dialog.dismiss();
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    rangeOfferModel = response.body();
 
-                                if (rangeOfferModel.getMax_offer().equals("0")){
-                                    binding.edtOffer.setHint(String.format(Locale.ENGLISH,"%s %s %s",getString(R.string.min_value),response.body().getMin_offer(),currency));
+                                    if (rangeOfferModel.getMax_offer().equals("0")){
+                                        binding.edtOffer.setHint(String.format(Locale.ENGLISH,"%s %s %s",getString(R.string.min_value),response.body().getMin_offer(),currency));
 
-                                }else {
-                                    binding.edtOffer.setHint(String.format(Locale.ENGLISH,"%s %s %s %s %s %s",getString(R.string.min_value),response.body().getMin_offer(),currency,getString(R.string.max_value),response.body().getMax_offer(),currency));
+                                    }else {
+                                        binding.edtOffer.setHint(String.format(Locale.ENGLISH,"%s %s %s %s %s %s",getString(R.string.min_value),response.body().getMin_offer(),currency,getString(R.string.max_value),response.body().getMax_offer(),currency));
+
+                                    }
 
                                 }
-
+                            } else {
+                                dialog.dismiss();
+                                try {
+                                    Log.e("error_code", response.code() + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        } else {
-                            dialog.dismiss();
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<RangeOfferModel> call, Throwable t) {
                             try {
-                                Log.e("error_code", response.code() + response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                                dialog.dismiss();
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage() + "__");
 
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<RangeOfferModel> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-                            if (t.getMessage() != null) {
-                                Log.e("error", t.getMessage() + "__");
-
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
-                                } else {
-                                    Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                    } else {
+                                        Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
+
+
+                            } catch (Exception e) {
+
                             }
-
-
-                        } catch (Exception e) {
-
                         }
-                    }
-                });
+                    });
+        }catch (Exception e){
+
+        }
+
     }
 
     private void sendOffer(String offer_value){
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.show();
-        Api.getService(Tags.base_url).sendDriverOffer(user_token,client_id,driver_id,order_id,offer_value,"make_offer")
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                setResult(RESULT_OK);
-                                finish();
-                            }
-                        } else {
-
-                            if (response.code()==406){
-                                Common.CreateDialogAlert(DelegateAddOfferActivity.this,getString(R.string.other_delegate_accept_order));
-                            }else if (response.code()==409){
-                                Common.CreateDialogAlert(DelegateAddOfferActivity.this,getString(R.string.order_canceled2));
-
-                            }
+        try {
+            ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.show();
+            Api.getService(Tags.base_url).sendDriverOffer(user_token,client_id,driver_id,order_id,offer_value,"make_offer")
+                    .enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             dialog.dismiss();
-                            try {
-                                Log.e("error_code", response.code() + response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                            if (response.isSuccessful()) {
+                                if (response.body() != null) {
+                                    setResult(RESULT_OK);
+                                    finish();
+                                }
+                            } else {
 
+                                if (response.code()==406){
+                                    Common.CreateDialogAlert(DelegateAddOfferActivity.this,getString(R.string.other_delegate_accept_order));
+                                }else if (response.code()==409){
+                                    Common.CreateDialogAlert(DelegateAddOfferActivity.this,getString(R.string.order_canceled2));
 
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-                            if (t.getMessage() != null) {
-                                Log.e("error", t.getMessage() + "__");
-
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
-                                } else {
-                                    Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                                dialog.dismiss();
+                                try {
+                                    Log.e("error_code", response.code() + response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             }
 
 
-                        } catch (Exception e) {
-
                         }
-                    }
-                });
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            try {
+                                dialog.dismiss();
+                                if (t.getMessage() != null) {
+                                    Log.e("error", t.getMessage() + "__");
+
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                    } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                    } else {
+                                        Toast.makeText(DelegateAddOfferActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    });
+        }catch (Exception e ){
+
+        }
+
     }
 
 

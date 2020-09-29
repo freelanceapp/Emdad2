@@ -291,6 +291,7 @@
     <string name="order_accepted">Order accepted</string>
     <string name="share">Share</string>
     <string name="end_order">End Order</string>
+    <string name="leave_order">Leave order</string>
 
 
 </resources>

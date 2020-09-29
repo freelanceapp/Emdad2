@@ -578,7 +578,7 @@ public class MapSearchActivity extends AppCompatActivity implements OnMapReadyCa
             marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())));
         }
         marker.setDraggable(false);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
     }
 
     @Override

@@ -230,8 +230,13 @@ public class AddOrderProductActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
 
-        addOrderTextModel.setOrder_text(convertOrderToText());
-        addOrderTextModel.setComments(binding.edtComment.getText().toString());
+        String notes = binding.edtComment.getText().toString();
+        String order_text =convertOrderToText();
+        if (!notes.isEmpty()){
+         order_text = order_text+"\n"+"ملاحظات:-"+"\n"+notes;
+        }
+        addOrderTextModel.setOrder_text(order_text);
+        addOrderTextModel.setComments(notes);
         Api.getService(Tags.base_url)
                 .sendTextOrder(userModel.getUser().getToken(),userModel.getUser().getId(),addOrderTextModel.getOrder_type(),addOrderTextModel.getMarket_id(),addOrderTextModel.getPlace_id(),String.valueOf(addOrderProductsModel.getTotal_cost()),addOrderTextModel.getTo_address(),addOrderTextModel.getTo_lat(),addOrderTextModel.getTo_lng(),addOrderTextModel.getPlace_name(),addOrderTextModel.getPlace_address(),addOrderTextModel.getPlace_lat(),addOrderTextModel.getPlace_lng(),String.valueOf(addOrderTextModel.getTime()),addOrderTextModel.getCoupon_id(),addOrderTextModel.getOrder_text(),addOrderTextModel.getComments())
                 .enqueue(new Callback<SingleOrderDataModel>() {
@@ -288,8 +293,15 @@ public class AddOrderProductActivity extends AppCompatActivity {
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
-        addOrderTextModel.setOrder_text(convertOrderToText());
-        addOrderTextModel.setComments(binding.edtComment.getText().toString().trim());
+        String notes = binding.edtComment.getText().toString();
+        String order_text =convertOrderToText();
+        if (!notes.isEmpty()){
+            order_text = order_text+"\n"+"ملاحظات:-"+"\n"+notes;
+        }
+        addOrderTextModel.setOrder_text(order_text);
+        addOrderTextModel.setComments(notes);
+
+
         RequestBody user_id_part = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
         RequestBody order_type_part = Common.getRequestBodyText(addOrderTextModel.getOrder_type());
 
@@ -380,12 +392,11 @@ public class AddOrderProductActivity extends AppCompatActivity {
             ProductModel model = addOrderProductsModel.getProductModelList().get(index);
 
             if (model.getSelectedAdditions().size()>0){
-                order = order+model.getTitle()+"\n"+getAdditions(model);
+                order = order+model.getTitle()+"("+model.getCount()+")"+"\n"+getAdditions(model);
             }else {
-                order = order+model.getTitle()+"\n";
+                order = order+model.getTitle()+"("+model.getCount()+")"+"\n";
             }
         }
-
         return order;
     }
     private String getAdditions(ProductModel productModel)
@@ -393,7 +404,7 @@ public class AddOrderProductActivity extends AppCompatActivity {
         String additions="";
         for (int index=0;index<productModel.getSelectedAdditions().size();index++){
             AdditionModel additionModel = productModel.getSelectedAdditions().get(index);
-            additions =additions+(index+1)+"-"+additionModel.getTitle()+"\n";
+            additions =additions+(index+1)+"-"+additionModel.getTitle()+"("+productModel.getCount()+")"+"\n";
         }
 
         if (additions.isEmpty()){
