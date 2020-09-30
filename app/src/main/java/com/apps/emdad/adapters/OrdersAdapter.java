@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -56,7 +57,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
@@ -66,10 +66,20 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             myHolder.binding.setModel(orderModel);
             myHolder.binding.setLang(lang);
 
-            if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("pennding")||orderModel.getOrder_status().equals("have_offer")){
+            if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("pennding")){
                 myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.rate_color));
                 myHolder.binding.tvState.setText(context.getString(R.string.pending));
+            }else if (orderModel.getOrder_status().equals("have_offer")){
+
+                if (Integer.parseInt(orderModel.getOffers_count())>0){
+                    myHolder.binding.tvLoading.setVisibility(View.GONE);
+                    myHolder.binding.llOfferCount.setVisibility(View.VISIBLE);
+                }else {
+                    myHolder.binding.tvLoading.setVisibility(View.VISIBLE);
+                    myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                }
+
             }else if (orderModel.getOrder_status().equals("accept_driver"))
             {
                 myHolder.binding.icon.setImageResource(R.drawable.ic_checked);

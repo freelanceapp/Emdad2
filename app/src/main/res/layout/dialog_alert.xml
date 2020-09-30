@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/transparent"
-                    android:text="@string/ok"
+                    android:text="@string/ok2"
                     android:textColor="@color/colorPrimary"
                     />
             </androidx.cardview.widget.CardView>

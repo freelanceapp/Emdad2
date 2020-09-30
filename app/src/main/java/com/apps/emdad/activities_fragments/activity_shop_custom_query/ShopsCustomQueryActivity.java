@@ -146,7 +146,6 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
 
 
     private void getShops(String department_id) {
-        Log.e("id",department_id);
         resultList.clear();
         adapter.notifyDataSetChanged();
         binding.tvNoData.setVisibility(View.GONE);
@@ -298,7 +297,8 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
             if (result!=null){
 
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(Double.parseDouble(result.getLatitude()),Double.parseDouble(result.getLongitude())))/1000);
+
+                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(Double.parseDouble(result.getLatitude()),Double.parseDouble(result.getLongitude()))));
                 resultListFiltered.add(result);
             }
 
@@ -334,7 +334,7 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
             if (result!=null){
 
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(Double.parseDouble(result.getLatitude()),Double.parseDouble(result.getLongitude())))/1000);
+                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(Double.parseDouble(result.getLatitude()),Double.parseDouble(result.getLongitude()))));
                 resultListFiltered.add(result);
             }
 

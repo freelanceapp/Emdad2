@@ -561,7 +561,6 @@ public class AddOrderActivity extends AppCompatActivity {
                             dialog.dismiss();
                             if (response.isSuccessful()&&response.body()!=null)
                             {
-                                Toast.makeText(AddOrderActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
                                 Intent intent =new Intent(AddOrderActivity.this, ChatActivity.class);
                                 intent.putExtra("order_id",response.body().getOrder().getId());
                                 startActivity(intent);

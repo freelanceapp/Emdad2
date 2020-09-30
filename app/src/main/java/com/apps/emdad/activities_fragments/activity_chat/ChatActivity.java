@@ -420,20 +420,36 @@ public class ChatActivity extends AppCompatActivity {
                 if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
                     binding.tvMsgRight.setText(orderModel.getDetails());
                     binding.tvMsgRight.setVisibility(View.VISIBLE);
-                    binding.flOffers.setVisibility(View.VISIBLE);
-                    binding.llOfferData.setVisibility(View.GONE);
-                    binding.llComingOffer.setVisibility(View.VISIBLE);
-                    getOffers();
+
+                    if (Integer.parseInt(orderModel.getOffers_count())>0){
+                        binding.flOffers.setVisibility(View.VISIBLE);
+                        binding.llOfferData.setVisibility(View.GONE);
+                        binding.llComingOffer.setVisibility(View.VISIBLE);
+                        getOffers();
+
+                    }else {
+                        binding.flOffers.setVisibility(View.VISIBLE);
+                        binding.llOfferData.setVisibility(View.VISIBLE);
+                        binding.llComingOffer.setVisibility(View.GONE);
+                    }
                 } else {
 
-                    if (orderModel.getDriver_last_offer() != null && orderModel.getDriver_last_offer().getStatus().equals("refuse")) {
-                        binding.flClientRefuseOffer.setVisibility(View.VISIBLE);
-                        binding.flOffers.setVisibility(View.GONE);
-                        binding.flDriverOffers.setVisibility(View.GONE);
+                    if (orderModel.getDriver_last_offer() != null ) {
+
+                        if (orderModel.getDriver_last_offer().getStatus().equals("refuse")){
+                            binding.flClientRefuseOffer.setVisibility(View.VISIBLE);
+                            binding.flOffers.setVisibility(View.GONE);
+                            binding.flDriverOffers.setVisibility(View.GONE);
+                        }else if (orderModel.getDriver_last_offer().getStatus().equals("new")){
+                            binding.flDriverOffers.setVisibility(View.VISIBLE);
+                            binding.flClientRefuseOffer.setVisibility(View.GONE);
+                        }
+
+
 
                     } else {
-                        binding.flDriverOffers.setVisibility(View.VISIBLE);
-                        binding.flClientRefuseOffer.setVisibility(View.GONE);
+                        binding.flDriverOffers.setVisibility(View.GONE);
+                        binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
 
                     }
                     binding.tvMsgLeft.setText(orderModel.getDetails());
@@ -592,11 +608,11 @@ public class ChatActivity extends AppCompatActivity {
         reasonType = 2;
         binding.tvActionType.setText(R.string.change_driver);
         actionReasonList.clear();
-        ChatActionModel chatActionModel1 = new ChatActionModel("المرسول غير مناسب");
+        ChatActionModel chatActionModel1 = new ChatActionModel("المندوب غير مناسب");
         actionReasonList.add(chatActionModel1);
-        ChatActionModel chatActionModel2 = new ChatActionModel("المرسول طلب التواصل خارج التطبيق");
+        ChatActionModel chatActionModel2 = new ChatActionModel("المندوب طلب التواصل خارج التطبيق");
         actionReasonList.add(chatActionModel2);
-        ChatActionModel chatActionModel3 = new ChatActionModel("المرسول لم يقبل الدفع الالكتروني");
+        ChatActionModel chatActionModel3 = new ChatActionModel("المندوب لم يقبل الدفع الالكتروني");
         actionReasonList.add(chatActionModel3);
         ChatActionModel chatActionModel4 = new ChatActionModel("سبب آخر");
         actionReasonList.add(chatActionModel4);
@@ -610,15 +626,15 @@ public class ChatActivity extends AppCompatActivity {
         reasonType = 3;
         binding.tvActionType.setText(R.string.delete_order);
         actionReasonList.clear();
-        ChatActionModel chatActionModel1 = new ChatActionModel("الطلب متأخر والمرسول لا يجيب");
+        ChatActionModel chatActionModel1 = new ChatActionModel("الطلب متأخر والمندوب لا يجيب");
         actionReasonList.add(chatActionModel1);
-        ChatActionModel chatActionModel2 = new ChatActionModel("المرسول طلب التواصل خارج التطبيق");
+        ChatActionModel chatActionModel2 = new ChatActionModel("المندوب طلب التواصل خارج التطبيق");
         actionReasonList.add(chatActionModel2);
-        ChatActionModel chatActionModel3 = new ChatActionModel("المرسول غير جاد");
+        ChatActionModel chatActionModel3 = new ChatActionModel("المندوب غير جاد");
         actionReasonList.add(chatActionModel3);
-        ChatActionModel chatActionModel4 = new ChatActionModel("المرسول طلب الإلغاء");
+        ChatActionModel chatActionModel4 = new ChatActionModel("المندوب طلب الإلغاء");
         actionReasonList.add(chatActionModel4);
-        ChatActionModel chatActionModel5 = new ChatActionModel("المرسول لم يقبل الدفع الالكتروني");
+        ChatActionModel chatActionModel5 = new ChatActionModel("المندوب لم يقبل الدفع الالكتروني");
         actionReasonList.add(chatActionModel5);
         ChatActionModel chatActionModel6 = new ChatActionModel("سعر التوصيل مرتفع");
         actionReasonList.add(chatActionModel6);
@@ -953,6 +969,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
+                            dialog.dismiss();
                             if (response.body() != null) {
                                 isDataChanged = true;
                                 setResult(RESULT_OK);
@@ -1465,7 +1482,7 @@ public class ChatActivity extends AppCompatActivity {
             sendAttachment(uri.toString(), "img");
 
         } else if (requestCode == 100 && resultCode == RESULT_OK) {
-            orderModel.setOrder_status("have_offer");
+            binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
             getOrderById(null);
         }
 

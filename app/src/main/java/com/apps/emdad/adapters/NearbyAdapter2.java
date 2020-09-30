@@ -21,6 +21,7 @@ import com.apps.emdad.databinding.ShopSearchRowBinding;
 import com.apps.emdad.models.NearbyModel;
 
 import java.util.List;
+import java.util.Locale;
 
 public class NearbyAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int DATA = 1;
@@ -62,6 +63,7 @@ public class NearbyAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder
             NearbyModel.Result placeModel = placeModelList.get(position);
             myHolder.binding.setModel(placeModel);
             myHolder.binding.setCurrency(currency);
+
             holder.itemView.setOnClickListener(v -> {
                 NearbyModel.Result placeModel1 = placeModelList.get(myHolder.getAdapterPosition());
                 fragment_main.placeItemData(placeModel1);

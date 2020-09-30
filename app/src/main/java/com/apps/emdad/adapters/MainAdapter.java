@@ -443,7 +443,12 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             if (result!=null){
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng()))/1000);
+                LatLng user_location = new LatLng(user_lat,user_lng);
+                LatLng place_location = new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng());
+
+                double distance = getDistance(user_location,place_location);
+
+                result.setDistance(distance);
                 resultList.add(result);
             }
 
@@ -474,7 +479,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (result != null) {
 
 
-                result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng()))/1000);
+                result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng())));
                 resultListFiltered.add(result);
 
             }

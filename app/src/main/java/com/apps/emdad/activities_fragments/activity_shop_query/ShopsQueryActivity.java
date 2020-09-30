@@ -314,7 +314,10 @@ public class ShopsQueryActivity extends AppCompatActivity {
             if (result!=null){
 
 
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng()))/1000);
+                LatLng user_location = new LatLng(user_lat,user_lng);
+                LatLng place_location = new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng());
+                double distance = getDistance(user_location,place_location);
+                result.setDistance(distance);
                 resultListFiltered.add(result);
             }
 
@@ -340,8 +343,11 @@ public class ShopsQueryActivity extends AppCompatActivity {
 
             if (result!=null){
 
-
-                result.setDistance(getDistance(new LatLng(user_lat,user_lng),new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng()))/1000);
+                LatLng user_location = new LatLng(user_lat,user_lng);
+                LatLng place_location = new LatLng(result.getGeometry().getLocation().getLat(),result.getGeometry().getLocation().getLng());
+                double distance = getDistance(user_location,place_location);
+                Log.e("dist",distance+"___"+user_lat+"__"+user_lng+result.getGeometry().getLocation().getLat()+"__"+result.getGeometry().getLocation().getLng());
+                result.setDistance(distance);
                 resultListFiltered.add(result);
             }
 

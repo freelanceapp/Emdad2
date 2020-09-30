@@ -201,7 +201,6 @@ public class AddOrderTextActivity extends AppCompatActivity {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
-                            Toast.makeText(AddOrderTextActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
                             Intent intent =new Intent(AddOrderTextActivity.this, ChatActivity.class);
                             intent.putExtra("order_id",response.body().getOrder().getId());
                             startActivity(intent);
@@ -282,7 +281,6 @@ public class AddOrderTextActivity extends AppCompatActivity {
                         dialog.dismiss();
                         if (response.isSuccessful()&&response.body()!=null)
                         {
-                            Toast.makeText(AddOrderTextActivity.this, R.string.success, Toast.LENGTH_SHORT).show();
                             Intent intent =new Intent(AddOrderTextActivity.this, ChatActivity.class);
                             intent.putExtra("order_id",response.body().getOrder().getId());
                             startActivity(intent);

@@ -142,7 +142,7 @@
     <string name="florist">هدايا</string>
     <string name="library">مكتبات</string>
     <string name="order2">طلب</string>
-    <string name="write_here_details_order">إكتب هنا تفاصيل طلبك من المحل مثلا:1هامبرجر بالجبنة،1 بطاطس كبير . ونرجو منك كتابة القيمة التقديرية للطلب حتى يتسنى للمرسول خدمتك.</string>
+    <string name="write_here_details_order">إكتب هنا تفاصيل طلبك من المحل مثلا:1هامبرجر بالجبنة،1 بطاطس كبير . ونرجو منك كتابة القيمة التقديرية للطلب حتى يتسنى للمندوب خدمتك.</string>
     <string name="done">تم</string>
     <string name="you_can_use_coupon">إذا عندك كوبون خصم على التوصيل ممكن تستخدمة الآن اذا احببت</string>
     <string name="map">خريطة</string>

@@ -153,17 +153,18 @@
                     app:layout_constraintTop_toBottomOf="@id/tvOrderText"
                     >
                     <com.bhargavms.dotloader.DotLoader
-                        android:id="@+id/tvTyping"
+                        android:id="@+id/tvLoading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:dot_radius="3dp"
                         app:number_of_dots="3"
                         app:color_array="@array/dots"
-                        android:visibility='@{model.order_status.equals("new_order")?(model.driver==null?View.VISIBLE:View.INVISIBLE):View.INVISIBLE,default=invisible}'
+                        android:visibility="invisible"
                         android:layout_gravity="center"
                         android:rotation='@{lang.equals("ar")?180:0}'
                         />
                     <LinearLayout
+                        android:id="@+id/llOfferCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -172,8 +173,7 @@
                         android:background="@drawable/rounded_primary"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:visibility='@{model.order_status.equals("have_offer")?View.VISIBLE:View.GONE,default=gone}'
-
+                        android:visibility="invisible"
                         >
                         <TextView
                             android:layout_width="wrap_content"

@@ -136,11 +136,14 @@ public class DelegateOrdersActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
 
+
                                 if (response.body().getData().size() > 0) {
                                     binding.llNoOrder.setVisibility(View.GONE);
                                     updateDataDistance(response.body().getData(),false);
                                     current_page = response.body().getCurrent_page();
                                 } else {
+                                    orderModelList.clear();
+                                    adapter.notifyDataSetChanged();
                                     binding.llNoOrder.setVisibility(View.VISIBLE);
 
                                 }
@@ -251,8 +254,12 @@ public class DelegateOrdersActivity extends AppCompatActivity {
         LatLng user_location = new LatLng(Double.parseDouble(userModel.getUser().getLatitude()),Double.parseDouble(userModel.getUser().getLongitude()));
         for (int index = 0; index < data.size(); index++) {
             OrderModel orderModel = data.get(index);
-            orderModel.setPick_up_distance(calculateDistance(user_location, new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude()))));
-            orderModel.setDrop_off_distance(calculateDistance(user_location, new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude()))));
+            LatLng pick_up_location = new LatLng(Double.parseDouble(orderModel.getMarket_latitude()), Double.parseDouble(orderModel.getMarket_longitude()));
+            LatLng drop_off_location = new LatLng(Double.parseDouble(orderModel.getClient_latitude()), Double.parseDouble(orderModel.getClient_longitude()));
+
+
+            orderModel.setPick_up_distance(calculateDistance(user_location,pick_up_location));
+            orderModel.setDrop_off_distance(calculateDistance(pick_up_location,drop_off_location));
 
             data.set(index, orderModel);
         }

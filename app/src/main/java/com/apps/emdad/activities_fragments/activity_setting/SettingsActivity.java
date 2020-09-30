@@ -106,7 +106,8 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
                 binding.viewBeDriver.setVisibility(View.GONE);
             }else {
                 binding.llBeDriver.setVisibility(View.VISIBLE);
-                binding.viewBeDriver.setVisibility(View.VISIBLE);
+                binding.viewBeDriver.setVisibility(View.VISIBLE
+                );
             }
         }
 
