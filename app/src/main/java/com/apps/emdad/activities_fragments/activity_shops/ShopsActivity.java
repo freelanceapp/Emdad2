@@ -628,7 +628,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
 
                 if (result.getRating() <= rate) {
-                    result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng())) / 1000);
+                    result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng())) );
                     resultListFiltered.add(result);
                 }
             }
@@ -657,7 +657,7 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
 
 
                 if (result.getRating() <= rate) {
-                    result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng())) / 1000);
+                    result.setDistance(getDistance(new LatLng(user_lat, user_lng), new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng())) );
                     resultListFiltered.add(result);
                 }
             }
