@@ -25,7 +25,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="m">
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="q">
         <activity android:name=".activities_fragments.activity_splash_loading.SplashLoadingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
