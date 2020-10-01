@@ -96,6 +96,9 @@ public class Fragment_Notifications extends Fragment {
         getNotifications();
     }
 
+    public void updateUserData(UserModel userModel){
+        this.userModel = userModel;
+    }
     private void getNotifications() {
         updateNotificationCount();
         Api.getService(Tags.base_url).getNotification(userModel.getUser().getToken(), userModel.getUser().getId(), 1, "on", 20)
@@ -270,7 +273,6 @@ public class Fragment_Notifications extends Fragment {
     }
 
     public void setItemData(NotificationDataModel.NotificationModel model) {
-        Log.e("ffff",model.getAction());
         if (model.getAction().equals("resend_offer")){
             Intent intent =new Intent(activity, ChatActivity.class);
             intent.putExtra("order_id",Integer.parseInt(model.getOrder_id()));

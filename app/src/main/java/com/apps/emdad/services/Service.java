@@ -14,6 +14,7 @@ import com.apps.emdad.models.PlaceDetailsModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
 import com.apps.emdad.models.RangeOfferModel;
+import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.ShopDepartmentDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.SliderModel;
@@ -380,5 +381,37 @@ public interface Service {
                                          @Field("order_id") int order_id
     );
 
+    @GET("api/sttings")
+    Call<SettingModel> getSetting(@Query(value = "lang") String lang);
+
+
+    @FormUrlEncoded
+    @POST("api/update-profile")
+    Call<UserModel> updateProfileWithoutImage(@Header("Authorization") String user_token,
+                                              @Field("user_id") int user_id,
+                                              @Field("name") String name,
+                                              @Field("email") String email,
+                                              @Field("phone") String phone,
+                                              @Field("phone_code") String phone_code,
+                                              @Field("gender") String gender,
+                                              @Field("date_of_birth") String date_of_birth
+
+
+    );
+
+    @Multipart
+    @POST("api/update-profile")
+    Call<UserModel> updateProfileWithImage(@Header("Authorization") String user_token,
+                                           @Part("user_id") RequestBody user_id,
+                                           @Part("name") RequestBody name,
+                                           @Part("email") RequestBody email,
+                                           @Part("phone") RequestBody phone,
+                                           @Part("phone_code") RequestBody phone_code,
+                                           @Part("gender") RequestBody gender,
+                                           @Part("date_of_birth") RequestBody date_of_birth,
+                                           @Part MultipartBody.Part logo
+
+
+    );
 
 }

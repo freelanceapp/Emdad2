@@ -9,7 +9,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.databinding.FragmentNotificationBinding;
 import com.apps.emdad.databinding.FragmentProfileBinding;
 import com.apps.emdad.interfaces.Listeners;
+import com.apps.emdad.models.NotificationDataModel;
+import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -131,7 +135,61 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onTelegram() {
+        ProgressDialog dialog = Common.createProgressDialog(activity,getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).getSetting(lang)
+                .enqueue(new Callback<SettingModel>() {
+                    @Override
+                    public void onResponse(Call<SettingModel> call, Response<SettingModel> response) {
+                       dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                String telegramUrl = response.body().getSettings().getTelegram();
+                                String url_pattern ="^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+                                if (telegramUrl.matches(url_pattern)){
+                                    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(telegramUrl));
+                                    startActivity(intent);
+                                }else {
+                                    Common.CreateDialogAlert(activity,getString(R.string.inv_telegram_url));
+                                }
+                            }
+                        } else {
+                            dialog.dismiss();
 
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SettingModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(activity, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
     }
 
     @Override
@@ -148,8 +206,20 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 200 && resultCode == Activity.RESULT_OK ) {
-            activity.refreshActivity();
+        if (requestCode == 200 && resultCode == Activity.RESULT_OK &&data!=null) {
+
+            String action = data.getStringExtra("action");
+            if (action.equals("language")){
+                activity.refreshActivity();
+
+            }else {
+
+                userModel = preferences.getUserData(activity);
+                binding.setModel(userModel);
+                updateUi(userModel);
+                activity.updateUserData(userModel);
+
+            }
         }
     }
 }

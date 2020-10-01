@@ -20,16 +20,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.databinding.ActivitySignUpBinding;
-import com.apps.emdad.databinding.DialogAlertBinding;
 import com.apps.emdad.databinding.DialogYearBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
@@ -65,6 +61,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     private SignUpModel signUpModel;
     private Preferences preferences;
     private boolean fromSplash =true;
+    private UserModel userModel;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -83,6 +80,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     private void initView() {
         preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
+
         signUpModel = new SignUpModel();
         binding.setModel(signUpModel);
         binding.setListener(this);
@@ -90,6 +89,27 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             createDialogAlert();
         });
 
+
+        if (userModel!=null){
+            signUpModel.setCountry_id(userModel.getUser().getCountry().getId_country());
+            signUpModel.setYear(userModel.getUser().getDate_of_birth());
+            signUpModel.setGender(userModel.getUser().getGender());
+            signUpModel.setEmail(userModel.getUser().getEmail());
+            signUpModel.setName(userModel.getUser().getName());
+            signUpModel.setPhone_code(userModel.getUser().getPhone_code());
+            signUpModel.setPhone(userModel.getUser().getPhone());
+            binding.setModel(signUpModel);
+            if (userModel.getUser().getGender().equals("male")){
+                male();
+            }else {
+                female();
+            }
+            binding.tvYearOfBirth.setText(signUpModel.getYear());
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+userModel.getUser().getLogo())).placeholder(R.drawable.user_avatar).into(binding.image);
+
+            binding.btnSignUp.setText(R.string.update);
+
+        }
 
     }
 
@@ -100,9 +120,13 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             String phone = intent.getStringExtra("phone");
             String country_id = intent.getStringExtra("country_id");
             fromSplash = intent.getBooleanExtra("from",true);
-            signUpModel.setPhone_code(phone_code);
-            signUpModel.setPhone(phone);
-            signUpModel.setCountry_id(country_id);
+
+            if (!fromSplash){
+                signUpModel.setPhone_code(phone_code);
+                signUpModel.setPhone(phone);
+                signUpModel.setCountry_id(country_id);
+            }
+
 
         }
     }
@@ -124,10 +148,23 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
         if (signUpModel.isDataValid(this)) {
             Common.CloseKeyBoard(this, binding.edtName);
-            signUp();
+
+            if (userModel==null){
+                signUp();
+
+            }else {
+                if (uri==null){
+                    updateProfileWithoutImage();
+
+                }else {
+                    updateProfileWithImage();
+                }
+            }
         }
 
     }
+
+
 
     @Override
     public void checkReadPermission() {
@@ -429,6 +466,141 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                                 //navigateToHomeActivity();
 
                             }
+                            finish();
+
+                        }else
+                        {
+                            if (response.code()==500)
+                            {
+                                Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }else if (response.code()==409)
+                            {
+                                Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
+                            }else if (response.code()==406)
+                            {
+                                Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
+
+
+                            }else
+                            {
+                                Toast.makeText(SignUpActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("msg_category_error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.e("Error",e.getMessage()+"__");
+                        }
+                    }
+                });
+
+    }
+
+
+    private void updateProfileWithoutImage()
+    {
+
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url)
+                .updateProfileWithoutImage(userModel.getUser().getToken(),userModel.getUser().getId(),signUpModel.getName(),signUpModel.getEmail(),signUpModel.getPhone(),signUpModel.getPhone_code(),signUpModel.getGender(),signUpModel.getYear())
+                .enqueue(new Callback<UserModel>() {
+                    @Override
+                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()&&response.body()!=null)
+                        {
+                            preferences.create_update_userdata(SignUpActivity.this,response.body());
+                            setResult(RESULT_OK);
+                            finish();
+                        }else
+                        {
+                            if (response.code()==500)
+                            {
+                                Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }else if (response.code()==409)
+                            {
+                                Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
+                            }else if (response.code()==406)
+                            {
+                                Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
+
+
+                            }
+                            else
+                            {
+                                Toast.makeText(SignUpActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+
+                            try {
+                                Log.e("error",response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("msg_category_error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }catch (Exception e)
+                        {
+                            Log.e("Error",e.getMessage()+"__");
+                        }
+                    }
+                });
+
+    }
+    private void updateProfileWithImage() {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.show();
+        RequestBody user_id = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
+        RequestBody name_part = Common.getRequestBodyText(signUpModel.getName());
+        RequestBody phone_code_part = Common.getRequestBodyText(signUpModel.getPhone_code());
+        RequestBody phone_part = Common.getRequestBodyText(signUpModel.getPhone());
+        RequestBody email_part = Common.getRequestBodyText(signUpModel.getEmail());
+        RequestBody gender_part = Common.getRequestBodyText(signUpModel.getGender());
+        RequestBody year_part = Common.getRequestBodyText(signUpModel.getYear());
+
+        MultipartBody.Part image = Common.getMultiPart(this,uri,"logo");
+
+
+        Api.getService(Tags.base_url)
+                .updateProfileWithImage(userModel.getUser().getToken(),user_id,name_part,email_part,phone_part,phone_code_part,gender_part,year_part,image)
+                .enqueue(new Callback<UserModel>() {
+                    @Override
+                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()&&response.body()!=null)
+                        {
+                            preferences.create_update_userdata(SignUpActivity.this,response.body());
+                            setResult(RESULT_OK);
                             finish();
 
                         }else

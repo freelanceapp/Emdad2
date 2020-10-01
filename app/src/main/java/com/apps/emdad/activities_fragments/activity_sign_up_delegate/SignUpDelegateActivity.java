@@ -18,6 +18,7 @@ import android.webkit.WebViewClient;
 import com.apps.emdad.R;
 import com.apps.emdad.databinding.ActivitySignUpDelegateBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.tags.Tags;
 
 import io.paperdb.Paper;
 
@@ -66,6 +67,12 @@ public class SignUpDelegateActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                if (url.equals(Tags.sign_up_driver_success)){
+                    setResult(RESULT_OK);
+                    finish();
+                }else if(url.equals(Tags.sign_up_driver_failed)) {
+
+                }
 
             }
 

@@ -50,6 +50,7 @@ public class Fragment_Main extends Fragment {
     private MainAdapter mainAdapter;
     private Preferences preferences;
     private UserModel userModel;
+    private String currency;
 
 
 
@@ -89,11 +90,8 @@ public class Fragment_Main extends Fragment {
         binding.recViewCategory.setLayoutManager(new LinearLayoutManager(activity));
         MainItemData itemData1 = new MainItemData(0);
         mainItemDataList.add(itemData1);
-        String currency=getString(R.string.sar);
-        if (userModel!=null){
-            currency = userModel.getUser().getCountry().getWord().getCurrency();
-            binding.setModel(userModel);
-        }
+        currency=getString(R.string.sar);
+        getUserData();
 
         mainAdapter = new MainAdapter(mainItemDataList,activity,this,user_lat,user_lng,currency);
         binding.recViewCategory.setAdapter(mainAdapter);
@@ -116,6 +114,18 @@ public class Fragment_Main extends Fragment {
 
     }
 
+    private void getUserData() {
+
+        if (userModel!=null){
+            currency = userModel.getUser().getCountry().getWord().getCurrency();
+            binding.setModel(userModel);
+        }
+    }
+
+    public void updateUserData(UserModel userModel){
+        this.userModel= userModel;
+        getUserData();
+    }
 
 
     @Override

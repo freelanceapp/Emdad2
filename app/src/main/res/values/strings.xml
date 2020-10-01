@@ -292,6 +292,8 @@
     <string name="share">Share</string>
     <string name="end_order">End Order</string>
     <string name="leave_order">Leave order</string>
+    <string name="inv_telegram_url">Invalid Telegram URL</string>
+    <string name="update">Update</string>
 
 
 </resources>

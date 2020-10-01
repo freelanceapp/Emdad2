@@ -93,6 +93,7 @@
                     android:src="@drawable/ic_nav_notification"
                     android:tint="@color/colorPrimary"
                     android:onClick="@{()->actions.onNotification()}"
+                    android:visibility="invisible"
 
 
                     />

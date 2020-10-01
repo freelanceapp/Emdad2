@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_intro_slider.IntroSliderActivity;
 import com.apps.emdad.activities_fragments.activity_language.LanguageActivity;
 import com.apps.emdad.activities_fragments.activity_login.LoginActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up.SignUpActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.databinding.ActivitySettingsBinding;
@@ -119,17 +121,23 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
     }
 
     private void getUserData() {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
         Api.getService(Tags.base_url)
                 .getUserById(userModel.getUser().getToken(),lang,userModel.getUser().getId())
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                        dialog.dismiss();
                         if (response.isSuccessful()) {
 
                             userModel = response.body();
                             preferences.create_update_userdata(SettingsActivity.this,userModel);
 
                         } else {
+                            dialog.dismiss();
                             try {
                                 Log.e("error", response.code() + "__" + response.errorBody().string());
                             } catch (IOException e) {
@@ -147,6 +155,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
                     @Override
                     public void onFailure(Call<UserModel> call, Throwable t) {
                         try {
+                            dialog.dismiss();
                             if (t.getMessage() != null) {
                                 Log.e("error", t.getMessage() + "__");
 
@@ -170,7 +179,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-        startActivityForResult(intent, 200);
+        startActivityForResult(intent, 100);
     }
 
     @Override
@@ -180,13 +189,14 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     @Override
     public void onEditProfile() {
-
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivityForResult(intent,400);
     }
 
     @Override
     public void onLanguageSetting() {
         Intent intent = new Intent(this, LanguageActivity.class);
-        startActivityForResult(intent, 300);
+        startActivityForResult(intent, 200);
     }
 
     @Override
@@ -249,7 +259,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
                 Intent intent = new Intent(this, SignUpDelegateActivity.class);
                 String url = Tags.base_url+userModel.getUser().getRegister_link();
                 intent.putExtra("url",url);
-                startActivityForResult(intent,100);
+                startActivityForResult(intent,300);
             }else {
                 Common.CreateDialogAlert(this,getString(R.string.inv_url));
             }
@@ -287,12 +297,26 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
             }
         } else if (requestCode == 200 && resultCode == RESULT_OK ) {
 
-            setResult(RESULT_OK);
+            Intent intent = getIntent();
+            intent.putExtra("action","language");
+            setResult(RESULT_OK,intent);
             finish();
         }
 
         else if (requestCode == 300 && resultCode == RESULT_OK ) {
-            getUserData();
+            userModel.getUser().setUser_type("driver");
+            preferences.create_update_userdata(this,userModel);
+            Intent intent = getIntent();
+            intent.putExtra("action","update_user");
+            setResult(RESULT_OK,intent);
+            finish();
+        }
+        else if (requestCode == 400 && resultCode == RESULT_OK ) {
+            userModel = preferences.getUserData(this);
+            Intent intent = getIntent();
+            intent.putExtra("action","update_user");
+            setResult(RESULT_OK,intent);
+            finish();
         }
     }
 }

@@ -293,5 +293,7 @@
     <string name="share">مشاركة</string>
     <string name="end_order">إنهاء الطلب</string>
     <string name="leave_order">انسحاب من الطلب</string>
+    <string name="inv_telegram_url">رابط تليجرام غير صحيح</string>
+    <string name="update">تعديل</string>
 
 </resources>

@@ -3,34 +3,26 @@ package com.apps.emdad.activities_fragments.activity_home;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.transition.TransitionSet;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
-import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Notifications;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Profile;
@@ -41,25 +33,12 @@ import com.apps.emdad.databinding.ActivityHomeBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.location_service.LocationService;
 import com.apps.emdad.models.LocationModel;
-import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UnReadCountModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
 import com.apps.emdad.tags.Tags;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
@@ -107,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
                 Picasso.get().load(R.drawable.image_avatar).into(binding.imageProfile);
 
             }
-            updateFirbaseToken();
+            updateFirebaseToken();
 
             if (fragment_profile!=null&&fragment_profile.isAdded()){
                 fragment_profile.updateUi(userModel);
@@ -226,7 +205,7 @@ public class HomeActivity extends AppCompatActivity {
 
             }
             getNotificationCount();
-            updateFirbaseToken();
+            updateFirebaseToken();
         }
 
     }
@@ -280,7 +259,7 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    private void updateFirbaseToken() {
+    private void updateFirebaseToken() {
         FirebaseInstanceId.getInstance()
                 .getInstanceId()
                 .addOnCompleteListener(this, task -> {
@@ -329,6 +308,24 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+    }
+
+    public void updateUserData(UserModel userModel){
+        this.userModel = userModel;
+        try {
+            if (fragment_main!=null&&fragment_main.isAdded()){
+                fragment_main.updateUserData(userModel);
+            }
+
+            if (fragment_notifications!=null&&fragment_notifications.isAdded()){
+                fragment_notifications.updateUserData(userModel);
+            }
+
+        }catch (Exception e){
+
+        }
+
 
     }
 

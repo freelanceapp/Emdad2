@@ -76,6 +76,10 @@ public class UserModel implements Serializable {
             return user_type;
         }
 
+        public void setUser_type(String user_type) {
+            this.user_type = user_type;
+        }
+
         public String getGender() {
             return gender;
         }
