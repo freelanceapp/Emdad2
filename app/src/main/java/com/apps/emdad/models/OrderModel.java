@@ -41,8 +41,8 @@ public class OrderModel implements Serializable {
     private String drop_off_distance = "0.0";
     private DriverLastOffer driver_last_offer;
     private DriverLastOffer order_offer;
-
     private List<OrderImages>order_images;
+    private RangeOfferModel limit_offer;
 
     public String getOffers_count() {
         return offers_count;
@@ -180,6 +180,10 @@ public class OrderModel implements Serializable {
         return order_offer;
     }
 
+    public RangeOfferModel getLimit_offer() {
+        return limit_offer;
+    }
+
     public List<OrderImages> getOrder_images() {
         return order_images;
     }
@@ -224,6 +228,8 @@ public class OrderModel implements Serializable {
         public void setImage(String image) {
             this.image = image;
         }
+
+
     }
 
     public static class DriverLastOffer implements Serializable{
@@ -267,6 +273,7 @@ public class OrderModel implements Serializable {
         public String getOffer_time() {
             return offer_time;
         }
+
 
 
     }

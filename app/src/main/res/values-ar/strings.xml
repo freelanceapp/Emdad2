@@ -295,5 +295,6 @@
     <string name="leave_order">انسحاب من الطلب</string>
     <string name="inv_telegram_url">رابط تليجرام غير صحيح</string>
     <string name="update">تعديل</string>
+    <string name="less_offer">عرض أقل</string>
 
 </resources>

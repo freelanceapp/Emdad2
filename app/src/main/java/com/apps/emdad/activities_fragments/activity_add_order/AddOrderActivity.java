@@ -564,6 +564,7 @@ public class AddOrderActivity extends AppCompatActivity {
                                 Intent intent =new Intent(AddOrderActivity.this, ChatActivity.class);
                                 intent.putExtra("order_id",response.body().getOrder().getId());
                                 startActivity(intent);
+                                finish();
 
                             }else
                             {

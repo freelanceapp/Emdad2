@@ -239,7 +239,7 @@ public class DelegateAddOfferActivity extends AppCompatActivity implements OnMap
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.show();
-            Api.getService(Tags.base_url).sendDriverOffer(user_token,client_id,driver_id,order_id,offer_value,"make_offer")
+            Api.getService(Tags.base_url).sendDriverOffer(user_token,client_id,driver_id,order_id,offer_value,rangeOfferModel.getMin_offer(),"make_offer")
                     .enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

@@ -121,11 +121,9 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             String country_id = intent.getStringExtra("country_id");
             fromSplash = intent.getBooleanExtra("from",true);
 
-            if (!fromSplash){
-                signUpModel.setPhone_code(phone_code);
-                signUpModel.setPhone(phone);
-                signUpModel.setCountry_id(country_id);
-            }
+            signUpModel.setPhone_code(phone_code);
+            signUpModel.setPhone(phone);
+            signUpModel.setCountry_id(country_id);
 
 
         }
@@ -443,7 +441,6 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         RequestBody year_part = Common.getRequestBodyText(signUpModel.getYear());
         RequestBody country_id_part = Common.getRequestBodyText(signUpModel.getCountry_id());
         RequestBody software_part = Common.getRequestBodyText("android");
-
 
         MultipartBody.Part image = Common.getMultiPart(this,uri,"logo");
 

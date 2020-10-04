@@ -28,7 +28,6 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private String currency;
     private ChatActivity activity;
 
-
     public OffersAdapter(List<OffersModel> list, Context context,String currency) {
         this.list = list;
         this.context = context;
@@ -62,9 +61,24 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             myHolder.binding.setModel(offersModel);
             double cost = Double.parseDouble(offersModel.getOffer_value())+Double.parseDouble(offersModel.getTax_value());
             myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s",String.format(Locale.ENGLISH,"%.2f",cost),currency));
+            if (Double.parseDouble(offersModel.getOffer_value())>Double.parseDouble(offersModel.getMin_offer())){
+                myHolder.binding.btnCancel.setText(R.string.less_offer);
+            }else {
+                myHolder.binding.btnCancel.setText(R.string.cancel);
+
+            }
+
+
             myHolder.binding.btnCancel.setOnClickListener(v -> {
                 OffersModel offersModel1 = list.get(holder.getAdapterPosition());
-                activity.deleteOrderActions(offersModel1);
+
+                if (Double.parseDouble(offersModel.getOffer_value())>Double.parseDouble(offersModel1.getMin_offer())){
+                    activity.clientRefuseOffer(offersModel1,"yes");
+                }else {
+                    activity.deleteOrderActionBeforeDriverAcceptOrderActions(offersModel1);
+                }
+
+
             });
             myHolder.binding.btnAccept.setOnClickListener(v -> {
                 OffersModel offersModel1 = list.get(holder.getAdapterPosition());
@@ -107,6 +121,7 @@ public class OffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
 
     }
+
 
     @Override
     public int getItemViewType(int position) {

@@ -260,7 +260,7 @@ public interface Service {
                                         @Field("user_id") int user_id
     );
 
-    @GET("api/get-driver-new-orders")
+    @GET("api/get-driver-orders")
     Call<OrdersDataModel> getDriverDeliveryOrder(@Header("Authorization") String user_token,
                                                  @Query(value = "user_id") int user_id,
                                                  @Query(value = "page") int page,
@@ -302,6 +302,7 @@ public interface Service {
                                        @Field("driver_id") int driver_id,
                                        @Field("order_id") int order_id,
                                        @Field("offer_value") String offer_value,
+                                       @Field("min_offer") String min_offer,
                                        @Field("action") String action
 
 

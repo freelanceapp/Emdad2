@@ -13,6 +13,7 @@ public class OffersModel implements Serializable {
     private String offer_time;
     private String order_time;
     private String distance;
+    private String min_offer;
     private UserModel.User client;
     private UserModel.User driver;
 
@@ -71,5 +72,9 @@ public class OffersModel implements Serializable {
 
     public UserModel.User getDriver() {
         return driver;
+    }
+
+    public String getMin_offer() {
+        return min_offer;
     }
 }

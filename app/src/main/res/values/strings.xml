@@ -294,6 +294,7 @@
     <string name="leave_order">Leave order</string>
     <string name="inv_telegram_url">Invalid Telegram URL</string>
     <string name="update">Update</string>
+    <string name="less_offer">Less offer</string>
 
 
 </resources>

@@ -85,15 +85,24 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
                 myHolder.binding.tvState.setText(R.string.order_accepted);
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+
+
             }
             else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
                 myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
                 myHolder.binding.tvState.setText(context.getString(R.string.done));
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+
             }else if (orderModel.getOrder_status().equals("client_cancel")){
                 myHolder.binding.icon.setImageResource(R.drawable.ic_error);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.color_red));
                 myHolder.binding.tvState.setText(context.getString(R.string.cancel));
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
             }
 
             myHolder.itemView.setOnClickListener(v -> {
