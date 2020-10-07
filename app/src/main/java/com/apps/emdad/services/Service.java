@@ -4,6 +4,7 @@ import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel2;
+import com.apps.emdad.models.MessageDataModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.NotificationDataModel;
 import com.apps.emdad.models.OfferSettingModel;
@@ -16,6 +17,7 @@ import com.apps.emdad.models.PlaceMapDetailsData;
 import com.apps.emdad.models.RangeOfferModel;
 import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.ShopDepartmentDataModel;
+import com.apps.emdad.models.SingleMessageDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.SliderModel;
 import com.apps.emdad.models.UnReadCountModel;
@@ -414,5 +416,38 @@ public interface Service {
 
 
     );
+
+    @GET("api/get-room-msg")
+    Call<MessageDataModel> getChatMessages(@Header("Authorization") String user_token,
+                                           @Query(value = "room_id") String room_id,
+                                           @Query(value = "page") int page,
+                                           @Query(value = "pagination") String pagination,
+                                           @Query(value = "limit_per_page") int limit_per_page
+    );
+
+    @FormUrlEncoded
+    @POST("api/send-chat-msg")
+    Call<SingleMessageDataModel> sendChatMessage(@Header("Authorization") String user_token,
+                                                 @Field("room_id") int room_id,
+                                                 @Field("from_user_id") int from_user_id,
+                                                 @Field("to_user_id") int to_user_id,
+                                                 @Field("type") String type,
+                                                 @Field("message") String message
+
+
+    );
+
+    @Multipart
+    @POST("api/send-chat-msg")
+    Call<SingleMessageDataModel> sendChatAttachment(@Header("Authorization") String user_token,
+                                                    @Part("room_id") RequestBody room_id,
+                                                    @Part("from_user_id") RequestBody from_user_id,
+                                                    @Part("to_user_id") RequestBody to_user_id,
+                                                    @Part("type") RequestBody type,
+                                                    @Part("message") RequestBody message,
+                                                    @Part MultipartBody.Part attachment
+    );
+
+
 
 }

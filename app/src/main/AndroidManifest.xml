@@ -179,6 +179,11 @@
             android:name=".location_service.LocationService"
             android:enabled="true"
             android:stopWithTask="false" />
+
+        <service
+            android:name=".activities_fragments.activity_chat.ServiceUploadAttachment"
+            android:enabled="true"
+            android:stopWithTask="false" />
     </application>
 
 </manifest>

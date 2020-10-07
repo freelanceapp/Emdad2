@@ -11,6 +11,7 @@ public class DefaultSettings implements Serializable {
     private String ringToneName;
     private List<FavoriteLocationModel> favoriteLocationModelList = new ArrayList<>();
     private List<String> recentSearchList = new ArrayList<>();
+    private int room_id;
 
     public DefaultSettings() {
     }
@@ -61,5 +62,13 @@ public class DefaultSettings implements Serializable {
 
     public void setRingToneName(String ringToneName) {
         this.ringToneName = ringToneName;
+    }
+
+    public int getRoom_id() {
+        return room_id;
+    }
+
+    public void setRoom_id(int room_id) {
+        this.room_id = room_id;
     }
 }

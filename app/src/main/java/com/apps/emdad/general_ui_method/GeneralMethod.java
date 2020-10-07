@@ -135,6 +135,34 @@ public class GeneralMethod {
 
     }
 
+    @BindingAdapter("chat_image")
+    public static void chat_image(View view, String endPoint) {
+        if (view instanceof CircleImageView) {
+            CircleImageView imageView = (CircleImageView) view;
+            if (endPoint!=null){
+                Picasso.get().load(Tags.IMAGE_URL+endPoint).into(imageView);
+
+            }
+
+
+        } else if (view instanceof RoundedImageView) {
+            RoundedImageView imageView = (RoundedImageView) view;
+            if (endPoint!=null){
+                Picasso.get().load(Tags.IMAGE_URL+endPoint).into(imageView);
+
+            }
+        } else if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+            if (endPoint!=null){
+                Picasso.get().load(Tags.IMAGE_URL+endPoint).into(imageView);
+
+            }
+
+        }
+
+    }
+
+
     @BindingAdapter("distance")
     public static void distance(TextView view,double distance){
         view.setText(String.format(Locale.ENGLISH,"%.2f %s",distance,view.getContext().getString(R.string.km)));

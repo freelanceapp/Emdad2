@@ -8,8 +8,7 @@
     <color name="color2">#10afbf</color>
     <color name="color3">#334d51</color>
     <color name="color4">#2e3233</color>
-    <color name="color_primary_trans">#661db198</color>
-
+    <color name="color_primary_trans">#bb0E9A82</color>
 
     <color name="white">#fff</color>
     <color name="black">#000000</color>
@@ -41,6 +40,8 @@
     <color name="rate_color">#FFD800</color>
     <color name="yellow">#FBC02D</color>
     <color name="primary_trans">#111db198</color>
+    <color name="color_gray_trans">#55e0e0e0</color>
+
 
     <array name="dots">
         <item>@color/colorPrimary</item>

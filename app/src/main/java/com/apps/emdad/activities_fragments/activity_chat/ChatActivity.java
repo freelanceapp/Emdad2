@@ -35,16 +35,21 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
 import com.apps.emdad.adapters.ChatActionAdapter;
+import com.apps.emdad.adapters.ChatAdapter;
 import com.apps.emdad.adapters.OffersAdapter;
 import com.apps.emdad.databinding.ActivityChatBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.ChatActionModel;
+import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.FromToLocationModel;
+import com.apps.emdad.models.MessageDataModel;
+import com.apps.emdad.models.MessageModel;
 import com.apps.emdad.models.OffersDataModel;
 import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.RangeOfferModel;
+import com.apps.emdad.models.SingleMessageDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
@@ -56,6 +61,10 @@ import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -100,6 +109,10 @@ public class ChatActivity extends AppCompatActivity {
     private ChatActionModel chatActionModel = null;
     private OffersModel offersModel = null;
     private int reasonType = 0;
+    private DefaultSettings defaultSettings;
+    private List<MessageModel> messageModelList;
+    private ChatAdapter adapter;
+    private boolean isNewMessage = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -123,12 +136,18 @@ public class ChatActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
+
+        messageModelList = new ArrayList<>();
         actionReasonList = new ArrayList<>();
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         offersModelList = new ArrayList<>();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
+        defaultSettings = preferences.getAppSetting(this);
+        if (defaultSettings==null){
+            defaultSettings = new DefaultSettings();
+        }
         binding.setLang(lang);
         currency = getString(R.string.sar);
         if (userModel != null) {
@@ -185,7 +204,8 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         recorder.stop();
                         stopTimer();
-                        sendAttachment(audio_path, "sound");
+                        Log.e("ddd","fff");
+                        sendAttachment(audio_path, "","voice");
                     } catch (Exception e) {
                         Log.e("error1", e.getMessage() + "___");
                     }
@@ -302,7 +322,20 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        adapter = new ChatAdapter(messageModelList,this,userModel.getUser().getId());
+        binding.recView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recView.setAdapter(adapter);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
 
+        binding.imageSend.setOnClickListener(v -> {
+            String message =binding.edtMessage.getText().toString().trim();
+            if (!message.isEmpty()){
+                binding.edtMessage.setText(null);
+                sendChatText(message);
+            }
+        });
         getOrderById(null);
 
     }
@@ -501,9 +534,12 @@ public class ChatActivity extends AppCompatActivity {
                 binding.flOffers.setVisibility(View.GONE);
                 binding.llOfferData.setVisibility(View.GONE);
                 binding.llComingOffer.setVisibility(View.GONE);
+
                 updateUserUi();
+                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                    getChatMessages(orderModel.getRoom_id());
 
-
+                }
                 break;
             case "driver_end_rate":
             case "client_end_and_rate":
@@ -514,9 +550,11 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
-
                 updateUserUi();
+                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                    getChatMessages(orderModel.getRoom_id());
 
+                }
                 break;
 
             case "order_driver_back":
@@ -530,7 +568,10 @@ public class ChatActivity extends AppCompatActivity {
                 binding.tvCanceled.setVisibility(View.VISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 updateUserUi();
+                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                    getChatMessages(orderModel.getRoom_id());
 
+                }
                 break;
             case "client_cancel":
                 binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
@@ -563,7 +604,10 @@ public class ChatActivity extends AppCompatActivity {
                 binding.tvCanceled.setVisibility(View.VISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
 
+                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                    getChatMessages(orderModel.getRoom_id());
 
+                }
                 break;
 
 
@@ -812,56 +856,6 @@ public class ChatActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
         Api.getService(Tags.base_url).clientDeleteOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), order_id, chatActionModel.getAction())
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-                                setResult(RESULT_OK);
-                                finish();
-                            }
-                        } else {
-                            dialog.dismiss();
-                            try {
-                                Log.e("error_code", response.code() + response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-                            if (t.getMessage() != null) {
-                                Log.e("error", t.getMessage() + "__");
-
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
-                                } else {
-                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-
-                        } catch (Exception e) {
-
-                        }
-                    }
-                });
-    }
-
-    private void clientCancelOrder() {
-        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.show();
-        Api.getService(Tags.base_url).clientCancelOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), order_id)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1160,17 +1154,149 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void sendAttachment(String file_uri, String attachment_type) {
-        /*Intent intent = new Intent(this, ServiceUploadAttachment.class);
+    private void sendAttachment(String file_uri,String message, String attachment_type) {
+        binding.expandedLayout.collapse(true);
+        Intent intent = new Intent(this, ServiceUploadAttachment.class);
         intent.putExtra("file_uri", file_uri);
-        intent.putExtra("user_token", userModel.getData().getToken());
-        intent.putExtra("user_id", userModel.getData().getId());
-        intent.putExtra("room_id", chatUserModel.getRoom_id());
+        intent.putExtra("user_token", userModel.getUser().getToken());
+        intent.putExtra("user_id", userModel.getUser().getId());
+        intent.putExtra("to_user_id",orderModel.getDriver().getId());
+        intent.putExtra("message",message);
+        intent.putExtra("room_id", Integer.parseInt(orderModel.getRoom_id()));
         intent.putExtra("attachment_type", attachment_type);
-        startService(intent);*/
+        startService(intent);
 
 
     }
+
+    private void sendChatText(String message) {
+
+        Api.getService(Tags.base_url)
+                .sendChatMessage( userModel.getUser().getToken(),Integer.parseInt(orderModel.getRoom_id()),userModel.getUser().getId(),orderModel.getDriver().getId(),"message", message)
+                .enqueue(new Callback<SingleMessageDataModel>() {
+                    @Override
+                    public void onResponse(Call<SingleMessageDataModel> call, Response<SingleMessageDataModel> response) {
+                        binding.progBar.setVisibility(View.GONE);
+                        if (response.isSuccessful()) {
+
+                            if (response.body() != null && response.body().getData() != null) {
+                                isNewMessage = true;
+                                MessageModel model = response.body().getData();
+                                messageModelList.add(model);
+                                adapter.notifyItemInserted(messageModelList.size());
+                            }
+
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SingleMessageDataModel> call, Throwable t) {
+                        try {
+                            binding.progBar.setVisibility(View.GONE);
+                            if (t.getMessage() != null) {
+                                Log.e("Error", t.getMessage());
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().contains("socket")) {
+
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+                });
+    }
+
+    private void getChatMessages(String room_id)
+    {
+        defaultSettings.setRoom_id(Integer.parseInt(room_id));
+        preferences.createUpdateAppSetting(this,defaultSettings);
+
+        Api.getService(Tags.base_url)
+                .getChatMessages(userModel.getUser().getToken(),room_id, 1, "on", 40)
+                .enqueue(new Callback<MessageDataModel>() {
+                    @Override
+                    public void onResponse(Call<MessageDataModel> call, Response<MessageDataModel> response) {
+                        binding.progBar.setVisibility(View.GONE);
+                        if (response.isSuccessful()) {
+
+                            if (response.body() != null && response.body().getData() != null) {
+
+                                if (response.body().getData().size() > 0) {
+                                    messageModelList.clear();
+                                    messageModelList.addAll(response.body().getData());
+                                    adapter.notifyDataSetChanged();
+                                    binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
+
+                                }
+                            }
+
+
+                        } else {
+                            if (response.code() == 500) {
+                                Toast.makeText(ChatActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            }
+
+                            try {
+                                Log.e("error code", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<MessageDataModel> call, Throwable t) {
+                        try {
+                            binding.progBar.setVisibility(View.GONE);
+                            if (t.getMessage() != null) {
+                                Log.e("Error", t.getMessage());
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().contains("socket")) {
+
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+                });
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAttachmentSuccess(MessageModel messageModel) {
+        messageModelList.add(messageModel);
+        adapter.notifyItemChanged(messageModelList.size());
+        binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
+        isNewMessage = true;
+        if (Integer.parseInt(messageModel.getFrom_user_id()) == userModel.getUser().getId()) {
+            deleteFile();
+
+        }
+
+    }
+
+    private void deleteFile() {
+        if (!audio_path.isEmpty()) {
+            File file = new File(audio_path);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
 
     private void getOffers() {
 
@@ -1470,14 +1596,14 @@ public class ChatActivity extends AppCompatActivity {
 
         if (requestCode == IMG_REQ && resultCode == RESULT_OK && data != null) {
             Uri uri = data.getData();
-            sendAttachment(uri.toString(), "img");
+            sendAttachment(uri.toString(),"", "image");
 
         } else if (requestCode == CAMERA_REQ && resultCode == RESULT_OK && data != null) {
 
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
             Uri uri = getUriFromBitmap(bitmap);
-            sendAttachment(uri.toString(), "img");
+            sendAttachment(uri.toString(),"", "image");
 
         } else if (requestCode == 100 && resultCode == RESULT_OK) {
             binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
