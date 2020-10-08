@@ -154,7 +154,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:background="@color/color_primary_trans2"
+                        >
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/userImage"
@@ -189,14 +193,14 @@
                             android:layout_marginTop="5dp"
                             app:layout_constraintBottom_toBottomOf="@id/userImage"
                             app:layout_constraintStart_toStartOf="@id/tvName"
-                            app:srb_borderColor="@color/gray2"
+                            app:srb_borderColor="@color/rate_color"
                             app:srb_fillColor="@color/rate_color"
                             app:srb_isIndicator="true"
                             app:srb_numberOfStars="5"
-                            app:srb_starBackgroundColor="@color/gray2"
+                            app:srb_starBackgroundColor="@color/white"
                             app:srb_starBorderWidth="1"
-                            app:srb_starSize="12dp"
-                            app:srb_starsSeparation="8dp"
+                            app:srb_starSize="14dp"
+                            app:srb_starsSeparation="5dp"
 
                             />
 
@@ -275,7 +279,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:background="@drawable/rounded_red"
-                        android:layout_marginTop="5dp"
                         android:textColor="@color/gray11"
                         android:paddingStart="20dp"
                         android:paddingEnd="20dp"
@@ -289,7 +292,6 @@
                         android:id="@+id/btnResend"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_marginTop="10dp"
                         android:background="@color/colorPrimary"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -329,18 +331,19 @@
                         android:layout_height="45dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginTop="5dp"
                         android:background="@drawable/bill_gradient"
                         android:visibility="gone"
                         >
                         <TextView
+                            android:id="@+id/tvBillStatus"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:textColor="@color/white"
-                            android:textSize="15sp"
+                            android:textSize="13sp"
+                            android:maxLines="2"
                             android:text="@string/make_a_bill_for_client"
 
 

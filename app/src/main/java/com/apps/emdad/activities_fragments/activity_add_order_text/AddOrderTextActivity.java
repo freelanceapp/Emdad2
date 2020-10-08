@@ -487,9 +487,6 @@ public class AddOrderTextActivity extends AppCompatActivity {
 
     }
 
-
-
-
     private void cropImage(Uri uri) {
 
         CropImage.activity(uri).setAspectRatio(1,1).setGuidelines(CropImageView.Guidelines.ON).start(this);

@@ -295,6 +295,20 @@
     <string name="inv_telegram_url">Invalid Telegram URL</string>
     <string name="update">Update</string>
     <string name="less_offer">Less offer</string>
+    <string name="add_a_bill">Add a bill</string>
+    <string name="order_cost">Order Cost</string>
+    <string name="enter_order_cost">Enter order cost</string>
+    <string name="delivery_cost_vat">Delivery cost + VAT</string>
+    <string name="total_with_tax">Total with tax</string>
+    <string name="attachment">Attachment</string>
+    <string name="picking_order">Picking Order</string>
+    <string name="received">Received</string>
+    <string name="click_on_receive">Click on Received when received order from shop</string>
+    <string name="on_location">On location</string>
+    <string name="click_on_reached_location">Click Reached to location when get to client\'s location</string>
+    <string name="delivering2">Delivering</string>
+    <string name="delivered">Delivered</string>
+    <string name="click_on_deliverd">Click on Delivered when the order is delivered to the client</string>
 
 
 </resources>

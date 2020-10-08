@@ -296,5 +296,19 @@
     <string name="inv_telegram_url">رابط تليجرام غير صحيح</string>
     <string name="update">تعديل</string>
     <string name="less_offer">عرض أقل</string>
+    <string name="add_a_bill">إصدار فاتورة</string>
+    <string name="order_cost">تكلفة المشتريات</string>
+    <string name="enter_order_cost">ادخل تكلفة البضاعة</string>
+    <string name="delivery_cost_vat">تكلفة التوصيل + ضريبة</string>
+    <string name="total_with_tax">المجموع (يشمل الضريبة)</string>
+    <string name="attachment">ملحق</string>
+    <string name="picking_order">متوجة للستلام</string>
+    <string name="received">تم الستلام</string>
+    <string name="click_on_receive">اضغط على تم الاستلام بمجرد استلام الطلب من المتجر</string>
+    <string name="on_location">في الموقع</string>
+    <string name="click_on_reached_location">إضغط على وصلت للموقع بمجرد وصولك لموقع العميل</string>
+    <string name="delivering2">جار التوصيل</string>
+    <string name="delivered">تم التسليم</string>
+    <string name="click_on_deliverd">اضغط على تم التسليم بمجرد تسليم الطلب للعميل</string>
 
 </resources>

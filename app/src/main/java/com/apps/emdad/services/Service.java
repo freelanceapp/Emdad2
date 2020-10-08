@@ -449,5 +449,36 @@ public interface Service {
     );
 
 
+    @Multipart
+    @POST("api/attach-bill")
+    Call<MessageDataModel> addBillWithImage(@Header("Authorization") String user_token,
+                                            @Part("driver_id") RequestBody driver_id,
+                                            @Part("client_id") RequestBody client_id,
+                                            @Part("order_id") RequestBody order_id,
+                                            @Part("bill_cost") RequestBody bill_cost,
+                                            @Part("message") RequestBody message,
+                                            @Part MultipartBody.Part attachment
+    );
+
+    @Multipart
+    @POST("api/attach-bill")
+    Call<MessageDataModel> addBillWithoutImage(@Header("Authorization") String user_token,
+                                               @Part("driver_id") RequestBody driver_id,
+                                               @Part("client_id") RequestBody client_id,
+                                               @Part("order_id") RequestBody order_id,
+                                               @Part("bill_cost") RequestBody bill_cost,
+                                               @Part("message") RequestBody message
+    );
+
+
+    @FormUrlEncoded
+    @POST("api/change-order-status")
+    Call<ResponseBody> changeOrderStatus(@Header("Authorization") String user_token,
+                                         @Field("driver_id") int driver_id,
+                                         @Field("client_id") int client_id,
+                                         @Field("order_id") int order_id,
+                                         @Field("order_status") String order_status
+    );
+
 
 }

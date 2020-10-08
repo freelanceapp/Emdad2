@@ -20,17 +20,21 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
-        android:requestLegacyExternalStorage="true"
         tools:targetApi="q">
-        <activity android:name=".activities_fragments.activity_splash_loading.SplashLoadingActivity"
+        <activity android:name=".activities_fragments.activity_add_bill.AddBillActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             />
+        <activity
+            android:name=".activities_fragments.activity_splash_loading.SplashLoadingActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -179,7 +183,6 @@
             android:name=".location_service.LocationService"
             android:enabled="true"
             android:stopWithTask="false" />
-
         <service
             android:name=".activities_fragments.activity_chat.ServiceUploadAttachment"
             android:enabled="true"

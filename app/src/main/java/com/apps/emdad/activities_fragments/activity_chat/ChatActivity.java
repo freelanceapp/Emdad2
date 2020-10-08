@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -28,11 +29,13 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_bill.AddBillActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
 import com.apps.emdad.adapters.ChatActionAdapter;
 import com.apps.emdad.adapters.ChatAdapter;
@@ -113,6 +116,7 @@ public class ChatActivity extends AppCompatActivity {
     private List<MessageModel> messageModelList;
     private ChatAdapter adapter;
     private boolean isNewMessage = false;
+    private boolean loadData = true;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -310,7 +314,6 @@ public class ChatActivity extends AppCompatActivity {
             closeDriverActionSheet();
             endOrder();
         });
-
         binding.flCall.setOnClickListener(v -> {
             if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
                 Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:"+orderModel.getDriver().getPhone_code()+orderModel.getDriver().getPhone()));
@@ -321,10 +324,36 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+        binding.btnBill.setOnClickListener(v -> {
+            String orderStatus = orderModel.getOrder_status();
+            switch (orderStatus){
+                case "accept_driver":
+                    Intent intent = new Intent(this, AddBillActivity.class);
+                    intent.putExtra("data",orderModel);
+                    startActivityForResult(intent,200);
+                    break;
+                case "bill_attach":
+                    changeOrderStatus("order_collected");
+                    break;
+                case "order_collected":
+                    changeOrderStatus("reach_to_client");
+                    break;
+                case "reach_to_client":
 
+                    break;
+            }
+
+        });
         adapter = new ChatAdapter(messageModelList,this,userModel.getUser().getId());
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(adapter);
+
+        binding.recView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if ( bottom < oldBottom) {
+                binding.recView.postDelayed(() -> binding.recView.scrollToPosition(adapter.getItemCount()), 100);
+            }
+        });
+
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
@@ -428,7 +457,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         String status = orderModel.getOrder_status();
-        Log.e("status", status);
+        Log.e("status",status);
         switch (status) {
             case "new_order":
                 binding.orderStatus.setBackgroundResource(R.drawable.pending_bg);
@@ -490,7 +519,10 @@ public class ChatActivity extends AppCompatActivity {
                         binding.flOffers.setVisibility(View.VISIBLE);
                         binding.llOfferData.setVisibility(View.GONE);
                         binding.llComingOffer.setVisibility(View.VISIBLE);
-                        getOffers();
+                        if (loadData){
+                            getOffers();
+
+                        }
 
                     } else {
                         binding.flOffers.setVisibility(View.VISIBLE);
@@ -524,7 +556,7 @@ public class ChatActivity extends AppCompatActivity {
                 break;
             case "accept_driver":
                 binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
-                binding.orderStatus.setText(getString(R.string.order_accepted));
+                binding.orderStatus.setText(R.string.picking_order);
                 binding.btnResend.setVisibility(View.GONE);
                 binding.imageRecord.setVisibility(View.VISIBLE);
                 binding.imageChooser.setVisibility(View.VISIBLE);
@@ -535,26 +567,108 @@ public class ChatActivity extends AppCompatActivity {
                 binding.llOfferData.setVisibility(View.GONE);
                 binding.llComingOffer.setVisibility(View.GONE);
 
-                updateUserUi();
-                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
-                    getChatMessages(orderModel.getRoom_id());
+                if (loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
 
+                    }
                 }
+
                 break;
+
+            case "bill_attach":
+                binding.orderStatus.setBackgroundResource(R.drawable.rounded_primary_dark);
+                binding.orderStatus.setText(getString(R.string.picking_order));
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.VISIBLE);
+                binding.imageChooser.setVisibility(View.VISIBLE);
+                binding.imageSend.setVisibility(View.VISIBLE);
+                binding.msgContent.setVisibility(View.VISIBLE);
+                binding.consUserData.setVisibility(View.VISIBLE);
+                binding.flOffers.setVisibility(View.GONE);
+                binding.llOfferData.setVisibility(View.GONE);
+                binding.llComingOffer.setVisibility(View.GONE);
+                binding.btnBill.setText(R.string.received);
+                binding.tvBillStatus.setText(R.string.click_on_receive);
+
+                if (loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
+
+                    }
+                }
+
+                break;
+            case "order_collected":
+                binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
+                binding.orderStatus.setText(R.string.delivering2);
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.VISIBLE);
+                binding.imageChooser.setVisibility(View.VISIBLE);
+                binding.imageSend.setVisibility(View.VISIBLE);
+                binding.msgContent.setVisibility(View.VISIBLE);
+                binding.consUserData.setVisibility(View.VISIBLE);
+                binding.flOffers.setVisibility(View.GONE);
+                binding.llOfferData.setVisibility(View.GONE);
+                binding.llComingOffer.setVisibility(View.GONE);
+                binding.btnBill.setText(R.string.on_location);
+                binding.tvBillStatus.setText(R.string.click_on_reached_location);
+
+                if (loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
+
+                    }
+                }
+
+                break;
+            case "reach_to_client":
+                binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
+                binding.orderStatus.setText(R.string.on_location);
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.VISIBLE);
+                binding.imageChooser.setVisibility(View.VISIBLE);
+                binding.imageSend.setVisibility(View.VISIBLE);
+                binding.msgContent.setVisibility(View.VISIBLE);
+                binding.consUserData.setVisibility(View.VISIBLE);
+                binding.flOffers.setVisibility(View.GONE);
+                binding.llOfferData.setVisibility(View.GONE);
+                binding.llComingOffer.setVisibility(View.GONE);
+                binding.btnBill.setText(getString(R.string.delivered));
+                binding.tvBillStatus.setText(R.string.click_on_deliverd);
+
+                if(loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
+
+                    }
+                }
+
+
+                break;
+
             case "driver_end_rate":
             case "client_end_and_rate":
                 binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
-                binding.orderStatus.setText(getString(R.string.done));
+                binding.orderStatus.setText(getString(R.string.delivered));
                 binding.btnResend.setVisibility(View.VISIBLE);
                 binding.imageRecord.setVisibility(View.GONE);
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
-                updateUserUi();
-                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
-                    getChatMessages(orderModel.getRoom_id());
+                binding.llBill.setVisibility(View.GONE);
+                if (loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
 
+                    }
                 }
+
                 break;
 
             case "order_driver_back":
@@ -567,11 +681,15 @@ public class ChatActivity extends AppCompatActivity {
                 binding.msgContent.setVisibility(View.GONE);
                 binding.tvCanceled.setVisibility(View.VISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
-                updateUserUi();
-                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
-                    getChatMessages(orderModel.getRoom_id());
+                binding.llBill.setVisibility(View.GONE);
+                if (loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
 
+                    }
                 }
+
                 break;
             case "client_cancel":
                 binding.orderStatus.setBackgroundResource(R.drawable.rejected_bg);
@@ -583,6 +701,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.msgContent.setVisibility(View.GONE);
                 binding.tvCanceled.setVisibility(View.VISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
+                binding.llBill.setVisibility(View.GONE);
 
                 if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
                     binding.tvMsgRight.setText(orderModel.getDetails());
@@ -603,11 +722,15 @@ public class ChatActivity extends AppCompatActivity {
                 binding.msgContent.setVisibility(View.GONE);
                 binding.tvCanceled.setVisibility(View.VISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
+                binding.llBill.setVisibility(View.GONE);
 
-                if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
-                    getChatMessages(orderModel.getRoom_id());
+                if (loadData){
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
 
+                    }
                 }
+
                 break;
 
 
@@ -636,7 +759,21 @@ public class ChatActivity extends AppCompatActivity {
         } else {
 
             Picasso.get().load(Uri.parse(Tags.IMAGE_URL + orderModel.getClient().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
-            binding.tvName.setText(orderModel.getClient().getName());
+
+            String name ="";
+
+
+            if (orderModel.getClient().getName().length()==2){
+                name = orderModel.getClient().getName().substring(0,1)+"**";
+            }else if (orderModel.getClient().getName().length()>=3){
+                String[] s = orderModel.getClient().getName().split(" ");
+                name = s[0].substring(0,2)+"**"+s[0].substring(s[0].length()-1);
+
+            }else {
+                name = orderModel.getClient().getName();
+            }
+
+            binding.tvName.setText(name);
             binding.rateBar.setRating(Float.parseFloat(orderModel.getClient().getRate()));
             binding.flCall.setVisibility(View.GONE);
             binding.llBill.setVisibility(View.VISIBLE);
@@ -649,6 +786,60 @@ public class ChatActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void changeOrderStatus(String status){
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).changeOrderStatus(userModel.getUser().getToken(), orderModel.getDriver().getId(), orderModel.getClient().getId(), order_id, status)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                isDataChanged = true;
+                                orderModel.setOrder_status(status);
+                                binding.setModel(orderModel);
+                                loadData = false;
+                                updateUi(orderModel);
+
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
     }
 
     public void navigateToDriverAddOffer() {
@@ -910,6 +1101,7 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 isDataChanged = true;
@@ -960,6 +1152,7 @@ public class ChatActivity extends AppCompatActivity {
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 isDataChanged = true;
@@ -1231,7 +1424,7 @@ public class ChatActivity extends AppCompatActivity {
                                     messageModelList.clear();
                                     messageModelList.addAll(response.body().getData());
                                     adapter.notifyDataSetChanged();
-                                    binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
+                                    binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 10);
 
                                 }
                             }
@@ -1608,6 +1801,20 @@ public class ChatActivity extends AppCompatActivity {
         } else if (requestCode == 100 && resultCode == RESULT_OK) {
             binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
             getOrderById(null);
+        }else if (requestCode==200&&resultCode==RESULT_OK&&data!=null){
+            List<MessageModel> list = (List<MessageModel>) data.getSerializableExtra("data");
+            int oldPos = messageModelList.size()-1;
+            messageModelList.addAll(list);
+            int newPos = messageModelList.size();
+            adapter.notifyItemRangeChanged(oldPos,newPos);
+            binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
+            orderModel.setOrder_status("bill_attach");
+            binding.setModel(orderModel);
+            loadData = false;
+            updateUi(orderModel);
+            isDataChanged = true;
+
+
         }
 
     }
