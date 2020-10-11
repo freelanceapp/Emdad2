@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -61,18 +62,120 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             OrderModel orderModel = list.get(position);
             myHolder.binding.setModel(orderModel);
 
-            if (orderModel.getOrder_status().equals("new_order")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
+            if (orderModel.getOrder_status().equals("new_order")||orderModel.getOrder_status().equals("pennding")){
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.VISIBLE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+
+                /* myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.rate_color));
-                myHolder.binding.tvState.setText(context.getString(R.string.pending));
-            }else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
+                myHolder.binding.tvState.setText(context.getString(R.string.pending));*/
+            }else if (orderModel.getOrder_status().equals("have_offer")){
+
+
+               /* myHolder.binding.icon.setImageResource(R.drawable.ic_clock2);
+                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.rate_color));
+                myHolder.binding.tvState.setText(context.getString(R.string.pending));*/
+
+                if (Integer.parseInt(orderModel.getOffers_count())>0){
+                    myHolder.binding.tvLoading.setVisibility(View.GONE);
+                    myHolder.binding.llOfferCount.setVisibility(View.VISIBLE);
+                    myHolder.binding.tvWaitAcceptOffer.setVisibility(View.VISIBLE);
+
+                }else {
+                    myHolder.binding.tvLoading.setVisibility(View.VISIBLE);
+                    myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                    myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+
+                }
+
+            }else if (orderModel.getOrder_status().equals("accept_driver"))
+            {
+               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
-                myHolder.binding.tvState.setText(context.getString(R.string.done));
+                myHolder.binding.tvState.setText(R.string.order_accepted);*/
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
+                myHolder.binding.progBar.setProgress(1);
+                myHolder.binding.tvStatus.setText(R.string.picking_order);
+
+
+
+
+
+
+            }else if (orderModel.getOrder_status().equals("bill_attach"))
+            {
+               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
+                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
+                myHolder.binding.tvState.setText(R.string.order_accepted);*/
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
+                myHolder.binding.progBar.setProgress(1);
+                myHolder.binding.tvStatus.setText(R.string.picking_order);
+
+
+
+
+
+
+            }else if (orderModel.getOrder_status().equals("order_collected"))
+            {
+               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
+                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
+                myHolder.binding.tvState.setText(R.string.order_accepted);*/
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
+                myHolder.binding.progBar.setProgress(2);
+                myHolder.binding.tvStatus.setText(R.string.delivering2);
+
+
+
+
+
+
+            }else if (orderModel.getOrder_status().equals("reach_to_client"))
+            {
+               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
+                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
+                myHolder.binding.tvState.setText(R.string.order_accepted);*/
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
+                myHolder.binding.progBar.setProgress(3);
+                myHolder.binding.tvStatus.setText(R.string.on_location);
+
+
+
+
+
+
+            } else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
+               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
+                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
+                myHolder.binding.tvState.setText(context.getString(R.string.done));*/
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
+                myHolder.binding.progBar.setProgress(4);
+                myHolder.binding.tvStatus.setText(R.string.delivered);
+
+
+
             }else if (orderModel.getOrder_status().equals("client_cancel")){
-                myHolder.binding.icon.setImageResource(R.drawable.ic_error);
+                /*myHolder.binding.icon.setImageResource(R.drawable.ic_error);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.color_red));
-                myHolder.binding.tvState.setText(context.getString(R.string.cancel));
+                myHolder.binding.tvState.setText(context.getString(R.string.cancel));*/
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
             }
 
             myHolder.itemView.setOnClickListener(v -> {

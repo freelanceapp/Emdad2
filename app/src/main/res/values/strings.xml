@@ -309,6 +309,7 @@
     <string name="delivering2">Delivering</string>
     <string name="delivered">Delivered</string>
     <string name="click_on_deliverd">Click on Delivered when the order is delivered to the client</string>
+    <string name="waiting_for_accepting_offers">Waiting for accepting offers</string>
 
 
 </resources>

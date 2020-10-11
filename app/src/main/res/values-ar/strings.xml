@@ -310,5 +310,6 @@
     <string name="delivering2">جار التوصيل</string>
     <string name="delivered">تم التسليم</string>
     <string name="click_on_deliverd">اضغط على تم التسليم بمجرد تسليم الطلب للعميل</string>
+    <string name="waiting_for_accepting_offers">بإنتظار قبول العروض</string>
 
 </resources>

@@ -113,6 +113,8 @@ public class AddOrderTextActivity extends AppCompatActivity {
     }
     private void initView()
     {
+
+        Log.e("sss","ssss");
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         addOrderTextModel = new AddOrderTextModel();
@@ -154,9 +156,15 @@ public class AddOrderTextActivity extends AppCompatActivity {
         });
         binding.close.setOnClickListener(v -> {super.onBackPressed();});
         binding.btnNext.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MapSearchActivity.class);
-            intent.putExtra("type", 1);
-            startActivityForResult(intent, 200);
+            if (canSend){
+                String order_text = binding.edtOrder.getText().toString();
+                addOrderTextModel.setOrder_text(order_text);
+                Intent intent = new Intent(this, MapSearchActivity.class);
+                intent.putExtra("type", 1);
+                startActivityForResult(intent, 200);
+            }
+
+
         });
         if (placeModel.getCustomPlaceModel()!=null){
             addOrderTextModel.setMarket_id(placeModel.getCustomPlaceModel().getId());
@@ -477,6 +485,7 @@ public class AddOrderTextActivity extends AppCompatActivity {
             addOrderTextModel.setTo_lat(model.getLat());
             addOrderTextModel.setTo_lng(model.getLng());
             if (imagesList.size()>0){
+
                 sendOrderTextWithImage();
             }else {
                 sendOrderTextWithoutImage();
