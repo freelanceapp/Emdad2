@@ -2,6 +2,8 @@ package com.apps.emdad.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +21,16 @@ import com.apps.emdad.databinding.CurrentOrderRowBinding;
 import com.apps.emdad.databinding.DriverDeliveryRowBinding;
 import com.apps.emdad.databinding.LoadMoreRowBinding;
 import com.apps.emdad.models.OrderModel;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
+import com.apps.emdad.tags.Tags;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.paperdb.Paper;
 
@@ -32,6 +42,8 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
     private LayoutInflater inflater;
     private Fragment fragment;
     private String lang;
+    private Preferences preferences;
+    private UserModel userModel;
 
     public DriverDeliveryOrdersAdapter(List<OrderModel> list, Context context, Fragment fragment) {
         this.list = list;
@@ -40,7 +52,8 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
         this.fragment = fragment;
         Paper.init(context);
         lang = Paper.book().read("lang","ar");
-
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(context);
     }
 
 
@@ -66,6 +79,48 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
             OrderModel orderModel = list.get(position);
             myHolder.binding.setModel(orderModel);
             myHolder.binding.setLang(lang);
+
+            if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                if (orderModel.getDriver()!=null){
+                    Picasso.get().load(Uri.parse(Tags.IMAGE_URL + orderModel.getDriver().getLogo())).placeholder(R.drawable.user_avatar).fit().into(myHolder.binding.userImage);
+
+                }
+            } else {
+
+                Picasso.get().load(Uri.parse(Tags.IMAGE_URL + orderModel.getClient().getLogo())).placeholder(R.drawable.user_avatar).fit().into(myHolder.binding.userImage);
+            }
+
+            String timeType = orderModel.getOrder_time_arrival();
+            long order_time = Long.parseLong(orderModel.getOrder_date())*1000;
+            Calendar calendar = Calendar.getInstance();
+            Calendar calendarNow = Calendar.getInstance();
+            calendar.setTimeInMillis(order_time);
+            switch (timeType){
+                case "1":
+                    calendar.add(Calendar.HOUR_OF_DAY,1);
+                    break;
+                case "2":
+                    calendar.add(Calendar.HOUR_OF_DAY,2);
+
+                    break;
+                case "3":
+                    calendar.add(Calendar.HOUR_OF_DAY,3);
+
+                    break;
+                case "4":
+                    calendar.add(Calendar.DAY_OF_MONTH,1);
+
+                    break;
+                case "5":
+                    calendar.add(Calendar.DAY_OF_MONTH,2);
+
+                    break;
+                case "6":
+                    calendar.add(Calendar.DAY_OF_MONTH,3);
+
+                    break;
+            }
+
             String status = orderModel.getOrder_status();
             switch (status){
                 case "new_order":
@@ -87,7 +142,14 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                     myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
                     myHolder.binding.tvStatus.setText(R.string.picking_order);
                     myHolder.binding.progBar.setProgress(1);
+                    if (calendarNow.getTime().before(calendar.getTime())){
+                        myHolder.binding.llLate.setVisibility(View.GONE);
+                    }else {
+                        myHolder.binding.loadView.setVisibility(View.VISIBLE);
+                        myHolder.binding.llLate.setVisibility(View.VISIBLE);
+                        myHolder.binding.tvLateTime.setText(getLateTime(calendar.getTimeInMillis()));
 
+                    }
                     break;
 
                 case "order_collected":
@@ -95,7 +157,14 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                     myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
                     myHolder.binding.tvStatus.setText(R.string.delivering2);
                     myHolder.binding.progBar.setProgress(2);
+                    if (calendarNow.getTime().before(calendar.getTime())){
+                        myHolder.binding.llLate.setVisibility(View.GONE);
+                    }else {
+                        myHolder.binding.loadView.setVisibility(View.VISIBLE);
+                        myHolder.binding.llLate.setVisibility(View.VISIBLE);
+                        myHolder.binding.tvLateTime.setText(getLateTime(calendar.getTimeInMillis()));
 
+                    }
                     break;
                 case "reach_to_client":
                     myHolder.binding.llDistance.setVisibility(View.VISIBLE);
@@ -103,9 +172,23 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                     myHolder.binding.tvStatus.setText(R.string.on_location);
                     myHolder.binding.progBar.setProgress(3);
 
+                    SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.ENGLISH);
+                    String df1 = dateFormat1.format(new Date(calendarNow.getTimeInMillis()));
 
+                    SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.ENGLISH);
+                    String df2 = dateFormat2.format(new Date(calendar.getTimeInMillis()));
+
+                    Log.e("date",df1+"____"+df2);
+
+                    if (calendarNow.getTime().before(calendar.getTime())){
+                        myHolder.binding.llLate.setVisibility(View.GONE);
+                    }else {
+                        myHolder.binding.loadView.setVisibility(View.VISIBLE);
+                        myHolder.binding.llLate.setVisibility(View.VISIBLE);
+                        myHolder.binding.tvLateTime.setText(getLateTime(calendar.getTimeInMillis()));
+
+                    }
                     break;
-
                 case "driver_end_rate":
                 case "client_end_and_rate":
                     myHolder.binding.llDistance.setVisibility(View.VISIBLE);
@@ -115,6 +198,15 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
 
                     break;
 
+
+            }
+
+            if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value())+Double.parseDouble(orderModel.getOrder_offer().getTax_value());
+                myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+            }else {
+                double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value());
+                myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
 
             }
 
@@ -135,12 +227,54 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
 
     }
 
+    private String getLateTime(long order_time)
+    {
+        int second = 1000;
+        int minute = second * 60;
+        int hour = minute * 60;
+        int day = hour * 24;
+        Calendar calendarNow = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(order_time);
+        long diff = calendarNow.getTimeInMillis()-calendar.getTimeInMillis();
+        if (diff < 5*minute) {
+            return context.getString(R.string.min5_late);
+
+        }else if (diff < 16*minute) {
+            return context.getString(R.string.min15_late);
+
+        } else if (diff < 35 * minute) {
+            return context.getString(R.string.min30_late);
+
+        } else if (diff < 2*hour) {
+            return context.getString(R.string.hour1_late);
+
+        } else if (diff < 3 * hour) {
+            return context.getString(R.string.hour2_late);
+
+        }else if (diff < 4 * hour) {
+            return context.getString(R.string.hour3_late);
+
+        } else if (diff < 2*day) {
+
+            return context.getString(R.string.day1_late);
+
+        } else if (diff < 3 * day) {
+            return context.getString(R.string.day2_late);
+        }else if (diff < 4 * day) {
+            return context.getString(R.string.day3_late);
+        } else {
+            return context.getString(R.string.more_days3_late);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    public static class MyHolder extends RecyclerView.ViewHolder {
+    public static class MyHolder extends RecyclerView.ViewHolder
+    {
         private DriverDeliveryRowBinding binding;
 
         public MyHolder(DriverDeliveryRowBinding binding) {
@@ -152,7 +286,8 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
 
     }
 
-    public static class LoadMoreHolder extends RecyclerView.ViewHolder {
+    public static class LoadMoreHolder extends RecyclerView.ViewHolder
+    {
         private LoadMoreRowBinding binding;
 
         public LoadMoreHolder(LoadMoreRowBinding binding) {

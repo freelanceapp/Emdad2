@@ -115,8 +115,13 @@ public class Fragment_Driver_Deliver_Order extends Fragment {
 
                                 if (response.body().getData().size() > 0) {
                                     binding.llNoOrder.setVisibility(View.GONE);
-                                    updateDataDistance(response.body().getData(), false);
-                                    current_page = response.body().getCurrent_page();
+                                    try {
+                                        updateDataDistance(response.body().getData(), false);
+                                        current_page = response.body().getCurrent_page();
+                                    }catch (Exception e){
+
+                                    }
+
                                 } else {
                                     orderModelList.clear();
                                     adapter.notifyDataSetChanged();

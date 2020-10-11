@@ -310,6 +310,17 @@
     <string name="delivered">Delivered</string>
     <string name="click_on_deliverd">Click on Delivered when the order is delivered to the client</string>
     <string name="waiting_for_accepting_offers">Waiting for accepting offers</string>
+    <string name="min15_late">15 minutes late</string>
+    <string name="min30_late">30 minutes late</string>
+    <string name="hour1_late">1 hour late</string>
+    <string name="hour2_late">2 hours late</string>
+    <string name="hour3_late">3 hours late</string>
+    <string name="day1_late">1 day late</string>
+    <string name="day2_late">2 days late</string>
+    <string name="day3_late">3 days late</string>
+    <string name="more_days3_late">more than 3 days late</string>
+    <string name="min5_late">5 minutes late</string>
+    <string name="how_was_your_experience">How was your experience?</string>
 
 
 </resources>

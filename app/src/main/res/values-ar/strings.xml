@@ -311,5 +311,16 @@
     <string name="delivered">تم التسليم</string>
     <string name="click_on_deliverd">اضغط على تم التسليم بمجرد تسليم الطلب للعميل</string>
     <string name="waiting_for_accepting_offers">بإنتظار قبول العروض</string>
+    <string name="min15_late">متأخر 15 دقيقة</string>
+    <string name="min30_late">متأخر 30 دقيقة</string>
+    <string name="hour1_late">متأخر ساعة واحدة</string>
+    <string name="hour2_late">متأخر 2 ساعة</string>
+    <string name="hour3_late">متأخر 3 ساعة</string>
+    <string name="day1_late">متأخر يوم واحد</string>
+    <string name="day2_late">متأخر 2 يوم</string>
+    <string name="day3_late">متأخر 3 يوم</string>
+    <string name="more_days3_late">متأخر اكثر من 3 يوم</string>
+    <string name="min5_late">متأخر 5 دقائق</string>
+    <string name="how_was_your_experience">كيف كانت تجربتك؟</string>
 
 </resources>
