@@ -150,6 +150,31 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                         myHolder.binding.tvLateTime.setText(getLateTime(calendar.getTimeInMillis()));
 
                     }
+                    if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+
+                        if (orderModel.getOrder_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value())+Double.parseDouble(orderModel.getOrder_offer().getTax_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }else if (orderModel.getDriver_last_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value())+Double.parseDouble(orderModel.getDriver_last_offer().getTax_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }
+
+                    }else {
+                        if (orderModel.getOrder_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }else if (orderModel.getDriver_last_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }
+
+                    }
+
                     break;
 
                 case "order_collected":
@@ -165,6 +190,31 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                         myHolder.binding.tvLateTime.setText(getLateTime(calendar.getTimeInMillis()));
 
                     }
+                    if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+
+                        if (orderModel.getOrder_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value())+Double.parseDouble(orderModel.getOrder_offer().getTax_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }else if (orderModel.getDriver_last_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value())+Double.parseDouble(orderModel.getDriver_last_offer().getTax_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }
+
+                    }else {
+                        if (orderModel.getOrder_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }else if (orderModel.getDriver_last_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }
+
+                    }
+
                     break;
                 case "reach_to_client":
                     myHolder.binding.llDistance.setVisibility(View.VISIBLE);
@@ -178,8 +228,6 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                     SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.ENGLISH);
                     String df2 = dateFormat2.format(new Date(calendar.getTimeInMillis()));
 
-                    Log.e("date",df1+"____"+df2);
-
                     if (calendarNow.getTime().before(calendar.getTime())){
                         myHolder.binding.llLate.setVisibility(View.GONE);
                     }else {
@@ -188,6 +236,32 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
                         myHolder.binding.tvLateTime.setText(getLateTime(calendar.getTimeInMillis()));
 
                     }
+
+                    if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+
+                        if (orderModel.getOrder_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value())+Double.parseDouble(orderModel.getOrder_offer().getTax_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }else if (orderModel.getDriver_last_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value())+Double.parseDouble(orderModel.getDriver_last_offer().getTax_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }
+
+                    }else {
+                        if (orderModel.getOrder_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }else if (orderModel.getDriver_last_offer()!=null){
+                            double deliveryCost = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
+                            myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
+
+                        }
+
+                    }
+
                     break;
                 case "driver_end_rate":
                 case "client_end_and_rate":
@@ -201,14 +275,7 @@ public class DriverDeliveryOrdersAdapter extends RecyclerView.Adapter<RecyclerVi
 
             }
 
-            if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
-                double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value())+Double.parseDouble(orderModel.getOrder_offer().getTax_value());
-                myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
-            }else {
-                double deliveryCost = Double.parseDouble(orderModel.getOrder_offer().getOffer_value());
-                myHolder.binding.tvDeliveryCost.setText(String.format(Locale.ENGLISH,"%s %s %s",context.getString(R.string.delivery_cost),deliveryCost,userModel.getUser().getCountry().getWord().getCurrency()));
 
-            }
 
             myHolder.itemView.setOnClickListener(v -> {
                 OrderModel orderModel1 = list.get(holder.getAdapterPosition());

@@ -1102,7 +1102,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/trans_black2"
-            android:visibility="visible"
+            android:visibility="gone"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1113,7 +1113,7 @@
                 android:paddingTop="10dp"
                 >
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/driverImage"
+                    android:id="@+id/clientImage"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_gravity="center_horizontal"
@@ -1296,7 +1296,80 @@
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recViewRateReason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/rounded_gray3"
+                    >
+                    <EditText
+                        android:id="@+id/edtRateComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:maxLength="150"
+                        android:inputType="textMultiLine"
+                        android:textColorHint="@color/gray8"
+                        android:hint="@string/write_your_opinion_here"
+                        android:background="@color/transparent"
+                        android:gravity="top"
+                        android:padding="8dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        />
+                    <TextView
+                        android:id="@+id/tvCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textColor="@color/gray8"
+                        android:textSize="13sp"
+                        android:text="0/150"
+                        />
 
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <Button
+                        android:id="@+id/btnRate"
+                        android:layout_width="180dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:background="@drawable/small_rounded_gray8"
+                        android:text="@string/rate_first"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="8dp"
+
+                        />
+                    <Space
+                        android:layout_width="80dp"
+                        android:layout_height="0dp"/>
+                    <TextView
+                        android:id="@+id/tvNotNow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="15sp"
+                        android:text="@string/not_now"
+                        />
+
+                </LinearLayout>
             </LinearLayout>
         </FrameLayout>
 

@@ -321,6 +321,9 @@
     <string name="more_days3_late">more than 3 days late</string>
     <string name="min5_late">5 minutes late</string>
     <string name="how_was_your_experience">How was your experience?</string>
+    <string name="write_your_opinion_here">Write your opinion here</string>
+    <string name="rate_first">Rate first</string>
+    <string name="not_now">Not now</string>
 
 
 </resources>

@@ -322,5 +322,8 @@
     <string name="more_days3_late">متأخر اكثر من 3 يوم</string>
     <string name="min5_late">متأخر 5 دقائق</string>
     <string name="how_was_your_experience">كيف كانت تجربتك؟</string>
+    <string name="write_your_opinion_here">إكتب رأيك هنا</string>
+    <string name="rate_first">قيم اولا</string>
+    <string name="not_now">ليس الان</string>
 
 </resources>

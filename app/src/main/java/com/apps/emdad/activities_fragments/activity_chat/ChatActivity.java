@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.media.MediaRecorder;
@@ -26,6 +28,8 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,6 +44,7 @@ import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateA
 import com.apps.emdad.adapters.ChatActionAdapter;
 import com.apps.emdad.adapters.ChatAdapter;
 import com.apps.emdad.adapters.OffersAdapter;
+import com.apps.emdad.adapters.RateReasonAdapter;
 import com.apps.emdad.databinding.ActivityChatBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.ChatActionModel;
@@ -52,6 +57,7 @@ import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.RangeOfferModel;
+import com.apps.emdad.models.RateReason;
 import com.apps.emdad.models.SingleMessageDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
@@ -117,6 +123,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatAdapter adapter;
     private boolean isNewMessage = false;
     private boolean loadData = true;
+    private RateReasonAdapter rateReasonAdapter;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -140,7 +147,6 @@ public class ChatActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
-
         messageModelList = new ArrayList<>();
         actionReasonList = new ArrayList<>();
         Paper.init(this);
@@ -339,7 +345,8 @@ public class ChatActivity extends AppCompatActivity {
                     changeOrderStatus("reach_to_client");
                     break;
                 case "reach_to_client":
-
+                    closeDriverActionSheet();
+                    endOrder();
                     break;
             }
 
@@ -347,17 +354,11 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new ChatAdapter(messageModelList,this,userModel.getUser().getId());
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(adapter);
-
         binding.recView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if ( bottom < oldBottom) {
                 binding.recView.postDelayed(() -> binding.recView.scrollToPosition(adapter.getItemCount()), 100);
             }
         });
-
-        if (!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
-
         binding.imageSend.setOnClickListener(v -> {
             String message =binding.edtMessage.getText().toString().trim();
             if (!message.isEmpty()){
@@ -365,10 +366,46 @@ public class ChatActivity extends AppCompatActivity {
                 sendChatText(message);
             }
         });
+        binding.edtRateComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().isEmpty()){
+                    binding.tvCount.setText(String.format(Locale.ENGLISH,"%s/%s","0","150"));
+                }else {
+                    binding.tvCount.setText(String.format(Locale.ENGLISH,"%s/%s",s.toString().length(),"150"));
+
+                }
+            }
+        });
+        binding.tvNotNow.setOnClickListener(v -> {closeRateActionSheet();});
+        binding.tvNotNow.setPaintFlags(binding.tvNotNow.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+        binding.recViewRateReason.setLayoutManager(new GridLayoutManager(this,2));
+        rateReasonAdapter = new RateReasonAdapter(new ArrayList<>(),this);
+        binding.recViewRateReason.setAdapter(rateReasonAdapter);
+
+        binding.emoji1.setOnClickListener(v -> {rate1UI();});
+        binding.emoji2.setOnClickListener(v -> {rate2UI();});
+        binding.emoji3.setOnClickListener(v -> {rate3UI();});
+        binding.emoji4.setOnClickListener(v -> {rate4UI();});
+        binding.emoji5.setOnClickListener(v -> {rate5UI();});
+
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+
         getOrderById(null);
 
     }
-
 
     private void getOrderById(ProgressDialog dialog) {
         Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(), order_id, userModel.getUser().getId())
@@ -429,6 +466,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private void updateUi(OrderModel orderModel) {
 
+        rateClear();
+        binding.tvEndOrder.setVisibility(View.GONE);
+
         if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
             binding.imageMore.setVisibility(View.VISIBLE);
 
@@ -467,7 +507,6 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
-
 
                 if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
                     binding.tvMsgRight.setText(orderModel.getDetails());
@@ -639,6 +678,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.llComingOffer.setVisibility(View.GONE);
                 binding.btnBill.setText(getString(R.string.delivered));
                 binding.tvBillStatus.setText(R.string.click_on_deliverd);
+                binding.tvEndOrder.setVisibility(View.VISIBLE);
 
                 if(loadData){
                     updateUserUi();
@@ -1252,10 +1292,137 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void endOrder() {
+        openRateSheet();
+    }
 
+    private void rateClear(){
+        Picasso.get().load(Tags.IMAGE_URL+orderModel.getClient().getLogo()).placeholder(R.drawable.user_avatar).into(binding.clientImage);
+        binding.emoji1.setImageResource(R.drawable.sad1);
+        binding.emoji2.setImageResource(R.drawable.sad1);
+        binding.emoji3.setImageResource(R.drawable.sad3);
+        binding.emoji4.setImageResource(R.drawable.smile1);
+        binding.emoji5.setImageResource(R.drawable.smile3);
+        binding.tv1.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv2.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.btnRate.setBackgroundResource(R.drawable.small_rounded_gray8);
+        binding.btnRate.setText(getString(R.string.rate_first));
+        binding.edtRateComment.setText(null);
+        rateReasonAdapter.addData(new ArrayList<>());
+    }
+
+    private void rate1UI(){
+
+        binding.emoji1.setImageResource(R.drawable.sad2);
+        binding.emoji2.setImageResource(R.drawable.sad1);
+        binding.emoji3.setImageResource(R.drawable.sad3);
+        binding.emoji4.setImageResource(R.drawable.smile1);
+        binding.emoji5.setImageResource(R.drawable.smile3);
+        binding.tv1.setTextColor(ContextCompat.getColor(this,R.color.black));
+        binding.tv2.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        List<RateReason> rateReasonList = new ArrayList<>();
+        rateReasonList.add(new RateReason(1,"يعاكس",false));
+        rateReasonList.add(new RateReason(2,"غير مهزب",false));
+        rateReasonList.add(new RateReason(3,"مدخن",false));
+        rateReasonList.add(new RateReason(4,"متأخر",false));
+        rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
+        rateReasonAdapter.addData(rateReasonList);
+        binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
+        binding.btnRate.setText(getString(R.string.send));
 
     }
 
+    private void rate2UI(){
+        Picasso.get().load(Tags.IMAGE_URL+orderModel.getClient().getLogo()).placeholder(R.drawable.user_avatar).into(binding.clientImage);
+        binding.emoji1.setImageResource(R.drawable.sad1);
+        binding.emoji2.setImageResource(R.drawable.sad2);
+        binding.emoji3.setImageResource(R.drawable.sad3);
+        binding.emoji4.setImageResource(R.drawable.smile1);
+        binding.emoji5.setImageResource(R.drawable.smile3);
+        binding.tv1.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv2.setTextColor(ContextCompat.getColor(this,R.color.black));
+        binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        List<RateReason> rateReasonList = new ArrayList<>();
+        rateReasonList.add(new RateReason(1,"يعاكس",false));
+        rateReasonList.add(new RateReason(2,"غير مهزب",false));
+        rateReasonList.add(new RateReason(3,"مدخن",false));
+        rateReasonList.add(new RateReason(4,"متأخر",false));
+        rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
+        rateReasonAdapter.addData(rateReasonList);
+        binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
+        binding.btnRate.setText(getString(R.string.send));
+
+    }
+
+    private void rate3UI(){
+        binding.emoji1.setImageResource(R.drawable.sad1);
+        binding.emoji2.setImageResource(R.drawable.sad1);
+        binding.emoji3.setImageResource(R.drawable.sad4);
+        binding.emoji4.setImageResource(R.drawable.smile1);
+        binding.emoji5.setImageResource(R.drawable.smile3);
+        binding.tv1.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv2.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.black));
+        binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        List<RateReason> rateReasonList = new ArrayList<>();
+        rateReasonList.add(new RateReason(1,"يعاكس",false));
+        rateReasonList.add(new RateReason(2,"غير مهزب",false));
+        rateReasonList.add(new RateReason(3,"مدخن",false));
+        rateReasonList.add(new RateReason(4,"متأخر",false));
+        rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
+        rateReasonAdapter.addData(rateReasonList);
+        binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
+        binding.btnRate.setText(getString(R.string.send));
+
+    }
+    private void rate4UI(){
+        binding.emoji1.setImageResource(R.drawable.sad1);
+        binding.emoji2.setImageResource(R.drawable.sad1);
+        binding.emoji3.setImageResource(R.drawable.sad3);
+        binding.emoji4.setImageResource(R.drawable.smile2);
+        binding.emoji5.setImageResource(R.drawable.smile3);
+        binding.tv1.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv2.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.black));
+        binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        List<RateReason> rateReasonList = new ArrayList<>();
+        rateReasonList.add(new RateReason(6,"يضايق",false));
+        rateReasonList.add(new RateReason(4,"متأخر",false));
+        rateReasonAdapter.addData(rateReasonList);
+        binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
+        binding.btnRate.setText(getString(R.string.send));
+
+    }
+    private void rate5UI(){
+        binding.emoji1.setImageResource(R.drawable.sad1);
+        binding.emoji2.setImageResource(R.drawable.sad1);
+        binding.emoji3.setImageResource(R.drawable.sad3);
+        binding.emoji4.setImageResource(R.drawable.smile1);
+        binding.emoji5.setImageResource(R.drawable.smile4);
+        binding.tv1.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv2.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
+        binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.black));
+        List<RateReason> rateReasonList = new ArrayList<>();
+        rateReasonList.add(new RateReason(7,"خدمة سريعة",false));
+        rateReasonList.add(new RateReason(8,"محترم",false));
+        rateReasonList.add(new RateReason(9,"إحترافي",false));
+        rateReasonList.add(new RateReason(10,"متجاوب",false));
+        rateReasonAdapter.addData(rateReasonList);
+        binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
+        binding.btnRate.setText(getString(R.string.send));
+
+    }
     private void openSheet() {
         binding.flAction.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
@@ -1301,7 +1468,6 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-
     private void openDriverActionSheet() {
         binding.flDriverAction.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
@@ -1337,6 +1503,53 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 binding.flDriverAction.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    private void openRateSheet() {
+        rateClear();
+
+        binding.flRate.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        binding.flRate.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                binding.flRate.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    private void closeRateActionSheet() {
+
+        binding.flRate.clearAnimation();
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        binding.flRate.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                binding.flRate.setVisibility(View.GONE);
 
             }
 
@@ -1863,11 +2076,20 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isDataChanged) {
-            setResult(RESULT_OK);
+        if (binding.flAction.getVisibility()==View.VISIBLE){
+            closeSheet();
+        }else if (binding.flDriverAction.getVisibility()==View.VISIBLE){
+            closeDriverActionSheet();
+        }else if (binding.flRate.getVisibility()==View.VISIBLE){
+            closeRateActionSheet();
+        }else {
+            if (isDataChanged) {
+                setResult(RESULT_OK);
+            }
+
+            finish();
         }
 
-        finish();
     }
 
 
