@@ -42,6 +42,7 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Preferences preferences;
     private UserModel userModel;
 
+
     public DriverOrdersAdapter(List<OrderModel> list, Context context, Fragment fragment) {
         this.list = list;
         this.context = context;
@@ -351,20 +352,30 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
 
-            } else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
-               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
-                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
-                myHolder.binding.tvState.setText(context.getString(R.string.done));*/
+            } else if (orderModel.getOrder_status().equals("client_end_and_rate")){
+
                 myHolder.binding.llOfferCount.setVisibility(View.GONE);
                 myHolder.binding.tvLoading.setVisibility(View.GONE);
                 myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
                 myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
                 myHolder.binding.progBar.setProgress(4);
                 myHolder.binding.tvStatus.setText(R.string.delivered);
+                myHolder.binding.flRate.setVisibility(View.GONE);
 
 
 
-            }else if (orderModel.getOrder_status().equals("client_cancel")){
+            }else if (orderModel.getOrder_status().equals("driver_end_rate")){
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.progBar.setProgress(4);
+                myHolder.binding.tvStatus.setText(R.string.delivered);
+                myHolder.binding.llOrderStatus.setVisibility(View.GONE);
+                myHolder.binding.llLate.setVisibility(View.GONE);
+                myHolder.binding.flRate.setVisibility(View.VISIBLE);
+
+            }
+            else if (orderModel.getOrder_status().equals("client_cancel")){
                 /*myHolder.binding.icon.setImageResource(R.drawable.ic_error);
                 myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.color_red));
                 myHolder.binding.tvState.setText(context.getString(R.string.cancel));*/
@@ -389,6 +400,48 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             });
 
+            myHolder.binding.emoji1.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                if (fragment instanceof Fragment_Driver_My_Order){
+                    Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
+                    fragment_driver_my_order.updateRateUi(orderModel1,holder.getAdapterPosition(),1);
+
+                }
+            });
+
+            myHolder.binding.emoji2.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                if (fragment instanceof Fragment_Driver_My_Order){
+                    Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
+                    fragment_driver_my_order.updateRateUi(orderModel1,holder.getAdapterPosition(),2);
+
+                }
+            });
+            myHolder.binding.emoji3.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                if (fragment instanceof Fragment_Driver_My_Order){
+                    Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
+                    fragment_driver_my_order.updateRateUi(orderModel1,holder.getAdapterPosition(),3);
+
+                }
+            });
+            myHolder.binding.emoji4.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                if (fragment instanceof Fragment_Driver_My_Order){
+                    Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
+                    fragment_driver_my_order.updateRateUi(orderModel1,holder.getAdapterPosition(),4);
+
+                }
+            });
+            myHolder.binding.emoji5.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                if (fragment instanceof Fragment_Driver_My_Order){
+                    Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
+                    fragment_driver_my_order.updateRateUi(orderModel1,holder.getAdapterPosition(),5);
+
+                }
+            });
+
         }else if (holder instanceof LoadMoreHolder){
             LoadMoreHolder loadMoreHolder = (LoadMoreHolder) holder;
             loadMoreHolder.binding.prgBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
@@ -396,6 +449,8 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
     }
+
+
 
     private String getLateTime(long order_time){ 
         int second = 1000;

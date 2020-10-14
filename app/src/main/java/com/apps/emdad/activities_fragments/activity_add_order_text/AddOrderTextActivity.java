@@ -45,6 +45,7 @@ import com.apps.emdad.databinding.DialogHoursBinding;
 import com.apps.emdad.databinding.DialogSelectImage2Binding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.AddOrderTextModel;
+import com.apps.emdad.models.CouponModel;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.HourModel;
 import com.apps.emdad.models.NearbyModel;
@@ -114,7 +115,6 @@ public class AddOrderTextActivity extends AppCompatActivity {
     private void initView()
     {
 
-        Log.e("sss","ssss");
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         addOrderTextModel = new AddOrderTextModel();
@@ -478,7 +478,20 @@ public class AddOrderTextActivity extends AppCompatActivity {
             }
         }
         else if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null){
-            //coupon
+            CouponModel couponModel = (CouponModel) data.getSerializableExtra("data");
+
+            addOrderTextModel.setCoupon_id(String.valueOf(couponModel.getId()));
+            if (couponModel.getCoupon_type().equals("per")){
+                String discount = getString(R.string.you_got)+" "+couponModel.getCoupon_value()+"% "+getString(R.string.discount)+" "+getString(R.string.on_delivery);;
+                binding.tvCoupon.setText(discount);
+            }else {
+                String discount = getString(R.string.you_got)+" "+couponModel.getCoupon_value()+" "+userModel.getUser().getCountry().getWord().getCurrency()+" "+getString(R.string.discount)+" "+getString(R.string.on_delivery);;
+                binding.tvCoupon.setText(discount);
+
+            }
+
+
+
         }else if (requestCode == 200 && resultCode == Activity.RESULT_OK && data != null){
             FavoriteLocationModel model = (FavoriteLocationModel) data.getSerializableExtra("data");
             addOrderTextModel.setTo_address(model.getAddress());

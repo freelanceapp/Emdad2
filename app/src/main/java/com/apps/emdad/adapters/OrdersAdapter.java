@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Order;
+import com.apps.emdad.activities_fragments.activity_home.fragments.fragment_driver_order.Fragment_Driver_My_Order;
 import com.apps.emdad.databinding.CurrentOrderRowBinding;
 import com.apps.emdad.databinding.LoadMoreRowBinding;
 import com.apps.emdad.models.OrderModel;
@@ -343,18 +344,27 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
 
-            } else if (orderModel.getOrder_status().equals("client_end_and_rate")||orderModel.getOrder_status().equals("driver_end_rate")){
-               /* myHolder.binding.icon.setImageResource(R.drawable.ic_checked);
-                myHolder.binding.icon.setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary));
-                myHolder.binding.tvState.setText(context.getString(R.string.done));*/
+            } else if (orderModel.getOrder_status().equals("client_end_and_rate")){
+
                 myHolder.binding.llOfferCount.setVisibility(View.GONE);
                 myHolder.binding.tvLoading.setVisibility(View.GONE);
                 myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
                 myHolder.binding.llOrderStatus.setVisibility(View.VISIBLE);
                 myHolder.binding.progBar.setProgress(4);
                 myHolder.binding.tvStatus.setText(R.string.delivered);
+                myHolder.binding.flRate.setVisibility(View.GONE);
 
 
+
+            }else if (orderModel.getOrder_status().equals("driver_end_rate")){
+                myHolder.binding.llOfferCount.setVisibility(View.GONE);
+                myHolder.binding.tvLoading.setVisibility(View.GONE);
+                myHolder.binding.tvWaitAcceptOffer.setVisibility(View.GONE);
+                myHolder.binding.progBar.setProgress(4);
+                myHolder.binding.tvStatus.setText(R.string.delivered);
+                myHolder.binding.llOrderStatus.setVisibility(View.GONE);
+                myHolder.binding.llLate.setVisibility(View.GONE);
+                myHolder.binding.flRate.setVisibility(View.VISIBLE);
 
             }else if (orderModel.getOrder_status().equals("client_cancel")){
                 /*myHolder.binding.icon.setImageResource(R.drawable.ic_error);
@@ -365,13 +375,40 @@ public class OrdersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
 
 
-
-
-
-
             myHolder.itemView.setOnClickListener(v -> {
                 OrderModel orderModel1 = list.get(holder.getAdapterPosition());
                 fragment.setItemData(orderModel1);
+            });
+
+
+
+
+
+            myHolder.binding.emoji1.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                fragment.updateRateUi(orderModel1,holder.getAdapterPosition(),1);
+
+            });
+
+            myHolder.binding.emoji2.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                fragment.updateRateUi(orderModel1,holder.getAdapterPosition(),2);
+
+            });
+            myHolder.binding.emoji3.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                fragment.updateRateUi(orderModel1,holder.getAdapterPosition(),3);
+
+            });
+            myHolder.binding.emoji4.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                fragment.updateRateUi(orderModel1,holder.getAdapterPosition(),4);
+
+            });
+            myHolder.binding.emoji5.setOnClickListener(v -> {
+                OrderModel orderModel1 = list.get(holder.getAdapterPosition());
+                fragment.updateRateUi(orderModel1,holder.getAdapterPosition(),5);
+
             });
 
         }else if (holder instanceof LoadMoreHolder){

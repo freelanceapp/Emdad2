@@ -2,8 +2,10 @@ package com.apps.emdad.services;
 
 import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CountryDataModel;
+import com.apps.emdad.models.CouponDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
 import com.apps.emdad.models.CustomPlaceDataModel2;
+import com.apps.emdad.models.FeedbackDataModel;
 import com.apps.emdad.models.MessageDataModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.NotificationDataModel;
@@ -480,5 +482,39 @@ public interface Service {
                                          @Field("order_status") String order_status
     );
 
+    @FormUrlEncoded
+    @POST("api/end-order")
+    Call<ResponseBody> driverRate(@Header("Authorization") String user_token,
+                                  @Field("driver_id") int driver_id,
+                                  @Field("client_id") int client_id,
+                                  @Field("order_id") int order_id,
+                                  @Field("rate") int rate,
+                                  @Field("reason") int reason,
+                                  @Field("comment") String comment
+
+    );
+
+    @FormUrlEncoded
+    @POST("api/client-end-order")
+    Call<ResponseBody> clientRate(@Header("Authorization") String user_token,
+                                  @Field("driver_id") int driver_id,
+                                  @Field("client_id") int client_id,
+                                  @Field("order_id") int order_id,
+                                  @Field("rate") int rate,
+                                  @Field("reason") int reason,
+                                  @Field("comment") String comment
+
+    );
+
+    @GET("api/Get-coupon")
+    Call<CouponDataModel> checkCoupon(@Query(value = "coupon_num") String coupon_num);
+
+    @GET("api/get-comments")
+    Call<FeedbackDataModel> getFeedback(@Header("Authorization") String user_token,
+                                        @Query(value = "user_type") String user_type,
+                                        @Query(value = "user_id") int user_id,
+                                        @Query(value = "page") int page,
+                                        @Query(value = "pagination") String pagination,
+                                        @Query(value = "limit_per_page") int limit_per_page);
 
 }

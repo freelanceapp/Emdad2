@@ -23,6 +23,7 @@ import com.apps.emdad.R;
 import com.apps.emdad.databinding.ActivityAddCouponBinding;
 import com.apps.emdad.databinding.ActivityAddOrderBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.CouponDataModel;
 import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.share.Common;
@@ -90,10 +91,13 @@ public class AddCouponActivity extends AppCompatActivity {
 
     private void verifyCoupon() {
         String coupon = binding.edtCoupon.getText().toString().trim();
-
-        Intent intent = getIntent();
-        setResult(RESULT_OK,intent);
-        finish();
+        if (!coupon.isEmpty()){
+            Common.CloseKeyBoard(this,binding.edtCoupon);
+            binding.edtCoupon.setError(null);
+            checkCoupon(coupon);
+        }else {
+            binding.edtCoupon.setError(getString(R.string.field_req));
+        }
 
     }
 
@@ -169,4 +173,63 @@ public class AddCouponActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void checkCoupon(String coupon_num){
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).checkCoupon(coupon_num)
+                .enqueue(new Callback<CouponDataModel>() {
+                    @Override
+                    public void onResponse(Call<CouponDataModel> call, Response<CouponDataModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                if (response.body().getCoupon()!=null){
+                                    Intent intent = getIntent();
+                                    intent.putExtra("data",response.body().getCoupon());
+                                    setResult(RESULT_OK,intent);
+                                    finish();
+                                }else {
+                                    Toast.makeText(AddCouponActivity.this, R.string.inv_coupon, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } else {
+                            dialog.dismiss();
+
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CouponDataModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(AddCouponActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(AddCouponActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
 }

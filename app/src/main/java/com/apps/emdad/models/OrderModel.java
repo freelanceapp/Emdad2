@@ -33,7 +33,7 @@ public class OrderModel implements Serializable {
     private String notes;
     private String offers_count;
 
-    private CountryModel coupon;
+    private CouponModel coupon;
     private MarketModel market;
     private UserModel.User client;
     private UserModel.User driver;
@@ -160,7 +160,7 @@ public class OrderModel implements Serializable {
         return notes;
     }
 
-    public CountryModel getCoupon() {
+    public CouponModel getCoupon() {
         return coupon;
     }
 

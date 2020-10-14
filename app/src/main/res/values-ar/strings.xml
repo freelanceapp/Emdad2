@@ -325,5 +325,12 @@
     <string name="write_your_opinion_here">إكتب رأيك هنا</string>
     <string name="rate_first">قيم اولا</string>
     <string name="not_now">ليس الان</string>
+    <string name="inv_coupon">هذا الكوبون غير صالح</string>
+    <string name="you_got">لقد حصلت على</string>
+    <string name="on_delivery">على قيمة التوصيل</string>
+    <string name="no_feedback_to_show">لايوجد ملاحظات لعرضها</string>
+    <string name="someting_dont_like">حصل شي ما حبيتة؟</string>
+    <string name="something_you_like">وش اللى حبيت اكثر شئ؟</string>
+    <string name="comments">التعليقات</string>
 
 </resources>

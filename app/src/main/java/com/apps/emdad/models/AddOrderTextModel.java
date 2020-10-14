@@ -19,7 +19,7 @@ public class AddOrderTextModel implements Serializable {
     private String comments;
     private String order_text;
     private String order_type;
-    private String coupon_id;
+    private String coupon_id="0";
     private int time;
     private List<String> images = new ArrayList<>();
 

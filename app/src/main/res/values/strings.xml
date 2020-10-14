@@ -324,6 +324,13 @@
     <string name="write_your_opinion_here">Write your opinion here</string>
     <string name="rate_first">Rate first</string>
     <string name="not_now">Not now</string>
+    <string name="inv_coupon">Invalid Coupon</string>
+    <string name="you_got">You got</string>
+    <string name="on_delivery">on delivery</string>
+    <string name="no_feedback_to_show">No feedback to show</string>
+    <string name="someting_dont_like">Something don\'t like happened?</string>
+    <string name="something_you_like">Something you like more?</string>
+    <string name="comments">Comments</string>
 
 
 </resources>

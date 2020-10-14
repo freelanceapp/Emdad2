@@ -41,6 +41,8 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_bill.AddBillActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
+import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
 import com.apps.emdad.adapters.ChatActionAdapter;
 import com.apps.emdad.adapters.ChatAdapter;
 import com.apps.emdad.adapters.OffersAdapter;
@@ -57,7 +59,9 @@ import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.RangeOfferModel;
+import com.apps.emdad.models.RateModel;
 import com.apps.emdad.models.RateReason;
+import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.SingleMessageDataModel;
 import com.apps.emdad.models.SingleOrderDataModel;
 import com.apps.emdad.models.UserModel;
@@ -124,6 +128,8 @@ public class ChatActivity extends AppCompatActivity {
     private boolean isNewMessage = false;
     private boolean loadData = true;
     private RateReasonAdapter rateReasonAdapter;
+    private RateModel rateModel;
+    private SettingModel settingModel;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -389,9 +395,17 @@ public class ChatActivity extends AppCompatActivity {
         });
         binding.tvNotNow.setOnClickListener(v -> {closeRateActionSheet();});
         binding.tvNotNow.setPaintFlags(binding.tvNotNow.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+        binding.btnRate.setOnClickListener(v -> {
+            String comment = binding.edtRateComment.getText().toString();
+            rateModel.setComment(comment);
+            rate();
+        });
+
         binding.recViewRateReason.setLayoutManager(new GridLayoutManager(this,2));
-        rateReasonAdapter = new RateReasonAdapter(new ArrayList<>(),this);
+        rateReasonAdapter = new RateReasonAdapter(new ArrayList<>(),this,null);
         binding.recViewRateReason.setAdapter(rateReasonAdapter);
+
+
 
         binding.emoji1.setOnClickListener(v -> {rate1UI();});
         binding.emoji2.setOnClickListener(v -> {rate2UI();});
@@ -399,6 +413,16 @@ public class ChatActivity extends AppCompatActivity {
         binding.emoji4.setOnClickListener(v -> {rate4UI();});
         binding.emoji5.setOnClickListener(v -> {rate5UI();});
 
+        binding.flComplain.setOnClickListener(v -> {
+            if (settingModel!=null){
+                Intent intent = new Intent(this, SignUpDelegateActivity.class);
+                String url = Tags.base_url+settingModel.getSettings().getSubmit_the_complaint();
+                intent.putExtra("url",url);
+                startActivity(intent);
+            }else {
+                getSetting();
+            }
+        });
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
@@ -406,6 +430,8 @@ public class ChatActivity extends AppCompatActivity {
         getOrderById(null);
 
     }
+
+
 
     private void getOrderById(ProgressDialog dialog) {
         Api.getService(Tags.base_url).getSingleOrder(userModel.getUser().getToken(), order_id, userModel.getUser().getId())
@@ -679,7 +705,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.btnBill.setText(getString(R.string.delivered));
                 binding.tvBillStatus.setText(R.string.click_on_deliverd);
                 binding.tvEndOrder.setVisibility(View.VISIBLE);
-
+                rateModel = new RateModel();
                 if(loadData){
                     updateUserUi();
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
@@ -688,10 +714,33 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
 
+                if ((userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() != orderModel.getClient().getId())) {
+                    binding.flCall.setVisibility(View.VISIBLE);
+                }
+
 
                 break;
 
             case "driver_end_rate":
+                binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
+                binding.orderStatus.setText(getString(R.string.delivered));
+                binding.btnResend.setVisibility(View.GONE);
+                binding.imageRecord.setVisibility(View.GONE);
+                binding.imageChooser.setVisibility(View.GONE);
+                binding.imageSend.setVisibility(View.GONE);
+                binding.msgContent.setVisibility(View.GONE);
+                binding.llBill.setVisibility(View.GONE);
+                binding.flCall.setVisibility(View.INVISIBLE);
+                binding.flMap.setVisibility(View.INVISIBLE);
+
+                if (loadData){
+                    updateUserUi();
+                    if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
+                        getChatMessages(orderModel.getRoom_id());
+
+                    }
+                }
+                break;
             case "client_end_and_rate":
                 binding.orderStatus.setBackgroundResource(R.drawable.done_bg);
                 binding.orderStatus.setText(getString(R.string.delivered));
@@ -700,6 +749,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageChooser.setVisibility(View.GONE);
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
+                binding.flCall.setVisibility(View.INVISIBLE);
                 binding.llBill.setVisibility(View.GONE);
                 if (loadData){
                     updateUserUi();
@@ -721,6 +771,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.msgContent.setVisibility(View.GONE);
                 binding.tvCanceled.setVisibility(View.VISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
+                binding.flCall.setVisibility(View.INVISIBLE);
                 binding.llBill.setVisibility(View.GONE);
                 if (loadData){
                     updateUserUi();
@@ -740,6 +791,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
                 binding.tvCanceled.setVisibility(View.VISIBLE);
+                binding.flCall.setVisibility(View.INVISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 binding.llBill.setVisibility(View.GONE);
 
@@ -761,6 +813,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.imageSend.setVisibility(View.GONE);
                 binding.msgContent.setVisibility(View.GONE);
                 binding.tvCanceled.setVisibility(View.VISIBLE);
+                binding.flCall.setVisibility(View.INVISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 binding.llBill.setVisibility(View.GONE);
 
@@ -815,9 +868,12 @@ public class ChatActivity extends AppCompatActivity {
 
             binding.tvName.setText(name);
             binding.rateBar.setRating(Float.parseFloat(orderModel.getClient().getRate()));
-            binding.flCall.setVisibility(View.GONE);
             binding.llBill.setVisibility(View.VISIBLE);
-
+            if (orderModel.getOrder_status().equals("reach_to_client")){
+                binding.flCall.setVisibility(View.VISIBLE);
+            }else {
+                binding.flCall.setVisibility(View.INVISIBLE);
+            }
             double offer_value = 0.0;
             if (orderModel.getDriver_last_offer() != null) {
                 offer_value = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
@@ -1295,6 +1351,61 @@ public class ChatActivity extends AppCompatActivity {
         openRateSheet();
     }
 
+
+    private void rate() {
+
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        Api.getService(Tags.base_url).driverRate(userModel.getUser().getToken(), orderModel.getDriver().getId(), orderModel.getClient().getId(), order_id, rateModel.getRate(),rateModel.getReason(),rateModel.getComment())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                isDataChanged = true;
+                                setResult(RESULT_OK);
+                                finish();
+
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+
+    }
     private void rateClear(){
         Picasso.get().load(Tags.IMAGE_URL+orderModel.getClient().getLogo()).placeholder(R.drawable.user_avatar).into(binding.clientImage);
         binding.emoji1.setImageResource(R.drawable.sad1);
@@ -1311,8 +1422,8 @@ public class ChatActivity extends AppCompatActivity {
         binding.btnRate.setText(getString(R.string.rate_first));
         binding.edtRateComment.setText(null);
         rateReasonAdapter.addData(new ArrayList<>());
+        rateModel = new RateModel();
     }
-
     private void rate1UI(){
 
         binding.emoji1.setImageResource(R.drawable.sad2);
@@ -1334,9 +1445,10 @@ public class ChatActivity extends AppCompatActivity {
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
+        rateModel.setRate(1);
+
 
     }
-
     private void rate2UI(){
         Picasso.get().load(Tags.IMAGE_URL+orderModel.getClient().getLogo()).placeholder(R.drawable.user_avatar).into(binding.clientImage);
         binding.emoji1.setImageResource(R.drawable.sad1);
@@ -1358,6 +1470,7 @@ public class ChatActivity extends AppCompatActivity {
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
+        rateModel.setRate(2);
 
     }
 
@@ -1381,6 +1494,8 @@ public class ChatActivity extends AppCompatActivity {
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
+        rateModel.setRate(3);
+
 
     }
     private void rate4UI(){
@@ -1400,6 +1515,8 @@ public class ChatActivity extends AppCompatActivity {
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
+        rateModel.setRate(4);
+
 
     }
     private void rate5UI(){
@@ -1421,8 +1538,11 @@ public class ChatActivity extends AppCompatActivity {
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
+        rateModel.setRate(5);
+
 
     }
+
     private void openSheet() {
         binding.flAction.clearAnimation();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
@@ -1560,6 +1680,63 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    private void getSetting(){
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).getSetting(lang)
+                .enqueue(new Callback<SettingModel>() {
+                    @Override
+                    public void onResponse(Call<SettingModel> call, Response<SettingModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                settingModel = response.body();
+                                Intent intent = new Intent(ChatActivity.this, SignUpDelegateActivity.class);
+                                String url = Tags.base_url+settingModel.getSettings().getSubmit_the_complaint();
+                                intent.putExtra("url",url);
+                                startActivity(intent);
+
+                            }
+                        } else {
+
+                            dialog.dismiss();
+
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SettingModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(ChatActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
     private void sendAttachment(String file_uri,String message, String attachment_type) {
         binding.expandedLayout.collapse(true);
         Intent intent = new Intent(this, ServiceUploadAttachment.class);
@@ -1680,6 +1857,9 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
+    public void setRateItem(RateReason reason) {
+        rateModel.setReason(reason.getId());
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAttachmentSuccess(MessageModel messageModel) {
@@ -2091,6 +2271,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
+
 
 
 }

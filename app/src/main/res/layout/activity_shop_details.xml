@@ -431,10 +431,10 @@
                     android:id="@+id/btnNext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/color_rose"
+                    android:background="@color/colorPrimary"
                     android:textColor="@color/white"
                     android:textSize="15sp"
-                    android:text="@string/sorry_this_branch_is_out_of_service"
+                    android:text="@string/next"
                     android:textAllCaps="false"
                     />
             </LinearLayout>

@@ -16,12 +16,14 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.apps.emdad.BuildConfig;
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_intro_slider.IntroSliderActivity;
 import com.apps.emdad.activities_fragments.activity_language.LanguageActivity;
@@ -33,6 +35,7 @@ import com.apps.emdad.databinding.ActivitySettingsBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.DefaultSettings;
+import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -56,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
     private DefaultSettings defaultSettings;
     private Preferences preferences;
     private UserModel userModel;
+    private SettingModel settingModel;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -82,7 +86,6 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         defaultSettings = preferences.getAppSetting(this);
-
         Paper.init(this);
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
@@ -112,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
                 );
             }
         }
-
+        getSetting();
 
 
 
@@ -172,6 +175,60 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
                 });
     }
 
+    private void getSetting(){
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).getSetting(lang)
+                .enqueue(new Callback<SettingModel>() {
+                    @Override
+                    public void onResponse(Call<SettingModel> call, Response<SettingModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                settingModel = response.body();
+
+
+                            }
+                        } else {
+
+                            dialog.dismiss();
+
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SettingModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(SettingsActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(SettingsActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
 
     @Override
     public void onTone() {
@@ -184,7 +241,14 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     @Override
     public void onComplaint() {
-
+        if (settingModel!=null){
+            Intent intent = new Intent(this, SignUpDelegateActivity.class);
+            String url = Tags.base_url+settingModel.getSettings().getComplaint_list();
+            intent.putExtra("url",url);
+            startActivity(intent);
+        }else {
+            Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -201,12 +265,26 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
     @Override
     public void onTerms() {
-
+        if (settingModel!=null){
+            Intent intent = new Intent(this, SignUpDelegateActivity.class);
+            String url = Tags.base_url+settingModel.getSettings().getTerms_and_conditions();
+            intent.putExtra("url",url);
+            startActivity(intent);
+        }else {
+            Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onPrivacy() {
-
+        if (settingModel!=null){
+            Intent intent = new Intent(this, SignUpDelegateActivity.class);
+            String url = Tags.base_url+settingModel.getSettings().getPrivacy_policy();
+            intent.putExtra("url",url);
+            startActivity(intent);
+        }else {
+            Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

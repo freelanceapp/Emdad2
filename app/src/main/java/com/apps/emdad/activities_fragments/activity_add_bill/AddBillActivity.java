@@ -141,9 +141,20 @@ public class AddBillActivity extends AppCompatActivity {
         binding.btnSend.setOnClickListener(v -> {
             if (canSelect){
                 double discount = 0.0;
+                double discountValue=0.0;
+                if (orderModel.getCoupon()!=null){
+                    if (orderModel.getCoupon().getCoupon_type().equals("per")){
+                        discountValue = delivery_cost*(Double.parseDouble(orderModel.getCoupon().getCoupon_value())/100);
+                    }else {
+                        discountValue = Double.parseDouble(orderModel.getCoupon().getCoupon_value());
+
+                    }
+                    discount = delivery_cost-discountValue;
+                }
+
                 double delivery_cost_after_discount = delivery_cost-discount;
                 double total_cost2 = delivery_cost_after_discount+product_cost;
-                String message= "قام المرسول " +orderModel.getDriver().getName()+" بإصدار فاتورة"+"\n"+"تكلفة المشتريات :"+product_cost+" "+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"تكلفة التوصيل :"+delivery_cost+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"قيمة الخصم :"+"0.0"+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"مجموع تكلفة التوصيل :"+delivery_cost+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"المجموع الكلي:"+total_cost2+userModel.getUser().getCountry().getWord().getCurrency();
+                String message= "قام المرسول " +orderModel.getDriver().getName()+" بإصدار فاتورة"+"\n"+"تكلفة المشتريات :"+product_cost+" "+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"تكلفة التوصيل :"+delivery_cost+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"قيمة الخصم :"+discountValue+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"مجموع تكلفة التوصيل :"+delivery_cost_after_discount+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"المجموع الكلي:"+total_cost2+userModel.getUser().getCountry().getWord().getCurrency();
 
                 if (uri==null){
                     AddBillWithoutImage(message,product_cost);

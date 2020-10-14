@@ -32,6 +32,7 @@ import com.apps.emdad.databinding.ActivityAddOrderBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.AddOrderTextModel;
 import com.apps.emdad.models.ChatBotModel;
+import com.apps.emdad.models.CouponModel;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.NearbyModel;
 import com.apps.emdad.models.OrderModel;
@@ -789,8 +790,17 @@ public class AddOrderActivity extends AppCompatActivity {
 
 
         }else if (requestCode == 400 && resultCode == RESULT_OK && data != null) {
-           addOrderTextModel.setCoupon_id("0");
-            updateCouponAction("تم حصولك على خصم 10%");
+            CouponModel couponModel = (CouponModel) data.getSerializableExtra("data");
+
+           addOrderTextModel.setCoupon_id(String.valueOf(couponModel.getId()));
+           if (couponModel.getCoupon_type().equals("per")){
+               String discount = getString(R.string.you_got)+" "+couponModel.getCoupon_value()+"% "+getString(R.string.discount)+" "+getString(R.string.on_delivery);
+               updateCouponAction(discount);
+
+           }else {
+               String discount = getString(R.string.you_got)+" "+couponModel.getCoupon_value()+" "+userModel.getUser().getCountry().getWord().getCurrency()+" "+getString(R.string.discount)+" "+getString(R.string.on_delivery);;
+               updateCouponAction(discount);
+           }
 
         }else if (requestCode==500 && resultCode==RESULT_OK && data!=null){
             try {

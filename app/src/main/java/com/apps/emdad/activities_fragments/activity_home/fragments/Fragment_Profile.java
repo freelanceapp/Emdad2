@@ -26,6 +26,7 @@ import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
+import com.apps.emdad.activities_fragments.activity_user_feedback.UserFeedbackActivity;
 import com.apps.emdad.databinding.FragmentNotificationBinding;
 import com.apps.emdad.databinding.FragmentProfileBinding;
 import com.apps.emdad.interfaces.Listeners;
@@ -107,7 +108,8 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     @Override
     public void onFeedback() {
-
+        Intent intent = new Intent(activity, UserFeedbackActivity.class);
+        startActivity(intent);
     }
 
     @Override

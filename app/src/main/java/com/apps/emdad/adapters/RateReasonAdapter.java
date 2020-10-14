@@ -6,13 +6,17 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Main;
+import com.apps.emdad.activities_fragments.activity_home.fragments.Fragment_Order;
+import com.apps.emdad.activities_fragments.activity_home.fragments.fragment_driver_order.Fragment_Driver_My_Order;
 import com.apps.emdad.databinding.CategoryRowBinding;
 import com.apps.emdad.databinding.RateReasonRowBinding;
 import com.apps.emdad.models.CategoryModel;
@@ -29,15 +33,17 @@ public class RateReasonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private List<RateReason> list;
     private Context context;
     private LayoutInflater inflater;
-    private ChatActivity activity;
+    private AppCompatActivity appCompatActivity;
     private int selectedPos = -1;
+    private Fragment fragment;
 
 
-    public RateReasonAdapter(List<RateReason> list, Context context) {
+    public RateReasonAdapter(List<RateReason> list, Context context,Fragment fragment) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        activity = (ChatActivity) context;
+        appCompatActivity = (AppCompatActivity) context;
+        this.fragment = fragment;
 
 
     }
@@ -68,17 +74,54 @@ public class RateReasonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         myHolder.itemView.setOnClickListener(v -> {
-            if (selectedPos!=-1){
-                RateReason reason = list.get(selectedPos);
-                reason.setSelected(false);
-                list.set(selectedPos,reason);
-                notifyItemChanged(selectedPos);
+            if (appCompatActivity instanceof ChatActivity){
+                ChatActivity activity = (ChatActivity) appCompatActivity;
+                if (selectedPos!=-1){
+                    RateReason reason = list.get(selectedPos);
+                    reason.setSelected(false);
+                    list.set(selectedPos,reason);
+                    notifyItemChanged(selectedPos);
+                }
+                selectedPos = myHolder.getAdapterPosition();
+                RateReason reason = list.get(myHolder.getAdapterPosition());
+                list.set(myHolder.getAdapterPosition(),reason);
+                reason.setSelected(true);
+                activity.setRateItem(reason);
+                notifyItemChanged(myHolder.getAdapterPosition());
+            }else {
+                if (fragment!=null){
+                    if (fragment instanceof Fragment_Driver_My_Order){
+                        Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragment;
+                        if (selectedPos!=-1){
+                            RateReason reason = list.get(selectedPos);
+                            reason.setSelected(false);
+                            list.set(selectedPos,reason);
+                            notifyItemChanged(selectedPos);
+                        }
+                        selectedPos = myHolder.getAdapterPosition();
+                        RateReason reason = list.get(myHolder.getAdapterPosition());
+                        list.set(myHolder.getAdapterPosition(),reason);
+                        reason.setSelected(true);
+                        fragment_driver_my_order.setRateItem(reason);
+                        notifyItemChanged(myHolder.getAdapterPosition());
+                    }else if (fragment instanceof Fragment_Order){
+                        Fragment_Order fragment_order = (Fragment_Order) fragment;
+                        if (selectedPos!=-1){
+                            RateReason reason = list.get(selectedPos);
+                            reason.setSelected(false);
+                            list.set(selectedPos,reason);
+                            notifyItemChanged(selectedPos);
+                        }
+                        selectedPos = myHolder.getAdapterPosition();
+                        RateReason reason = list.get(myHolder.getAdapterPosition());
+                        list.set(myHolder.getAdapterPosition(),reason);
+                        reason.setSelected(true);
+                        fragment_order.setRateItem(reason);
+                        notifyItemChanged(myHolder.getAdapterPosition());
+                    }
+                }
             }
-            selectedPos = myHolder.getAdapterPosition();
-            RateReason reason = list.get(myHolder.getAdapterPosition());
-            list.set(myHolder.getAdapterPosition(),reason);
-            reason.setSelected(true);
-            notifyItemChanged(myHolder.getAdapterPosition());
+
 
         });
 
