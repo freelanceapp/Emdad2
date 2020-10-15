@@ -41,6 +41,7 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_bill.AddBillActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
+import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
 import com.apps.emdad.adapters.ChatActionAdapter;
@@ -54,6 +55,7 @@ import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.FromToLocationModel;
 import com.apps.emdad.models.MessageDataModel;
 import com.apps.emdad.models.MessageModel;
+import com.apps.emdad.models.NotFireModel;
 import com.apps.emdad.models.OffersDataModel;
 import com.apps.emdad.models.OffersModel;
 import com.apps.emdad.models.OrderModel;
@@ -257,16 +259,13 @@ public class ChatActivity extends AppCompatActivity {
 
                                 if (Double.parseDouble(offersModel.getOffer_value()) > Double.parseDouble(offersModel.getMin_offer())) {
                                     clientRefuseOffer(offersModel, "yes");
-                                    Log.e("11", "11");
 
                                 } else {
                                     deleteOrder(chatActionModel);
-                                    Log.e("22", "22");
 
                                 }
 
                             } else {
-                                Log.e("33", "33");
                                 deleteOrder(chatActionModel);
 
                             }
@@ -423,6 +422,12 @@ public class ChatActivity extends AppCompatActivity {
                 getSetting();
             }
         });
+
+        binding.btnResend.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ResendOrderTextActivity.class);
+            intent.putExtra("data",orderModel);
+            startActivity(intent);
+        });
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
@@ -493,12 +498,23 @@ public class ChatActivity extends AppCompatActivity {
     private void updateUi(OrderModel orderModel) {
 
         rateClear();
+
         binding.tvEndOrder.setVisibility(View.GONE);
 
         if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
             binding.imageMore.setVisibility(View.VISIBLE);
+            if (orderModel.getDriver()!=null){
+                preferences.create_chat_user_id(this,String.valueOf(orderModel.getDriver().getId()));
+
+            }
 
         } else {
+
+            if (orderModel.getClient()!=null){
+                preferences.create_chat_user_id(this,String.valueOf(orderModel.getClient().getId()));
+
+            }
+
             binding.imageMore.setVisibility(View.VISIBLE);
             if (orderModel.getDriver_last_offer() == null) {
                 binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
@@ -1026,11 +1042,6 @@ public class ChatActivity extends AppCompatActivity {
         openSheet();
     }
 
-    private void resendOrder() {
-        isDataChanged = true;
-        binding.btnResend.setVisibility(View.GONE);
-    }
-
     public void setReason(ChatActionModel chatActionModel) {
         this.chatActionModel = chatActionModel;
 
@@ -1473,7 +1484,6 @@ public class ChatActivity extends AppCompatActivity {
         rateModel.setRate(2);
 
     }
-
     private void rate3UI(){
         binding.emoji1.setImageResource(R.drawable.sad1);
         binding.emoji2.setImageResource(R.drawable.sad1);
@@ -1873,14 +1883,20 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
-
+    @Subscribe
+    public void onOrderUpdated(NotFireModel notFireModel){
+        getOrderById(null);
+    }
     private void deleteFile() {
-        if (!audio_path.isEmpty()) {
-            File file = new File(audio_path);
-            if (file.exists()) {
-                file.delete();
+        try {
+            if (!audio_path.isEmpty()) {
+                File file = new File(audio_path);
+                if (file.exists()) {
+                    file.delete();
+                }
             }
-        }
+        }catch (Exception e){}
+
     }
 
 
@@ -2273,5 +2289,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        preferences.create_chat_user_id(this,"");
+    }
 }

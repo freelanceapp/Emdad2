@@ -86,6 +86,23 @@ public class Preferences {
         return session;
     }
 
+    public void create_chat_user_id(Context context, String chat_user_id) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("chat_user", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("chat_user_id", chat_user_id);
+        editor.apply();
+
+
+    }
+
+    public String getChat_User_Id(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("chat_user", Context.MODE_PRIVATE);
+        String chat_user_id = preferences.getString("chat_user_id","");
+        return chat_user_id;
+    }
+
+
 
     public void clear(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);

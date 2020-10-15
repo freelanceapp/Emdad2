@@ -16,17 +16,23 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
+import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.adapters.OrdersAdapter;
 import com.apps.emdad.adapters.PreviousOrdersAdapter;
 import com.apps.emdad.databinding.ActivityAddCouponBinding;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.NotFireModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,6 +98,9 @@ public class OldOrdersActivity extends AppCompatActivity {
 
         binding.flBack.setOnClickListener(v -> onBackPressed());
 
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
 
     }
 
@@ -214,9 +223,11 @@ public class OldOrdersActivity extends AppCompatActivity {
                 });
     }
 
-
     public void resendOrder(OrderModel orderModel) {
         isDataChanged = true;
+        Intent intent = new Intent(this, ResendOrderTextActivity.class);
+        intent.putExtra("data",orderModel);
+        startActivity(intent);
     }
 
     public void setItemData(OrderModel orderModel) {
@@ -234,6 +245,10 @@ public class OldOrdersActivity extends AppCompatActivity {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOrderUpdated(NotFireModel notFireModel){
+        getOrders();
+    }
     @Override
     public void onBackPressed() {
         if (isDataChanged) {
@@ -243,4 +258,11 @@ public class OldOrdersActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 public class DefaultSettings implements Serializable {
     private boolean isLanguageSelected = false;
     private boolean showIntroSlider = true;
-    private String ringToneUri;
+    private String ringToneUri="";
     private String ringToneName;
     private List<FavoriteLocationModel> favoriteLocationModelList = new ArrayList<>();
     private List<String> recentSearchList = new ArrayList<>();

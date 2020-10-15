@@ -1,6 +1,7 @@
 package com.apps.emdad.notifications;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -21,6 +23,10 @@ import androidx.core.app.NotificationCompat;
 
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.models.MessageModel;
+import com.apps.emdad.models.NotFireModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -57,12 +63,48 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         if (getSession().equals(Tags.session_login))
         {
             String to_user_id = String.valueOf(Integer.parseInt(map.get("to_user_id")));
-           /* String my_id = getCurrentUser_id();
+            String my_id = String.valueOf(getUserData().getUser().getId());
+            String notification_type =map.get("noti_type");
+            String from_user_id =map.get("from_user_id");
 
             if (my_id.equals(to_user_id))
             {
-                manageNotification(map);
-            }*/
+                if (notification_type.equals("chat")){
+                    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                    String current_class = activityManager.getRunningTasks(1).get(0).topActivity.getClassName();
+                    if (current_class.equals("com.apps.emdad.activities_fragments.activity_chat.ChatActivity")){
+                        if (from_user_id.equals(getChatUserId())){
+                            String id = String.valueOf(map.get("id"));
+                            String room_id = map.get("room_id");
+                            String type = String.valueOf(map.get("type"));
+                            String message = String.valueOf(map.get("message"));
+                            String date = String.valueOf(map.get("date"));
+                            String image="";
+                            String voice="";
+                            if (map.get("image")!=null){
+                                image = map.get("image");
+                            }
+
+                            if (map.get("voice")!=null){
+                                voice = map.get("voice");
+                            }
+                            MessageModel messageModel = new MessageModel(Integer.parseInt(id),room_id,from_user_id,to_user_id,type,message,image,voice,date);
+                            EventBus.getDefault().post(messageModel);
+
+                        }else {
+                            manageNotification(map);
+                        }
+                    }else {
+                        manageNotification(map);
+                    }
+
+
+                }else {
+                    manageNotification(map);
+
+                }
+
+            }
         }
     }
 
@@ -80,11 +122,14 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     }
 
 
+
+
+
+
+
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
-        Log.e("token",s);
-
         if (getSession().equals(Tags.session_login))
         {
             updateTokenFireBase(s);
@@ -96,10 +141,16 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     @SuppressLint("NewApi")
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void createNewNotificationVersion(Map<String, String> map) {
-        String sound_Path = "android.resource://" + getPackageName() + "/" + R.raw.not;
+        String sound_Path = getRingtonePath();
+        if (sound_Path.isEmpty()){
+            Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_RINGTONE);
+            sound_Path = uri.toString();
+        }
 
-        String title =map.get("notification_title");
-        String body = map.get("notification_body");
+        String title =map.get("title");
+        String body = map.get("message");
+        String notification_type =map.get("noti_type");
+        String order_id =map.get("order_id");
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         String CHANNEL_ID = "my_channel_02";
@@ -119,52 +170,85 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         builder.setSound(Uri.parse(sound_Path), AudioManager.STREAM_NOTIFICATION);
         builder.setSmallIcon(R.mipmap.ic_launcher_round);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
-        builder.setLargeIcon(bitmap);
-
-
-
-
-        /*Intent intent = new Intent(this, NotificationActivity.class);
-        intent.putExtra("not",true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
-        taskStackBuilder.addNextIntent(intent);
-
-        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(pendingIntent);
-
-
-
         builder.setContentTitle(title);
         builder.setContentText(body);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(body));
 
 
 
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (manager != null) {
 
-            manager.createNotificationChannel(channel);
-            manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+        if (notification_type.equals("chat")){
+            Intent intent = new Intent(this, ChatActivity.class);
+            intent.putExtra("order_id",order_id);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.image_avatar);
+            builder.setLargeIcon(bitmap);
 
-            EventBus.getDefault().post(new NotFireModel(true));
+        }else if (notification_type.equals("order")){
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+            builder.setLargeIcon(bitmap);
 
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+
+                manager.createNotificationChannel(channel);
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+
+                EventBus.getDefault().post(new NotFireModel(true));
+
+            }
+
+        }else if (notification_type.equals("offer")){
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+            builder.setLargeIcon(bitmap);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+
+                manager.createNotificationChannel(channel);
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+
+                EventBus.getDefault().post(new NotFireModel(true));
+
+            }
         }
-*/
+
+
+
+
+
 
     }
 
     private void createOldNotificationVersion(Map<String, String> map) {
 
 
-        String sound_Path = "android.resource://" + getPackageName() + "/" + R.raw.not;
-
-        String title =map.get("notification_title");
-        String body = map.get("notification_body");
-
+        String sound_Path = getRingtonePath();
+        if (sound_Path.isEmpty()){
+            Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_RINGTONE);
+            sound_Path = uri.toString();
+        }
+        String title =map.get("title");
+        String body = map.get("message");
+        String notification_type =map.get("noti_type");
+        String order_id =map.get("order_id");
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
@@ -172,37 +256,62 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         builder.setSound(Uri.parse(sound_Path), AudioManager.STREAM_NOTIFICATION);
         builder.setSmallIcon(R.mipmap.ic_launcher_round);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
-        builder.setLargeIcon(bitmap);
-
-       /* Intent intent = new Intent(this, NotificationActivity.class);
-        intent.putExtra("not",true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
-        taskStackBuilder.addNextIntent(intent);
-
-        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(pendingIntent);
-
         builder.setContentTitle(title);
         builder.setContentText(body);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(body));
 
 
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (manager != null) {
-            manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+        if (notification_type.equals("chat")){
+            Intent intent = new Intent(this, ChatActivity.class);
+            intent.putExtra("order_id",order_id);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.image_avatar);
+            builder.setLargeIcon(bitmap);
+
+        }else if (notification_type.equals("order")){
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+            builder.setLargeIcon(bitmap);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+                EventBus.getDefault().post(new NotFireModel(true));
+
+            }
+        }else if (notification_type.equals("offer")){
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+            builder.setLargeIcon(bitmap);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+                EventBus.getDefault().post(new NotFireModel(true));
+
+            }
+        }
 
 
 
-            EventBus.getDefault().post(new NotFireModel(true));
 
-        }*/
     }
-
-
 
     private void updateTokenFireBase(String token) {
 
@@ -255,9 +364,6 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         }
     }
 
-
-
-
     private UserModel getUserData(){
         return preferences.getUserData(this);
     }
@@ -266,4 +372,15 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     {
         return preferences.getSession(this);
     }
+
+    private String getChatUserId()
+    {
+        return preferences.getChat_User_Id(this);
+    }
+
+    private String getRingtonePath()
+    {
+        return preferences.getAppSetting(this).getRingToneUri();
+    }
+
 }

@@ -99,7 +99,7 @@ public class Fragment_Notifications extends Fragment {
     public void updateUserData(UserModel userModel){
         this.userModel = userModel;
     }
-    private void getNotifications() {
+    public void getNotifications() {
         updateNotificationCount();
         Api.getService(Tags.base_url).getNotification(userModel.getUser().getToken(), userModel.getUser().getId(), 1, "on", 20)
                 .enqueue(new Callback<NotificationDataModel>() {
@@ -159,7 +159,6 @@ public class Fragment_Notifications extends Fragment {
                     }
                 });
     }
-
 
     private void loadMore(int page) {
         notificationModelList.add(null);

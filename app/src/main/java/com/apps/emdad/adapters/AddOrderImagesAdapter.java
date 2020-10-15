@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_products.AddOrderProductActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
+import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_shops.ShopsActivity;
 import com.apps.emdad.databinding.AddOrderImagesMoreRowBinding;
 import com.apps.emdad.databinding.AddOrderImagesRowBinding;
@@ -73,6 +74,10 @@ public class AddOrderImagesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     AddOrderProductActivity addOrderProductActivity = (AddOrderProductActivity) activity;
                     addOrderProductActivity.delete(myHolder.getAdapterPosition());
 
+                }else if (activity instanceof ResendOrderTextActivity){
+                    ResendOrderTextActivity resendOrderTextActivity = (ResendOrderTextActivity) activity;
+                    resendOrderTextActivity.delete(myHolder.getAdapterPosition());
+
                 }
             });
 
@@ -87,6 +92,10 @@ public class AddOrderImagesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }else if (activity instanceof AddOrderProductActivity){
                     AddOrderProductActivity addOrderProductActivity = (AddOrderProductActivity) activity;
                     addOrderProductActivity.createDialogAlert();
+
+                }else if (activity instanceof ResendOrderTextActivity){
+                    ResendOrderTextActivity resendOrderTextActivity = (ResendOrderTextActivity) activity;
+                    resendOrderTextActivity.createDialogAlert();
 
                 }
 

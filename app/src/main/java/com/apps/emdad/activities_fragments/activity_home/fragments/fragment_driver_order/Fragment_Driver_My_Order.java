@@ -118,7 +118,7 @@ public class Fragment_Driver_My_Order extends Fragment {
         getOrders();
     }
 
-    private void getOrders() {
+    public void getOrders() {
         if (loadMoreCall!=null){
             loadMoreCall.cancel();
             if (orderModelList.size()>0&&orderModelList.get(orderModelList.size()-1)==null){

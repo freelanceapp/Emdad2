@@ -10,8 +10,8 @@ public class OrderModel implements Serializable {
     private String order_type;
     private String user_id;
     private String driver_id;
-    private String market_id;
-    private String google_palce_id;
+    private String market_id="0";
+    private String google_palce_id="";
     private String bill_cost;
     private String bill_step;
     private String payment_method;

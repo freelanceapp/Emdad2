@@ -33,6 +33,7 @@ import com.apps.emdad.databinding.ActivityHomeBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.location_service.LocationService;
 import com.apps.emdad.models.LocationModel;
+import com.apps.emdad.models.NotFireModel;
 import com.apps.emdad.models.UnReadCountModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
@@ -206,6 +207,11 @@ public class HomeActivity extends AppCompatActivity {
             }
             getNotificationCount();
             updateFirebaseToken();
+        }
+
+
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
         }
 
     }
@@ -548,6 +554,19 @@ public class HomeActivity extends AppCompatActivity {
         user_lng = locationModel.getLng();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOrderUpdated(NotFireModel notFireModel){
+        if (fragment_notifications!=null&&fragment_notifications.isAdded()){
+            fragment_notifications.getNotifications();
+        }
+        if (fragment_order!=null&&fragment_order.isAdded()){
+            fragment_order.getOrders();
+        }
+
+        if (fragment_driver_order!=null&&fragment_driver_order.isAdded()){
+            fragment_driver_order.updateData();
+        }
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -669,5 +688,11 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
 }

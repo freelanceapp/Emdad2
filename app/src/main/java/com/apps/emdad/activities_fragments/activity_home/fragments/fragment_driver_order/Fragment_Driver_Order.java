@@ -67,4 +67,14 @@ public class Fragment_Driver_Order extends Fragment {
         });
     }
 
+
+    public void updateData(){
+        Fragment_Driver_My_Order fragment_driver_my_order = (Fragment_Driver_My_Order) fragmentList.get(0);
+        fragment_driver_my_order.getOrders();
+        Fragment_Driver_Deliver_Order fragment_driver_deliver_order = (Fragment_Driver_Deliver_Order) fragmentList.get(1);
+        fragment_driver_deliver_order.getOrders();
+
+
+    }
+
 }
