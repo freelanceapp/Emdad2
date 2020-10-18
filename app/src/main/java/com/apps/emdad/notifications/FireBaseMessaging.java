@@ -25,6 +25,7 @@ import androidx.core.app.NotificationCompat;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.MessageModel;
 import com.apps.emdad.models.NotFireModel;
 import com.apps.emdad.models.UserModel;
@@ -96,6 +97,12 @@ public class FireBaseMessaging extends FirebaseMessagingService {
                     manageNotification(map);
                 }
 
+
+            }else if (notification_type.equals("location")){
+                double lat = Double.parseDouble(map.get("latitude"));
+                double lng = Double.parseDouble(map.get("longitude"));
+                FavoriteLocationModel model = new FavoriteLocationModel("","","",lat,lng);
+                EventBus.getDefault().post(model);
 
             }else {
                 manageNotification(map);

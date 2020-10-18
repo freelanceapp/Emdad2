@@ -25,6 +25,7 @@ import com.apps.emdad.activities_fragments.activity_user_feedback.UserFeedbackAc
 import com.apps.emdad.databinding.ActivityDriverUpdateLocationBinding;
 import com.apps.emdad.databinding.ActivityFollowOrderBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.FeedbackDataModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.UserModel;
@@ -47,6 +48,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 
@@ -99,6 +104,9 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
         binding.close.setOnClickListener(v -> {super.onBackPressed();});
         updateUI();
         binding.setModel(orderModel);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
 
     }
 
@@ -248,6 +256,11 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
                     }
                 });
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDriverLocationChanged(FavoriteLocationModel favoriteLocationModel){
+        updateCarLocation(favoriteLocationModel.getLat(),favoriteLocationModel.getLng());
+    }
     private void updateCarLocation(double latitude,double longitude){
         endPosition = new LatLng(latitude,longitude);
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
@@ -289,6 +302,13 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
         return -1;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
 }
 
 
