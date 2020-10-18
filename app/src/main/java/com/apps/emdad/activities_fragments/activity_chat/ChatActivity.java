@@ -372,11 +372,6 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new ChatAdapter(messageModelList,this,userModel.getUser().getId());
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(adapter);
-        binding.recView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            if ( bottom < oldBottom) {
-                binding.recView.postDelayed(() -> binding.recView.scrollToPosition(adapter.getItemCount()), 100);
-            }
-        });
         binding.imageSend.setOnClickListener(v -> {
             String message =binding.edtMessage.getText().toString().trim();
             if (!message.isEmpty()){
