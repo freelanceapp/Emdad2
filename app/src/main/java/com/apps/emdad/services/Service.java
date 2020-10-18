@@ -1,5 +1,6 @@
 package com.apps.emdad.services;
 
+import com.apps.emdad.models.BalanceModel;
 import com.apps.emdad.models.CategoryDataModel;
 import com.apps.emdad.models.CountryDataModel;
 import com.apps.emdad.models.CouponDataModel;
@@ -530,7 +531,12 @@ public interface Service {
                                             @Field("longitude") double longitude
 
 
-
     );
+
+
+    @GET("api/get-user-balance")
+    Call<BalanceModel> getUserBalance(@Header("Authorization") String user_token,
+                                      @Query("user_id") int user_id);
+
 
 }
