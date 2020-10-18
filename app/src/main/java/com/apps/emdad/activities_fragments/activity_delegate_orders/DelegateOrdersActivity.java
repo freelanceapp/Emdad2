@@ -23,6 +23,7 @@ import com.apps.emdad.adapters.OrdersAdapter;
 import com.apps.emdad.databinding.ActivityDelegateOrdersBinding;
 import com.apps.emdad.databinding.ActivityOldOrdersBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.NotFireModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.UserModel;
@@ -31,6 +32,10 @@ import com.apps.emdad.remote.Api;
 import com.apps.emdad.tags.Tags;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -114,6 +119,10 @@ public class DelegateOrdersActivity extends AppCompatActivity {
 
         binding.swipeRefresh.setOnRefreshListener(this::getOrders);
 
+
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         getOrders();
     }
 
@@ -331,5 +340,20 @@ public class DelegateOrdersActivity extends AppCompatActivity {
         intent.putExtra("order_id",orderModel1.getId());
         startActivity(intent);
         finish();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOrderUpdated(NotFireModel notFireModel)
+    {
+        getOrders();
+    }
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
     }
 }

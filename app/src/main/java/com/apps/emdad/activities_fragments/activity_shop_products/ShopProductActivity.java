@@ -245,7 +245,6 @@ public class ShopProductActivity extends AppCompatActivity {
         });
 
         binding.btnAddProduct.setOnClickListener(v -> {
-            Log.e("id", selectedProduct.getId() + "_");
             ShopDepartments departments = shopDepartmentsList.get(parentPos);
             departments.setCount(count);
             selectedProduct.setCount(count);
@@ -374,7 +373,6 @@ public class ShopProductActivity extends AppCompatActivity {
             public void onResponse(Call<ShopDepartmentDataModel> call, Response<ShopDepartmentDataModel> response) {
                 binding.progBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
-                    Log.e("data", response.body().getData().size() + "__");
 
                     if (response.body() != null && response.body().getData() != null && response.body().getData().size() > 0) {
                         updateDepartmentsUi(response.body().getData());
@@ -561,7 +559,6 @@ public class ShopProductActivity extends AppCompatActivity {
     }
 
     public void setAdditionItem(AdditionModel additionModel, int pos, boolean isSelected) {
-        Log.e("add_price",additionModel.getPrice());
         if (isSelected) {
             selectedAdditionList.add(additionModel);
         } else {
@@ -574,7 +571,6 @@ public class ShopProductActivity extends AppCompatActivity {
 
         }
 
-        Log.e("ssssizzzeee", selectedAdditionList.size() + "___");
         selectedProduct.setSelectedAdditions(selectedAdditionList);
         double total = getTotalItemCost(selectedProduct) * count;
         binding.tvTotalCost.setText(String.format("%s %s", total, currency));
@@ -609,7 +605,6 @@ public class ShopProductActivity extends AppCompatActivity {
             productModelList.remove(pos);
             addOrderProductsModel.setProductModelList(productModelList);
             totalOrderCost = getTotalOrderCost(addOrderProductsModel.getProductModelList());
-            Log.e("total_order_cost", totalOrderCost + "_");
         }
         updateTotalUi();
 
@@ -695,7 +690,6 @@ public class ShopProductActivity extends AppCompatActivity {
 
     private double getTotalItemCost(ProductModel productModel) {
         double total = (Double.parseDouble(productModel.getPrice()) + getTotalItemCostAdditions(productModel));
-        Log.e("total", total + "__");
         return total;
     }
 

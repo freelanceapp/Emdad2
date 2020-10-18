@@ -67,42 +67,38 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             String notification_type =map.get("noti_type");
             String from_user_id =map.get("from_user_id");
 
-            if (my_id.equals(to_user_id))
-            {
-                if (notification_type.equals("chat")){
-                    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                    String current_class = activityManager.getRunningTasks(1).get(0).topActivity.getClassName();
-                    if (current_class.equals("com.apps.emdad.activities_fragments.activity_chat.ChatActivity")){
-                        if (from_user_id.equals(getChatUserId())){
-                            String id = String.valueOf(map.get("id"));
-                            String room_id = map.get("room_id");
-                            String type = String.valueOf(map.get("type"));
-                            String message = String.valueOf(map.get("message"));
-                            String date = String.valueOf(map.get("date"));
-                            String image="";
-                            String voice="";
-                            if (map.get("image")!=null){
-                                image = map.get("image");
-                            }
-
-                            if (map.get("voice")!=null){
-                                voice = map.get("voice");
-                            }
-                            MessageModel messageModel = new MessageModel(Integer.parseInt(id),room_id,from_user_id,to_user_id,type,message,image,voice,date);
-                            EventBus.getDefault().post(messageModel);
-
-                        }else {
-                            manageNotification(map);
+            if (notification_type.equals("chat")){
+                ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                String current_class = activityManager.getRunningTasks(1).get(0).topActivity.getClassName();
+                if (current_class.equals("com.apps.emdad.activities_fragments.activity_chat.ChatActivity")){
+                    if (from_user_id.equals(getChatUserId())){
+                        String id = String.valueOf(map.get("id"));
+                        String room_id = map.get("room_id");
+                        String type = String.valueOf(map.get("type"));
+                        String message = String.valueOf(map.get("message"));
+                        String date = String.valueOf(map.get("date"));
+                        String image="";
+                        String voice="";
+                        if (map.get("image")!=null){
+                            image = map.get("image");
                         }
+
+                        if (map.get("voice")!=null){
+                            voice = map.get("voice");
+                        }
+                        MessageModel messageModel = new MessageModel(Integer.parseInt(id),room_id,from_user_id,to_user_id,type,message,image,voice,date);
+                        EventBus.getDefault().post(messageModel);
+
                     }else {
                         manageNotification(map);
                     }
-
-
                 }else {
                     manageNotification(map);
-
                 }
+
+
+            }else {
+                manageNotification(map);
 
             }
         }
@@ -143,7 +139,8 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     private void createNewNotificationVersion(Map<String, String> map) {
         String sound_Path = getRingtonePath();
         if (sound_Path.isEmpty()){
-            Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_RINGTONE);
+            Log.e("ddd","ddd");
+            Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             sound_Path = uri.toString();
         }
 
@@ -242,7 +239,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
         String sound_Path = getRingtonePath();
         if (sound_Path.isEmpty()){
-            Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_RINGTONE);
+            Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             sound_Path = uri.toString();
         }
         String title =map.get("title");

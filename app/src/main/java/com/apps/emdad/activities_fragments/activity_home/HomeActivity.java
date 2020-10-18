@@ -47,6 +47,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -68,15 +69,15 @@ public class HomeActivity extends AppCompatActivity {
     private Preferences preferences;
     public double user_lat =0.0,user_lng=0.0;
 
-
     @Override
-    protected void attachBaseContext(Context newBase) {
+    protected void attachBaseContext(Context newBase)
+    {
         Paper.init(newBase);
         super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
-
     @Override
-    protected void onRestart() {
+    protected void onRestart()
+    {
         super.onRestart();
         userModel = preferences.getUserData(this);
         if (userModel!=null){
@@ -95,9 +96,9 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -114,15 +115,19 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    private void getDataFromIntent() {
+    private void getDataFromIntent()
+    {
         Intent intent = getIntent();
         user_lat = intent.getDoubleExtra("lat",0.0);
         user_lng = intent.getDoubleExtra("lng",0.0);
 
     }
-
-    private void initView() {
+    private void initView()
+    {
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (manager!=null){
+            manager.cancel(Tags.not_tag,Tags.not_id);
+        }
         fragmentManager = getSupportFragmentManager();
 
         preferences = Preferences.getInstance();
@@ -215,8 +220,8 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    public void getNotificationCount() {
+    public void getNotificationCount()
+    {
         Api.getService(Tags.base_url).getNotificationCount(userModel.getUser().getToken(),userModel.getUser().getId())
                 .enqueue(new Callback<UnReadCountModel>() {
                     @Override
@@ -259,13 +264,13 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    public void updateNotificationCount(int count) {
+    public void updateNotificationCount(int count)
+    {
         binding.setNotCount(count);
 
     }
-
-    private void updateFirebaseToken() {
+    private void updateFirebaseToken()
+    {
         FirebaseInstanceId.getInstance()
                 .getInstanceId()
                 .addOnCompleteListener(this, task -> {
@@ -316,8 +321,8 @@ public class HomeActivity extends AppCompatActivity {
                 });
 
     }
-
-    public void updateUserData(UserModel userModel){
+    public void updateUserData(UserModel userModel)
+    {
         this.userModel = userModel;
         try {
             if (fragment_main!=null&&fragment_main.isAdded()){
@@ -334,8 +339,8 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
-
-    public void displayFragmentMain() {
+    public void displayFragmentMain()
+    {
         updateMainUi();
 
         if (fragment_main == null) {
@@ -368,8 +373,8 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
-
-    private void displayFragmentNotification() {
+    private void displayFragmentNotification()
+    {
         updateNotificationUi();
 
 
@@ -401,8 +406,8 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    private void displayFragmentOrder() {
+    private void displayFragmentOrder()
+    {
         updateOrderUi();
 
         if (fragment_order == null) {
@@ -429,8 +434,8 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    private void displayFragmentDriverOrder() {
+    private void displayFragmentDriverOrder()
+    {
         updateOrderUi();
 
         if (fragment_driver_order == null) {
@@ -461,8 +466,8 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    private void displayFragmentProfile() {
+    private void displayFragmentProfile()
+    {
         updateProfileUi();
 
         if (fragment_profile == null) {
@@ -495,8 +500,8 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
-
-    private void updateMainUi() {
+    private void updateMainUi()
+    {
         binding.iconStore.setImageResource(R.drawable.shop1);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
         binding.iconOrder.setImageResource(R.drawable.truck2);
@@ -508,8 +513,8 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.gray11));
 
     }
-
-    private void updateNotificationUi() {
+    private void updateNotificationUi()
+    {
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone1);
@@ -521,8 +526,8 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.gray11));
 
     }
-
-    private void updateOrderUi() {
+    private void updateOrderUi()
+    {
 
 
         binding.iconStore.setImageResource(R.drawable.shop2);
@@ -534,8 +539,8 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvOrder.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
         binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.gray11));
     }
-
-    private void updateProfileUi() {
+    private void updateProfileUi()
+    {
 
         binding.iconStore.setImageResource(R.drawable.shop2);
         binding.iconNotification.setImageResource(R.drawable.mega_phone2);
@@ -547,15 +552,16 @@ public class HomeActivity extends AppCompatActivity {
         binding.tvProfile.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
     }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void driverLocationUpdate(LocationModel locationModel){
+    public void driverLocationUpdate(LocationModel locationModel)
+    {
         user_lat = locationModel.getLat();
         user_lng = locationModel.getLng();
     }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onOrderUpdated(NotFireModel notFireModel){
+    public void onOrderUpdated(NotFireModel notFireModel)
+    {
+        getNotificationCount();
         if (fragment_notifications!=null&&fragment_notifications.isAdded()){
             fragment_notifications.getNotifications();
         }
@@ -568,7 +574,8 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         List<Fragment> fragments = fragmentManager.getFragments();
@@ -577,10 +584,9 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         List<Fragment> fragments = fragmentManager.getFragments();
         for (Fragment fragment : fragments) {
@@ -588,8 +594,8 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    public void navigateToLoginActivity(boolean hasData) {
+    public void navigateToLoginActivity(boolean hasData)
+    {
 
         Intent intent = new Intent(this, LoginActivity.class);
         if (hasData) {
@@ -601,14 +607,14 @@ public class HomeActivity extends AppCompatActivity {
 
         }
     }
-
-    public void refreshActivity() {
+    public void refreshActivity()
+    {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
     }
-
-    public void logout() {
+    public void logout()
+    {
         if (userModel != null) {
 
             try {
@@ -634,6 +640,7 @@ public class HomeActivity extends AppCompatActivity {
                                 if (manager != null) {
                                     manager.cancel(Tags.not_tag, Tags.not_id);
                                 }
+                                deleteCache();
                                 navigateToLoginActivity(false);
 
 
@@ -675,8 +682,32 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    private   void deleteCache() {
+        try {
+            File dir = getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         if (fragment_main != null && fragment_main.isAdded() && fragment_main.isVisible()) {
             if (userModel == null) {
                 navigateToLoginActivity(false);
@@ -687,9 +718,9 @@ public class HomeActivity extends AppCompatActivity {
             displayFragmentMain();
         }
     }
-
     @Override
-    protected void onDestroy() {
+    protected void onDestroy()
+    {
         super.onDestroy();
         if (EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);

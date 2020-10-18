@@ -517,4 +517,20 @@ public interface Service {
                                         @Query(value = "pagination") String pagination,
                                         @Query(value = "limit_per_page") int limit_per_page);
 
+    @GET("api/get-driver-location")
+    Call<UserModel> getDriverLocation(@Header("Authorization") String user_token,
+                                      @Query(value = "driver_id") int driver_id);
+
+    @FormUrlEncoded
+    @POST("api/update-order-location")
+    Call<ResponseBody> updateDriverLocation(@Header("Authorization") String user_token,
+                                            @Field("driver_id") int driver_id,
+                                            @Field("order_id") int order_id,
+                                            @Field("latitude") double latitude,
+                                            @Field("longitude") double longitude
+
+
+
+    );
+
 }

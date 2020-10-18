@@ -41,6 +41,8 @@ import android.widget.Toast;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_bill.AddBillActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
+import com.apps.emdad.activities_fragments.activity_driver_update_location.DriverUpdateLocationActivity;
+import com.apps.emdad.activities_fragments.activity_follow_order.FollowOrderActivity;
 import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
@@ -241,7 +243,6 @@ public class ChatActivity extends AppCompatActivity {
         chatActionAdapter = new ChatActionAdapter(actionReasonList, this);
         binding.recViewAction.setLayoutManager(new LinearLayoutManager(this));
         binding.recViewAction.setAdapter(chatActionAdapter);
-
         binding.btnActionOk.setOnClickListener(v ->
         {
             if (chatActionModel != null) {
@@ -356,6 +357,18 @@ public class ChatActivity extends AppCompatActivity {
             }
 
         });
+        binding.flMap.setOnClickListener(v -> {
+            if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+                Intent intent = new Intent(this, FollowOrderActivity.class);
+                intent.putExtra("data",orderModel);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, DriverUpdateLocationActivity.class);
+                intent.putExtra("data",orderModel);
+                startActivity(intent);
+
+            }
+        });
         adapter = new ChatAdapter(messageModelList,this,userModel.getUser().getId());
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(adapter);
@@ -403,8 +416,6 @@ public class ChatActivity extends AppCompatActivity {
         binding.recViewRateReason.setLayoutManager(new GridLayoutManager(this,2));
         rateReasonAdapter = new RateReasonAdapter(new ArrayList<>(),this,null);
         binding.recViewRateReason.setAdapter(rateReasonAdapter);
-
-
 
         binding.emoji1.setOnClickListener(v -> {rate1UI();});
         binding.emoji2.setOnClickListener(v -> {rate2UI();});
@@ -1048,12 +1059,15 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void leaveOrder(ChatActionModel chatActionModel) {
-
+        int driver_id =0;
+        if (orderModel!=null&&orderModel.getDriver()!=null){
+            driver_id = orderModel.getDriver().getId();
+        }
         ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), userModel.getUser().getId(), order_id, chatActionModel.getAction())
+        Api.getService(Tags.base_url).driverLeaveOrder(userModel.getUser().getToken(), orderModel.getClient().getId(), driver_id, order_id, chatActionModel.getAction())
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1251,11 +1265,19 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void clientRefuseOffer(OffersModel offersModel, String type) {
+        int driver_id =0;
+        if (offersModel!=null&&offersModel.getDriver_id()!=null){
+            driver_id = Integer.parseInt(offersModel.getDriver_id());
+        }else {
+            if (orderModel!=null&&orderModel.getDriver()!=null){
+                driver_id = orderModel.getDriver().getId();
+            }
+        }
         ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.show();
-        Api.getService(Tags.base_url).clientRefuseOffer(userModel.getUser().getToken(), orderModel.getClient().getId(), Integer.parseInt(offersModel.getDriver_id()), order_id, offersModel.getId(), type)
+        Api.getService(Tags.base_url).clientRefuseOffer(userModel.getUser().getToken(), orderModel.getClient().getId(),driver_id, order_id, offersModel.getId(), type)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

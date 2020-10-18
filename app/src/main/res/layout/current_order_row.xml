@@ -190,7 +190,6 @@
                         app:color_array="@array/dots"
                         android:visibility="invisible"
                         android:layout_gravity="center"
-                        android:rotation='@{lang.equals("ar")?180:0}'
                         />
                     <LinearLayout
                         android:id="@+id/llOfferCount"

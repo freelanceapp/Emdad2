@@ -290,7 +290,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void getNearByShops(MainSliderRowBinding binding) {
         String loc = user_lat + "," + user_lng;
-        Log.e("loc",loc);
         Api.getService("https://maps.googleapis.com/maps/api/")
                 .nearbyPlaceRankBy(loc, query, "distance", lang, "", context.getString(R.string.map_api_key))
                 .enqueue(new Callback<NearbyModel>() {
@@ -508,7 +507,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     public void onResponse(Call<CategoryDataModel> call, Response<CategoryDataModel> response) {
                         skeletonCategory.hide();
                         if (response.isSuccessful() && response.body() != null) {
-                            Log.e("size",response.body().getData().size()+"__");
                             categoryModelList.addAll(response.body().getData());
                             categoryAdapter = new CategoryAdapter(categoryModelList,context,fragment_main);
                             binding.recView.setAdapter(categoryAdapter);
@@ -592,7 +590,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 getPlaceDataByGooglePlaceId(newIndex);
 
                                 Log.e("Error", t.getMessage());
-                                Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
                             } catch (Exception e) {
 
                             }
@@ -648,7 +645,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 getPlaceDataByGooglePlaceIdLoadMore(newIndex,results);
 
                                 Log.e("Error", t.getMessage());
-                                Toast.makeText(context, context.getString(R.string.something), Toast.LENGTH_LONG).show();
                             } catch (Exception e) {
 
                             }
