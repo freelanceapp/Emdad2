@@ -142,6 +142,8 @@
             android:layout_height="match_parent"
             android:background="@color/trans_black2"
             android:visibility="gone"
+            android:clickable="true"
+            android:longClickable="true"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -151,6 +153,14 @@
                 android:background="@color/white"
                 android:paddingTop="10dp"
                 >
+                <ImageView
+                    android:id="@+id/imageCloseSheet"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_close"
+                    />
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/driverImage"
                     android:layout_width="60dp"
@@ -184,6 +194,8 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/v1"
+                        android:clickable="true"
+                        android:longClickable="true"
                         />
                     <View
                         android:id="@+id/v1"
@@ -204,6 +216,8 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@id/v1"
                         app:layout_constraintEnd_toStartOf="@id/v2"
+                        android:clickable="true"
+                        android:longClickable="true"
                         />
                     <View
                         android:id="@+id/v2"
@@ -225,6 +239,8 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@id/v2"
                         app:layout_constraintEnd_toStartOf="@id/v3"
+                        android:clickable="true"
+                        android:longClickable="true"
                         />
                     <View
                         android:id="@+id/v3"
@@ -246,6 +262,8 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@id/v3"
                         app:layout_constraintEnd_toStartOf="@id/v4"
+                        android:clickable="true"
+                        android:longClickable="true"
                         />
                     <View
                         android:id="@+id/v4"

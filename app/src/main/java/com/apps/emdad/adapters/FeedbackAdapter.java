@@ -2,6 +2,7 @@ package com.apps.emdad.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,19 +72,20 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             String name ="";
 
+            Log.e("user_type",userType);
             if (userType.equals("driver")){
                 if (feedbackModel.getDriver().getName().length()==2){
-                    name = feedbackModel.getDriver().getName().substring(0,1)+"**";
-                }else if (feedbackModel.getDriver().getName().length()>=3){
-                    String[] s = feedbackModel.getDriver().getName().split(" ");
+                    name = feedbackModel.getClient().getName().substring(0,1)+"**";
+                }else if (feedbackModel.getClient().getName().length()>=3){
+                    String[] s = feedbackModel.getClient().getName().split(" ");
                     name = s[0].substring(0,2)+"**"+s[0].substring(s[0].length()-1);
 
                 }else {
-                    name = feedbackModel.getDriver().getName();
+                    name = feedbackModel.getClient().getName();
                 }
 
             }else {
-                name = feedbackModel.getClient().getName();
+                name = feedbackModel.getDriver().getName();
 
             }
             myHolder.binding.tvName.setText(name);

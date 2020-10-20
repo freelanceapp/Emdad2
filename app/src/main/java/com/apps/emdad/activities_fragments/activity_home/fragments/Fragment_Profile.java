@@ -76,13 +76,13 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     private void initView() {
         activity = (HomeActivity) getActivity();
-
         preferences = Preferences.getInstance();
         userModel =preferences.getUserData(activity);
         currency = getString(R.string.sar);
         if (userModel != null) {
             currency = userModel.getUser().getCountry().getWord().getCurrency();
         }
+        binding.setRate(0.0);
         Paper.init(activity);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
@@ -121,7 +121,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
                                 binding.tvBalance.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getUser_balance(),currency));
                                 binding.tvTotalRevenue.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getDelivery_fee(),currency));
                                 binding.tvOrderNum.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getOrders(),getString(R.string.order2)));
-
+                                binding.setRate(response.body().getMy_rate());
                                 if (response.body().getUser_balance()>=0){
                                     binding.tvBalance.setTextColor(ContextCompat.getColor(activity,R.color.colorPrimary));
                                 }else {

@@ -81,8 +81,11 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
 
             initGoogleApiClient();
             if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                Intent intent = new Intent(this, LocationService.class);
-                startService(intent);
+               try {
+                   Intent intent = new Intent(this, LocationService.class);
+                   startService(intent);
+               }catch (Exception e){}
+
             }
         }
     }
@@ -96,8 +99,10 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initGoogleApiClient();
                 if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                    Intent intent = new Intent(this, LocationService.class);
-                    startService(intent);
+                    try {
+                        Intent intent = new Intent(this, LocationService.class);
+                        startService(intent);
+                    }catch (Exception e){}
                 }
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
@@ -188,8 +193,10 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
         if (requestCode == 1255 && resultCode == RESULT_OK) {
             startLocationUpdate();
             if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                Intent intent = new Intent(this, LocationService.class);
-                startService(intent);
+                try {
+                    Intent intent = new Intent(this, LocationService.class);
+                    startService(intent);
+                }catch (Exception e){}
             }
         }
     }

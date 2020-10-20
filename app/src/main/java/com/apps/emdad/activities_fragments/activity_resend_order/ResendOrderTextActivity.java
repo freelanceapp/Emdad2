@@ -170,6 +170,9 @@ public class ResendOrderTextActivity extends AppCompatActivity {
         addOrderTextModel.setPayment(orderModel.getPayment_method());
         addOrderTextModel.setCoupon_id("0");
         addOrderTextModel.setComments(orderModel.getNotes());
+        addOrderTextModel.setTo_address(orderModel.getClient_address());
+        addOrderTextModel.setTo_lat(Double.parseDouble(orderModel.getClient_latitude()));
+        addOrderTextModel.setTo_lng(Double.parseDouble(orderModel.getClient_longitude()));
 
 
 

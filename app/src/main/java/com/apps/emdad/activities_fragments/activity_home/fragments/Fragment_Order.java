@@ -105,6 +105,7 @@ public class Fragment_Order extends Fragment {
         });
 
         binding.flOldOrders.setOnClickListener(v -> {
+            binding.flRate.setVisibility(View.GONE);
             Intent intent = new Intent(activity, OldOrdersActivity.class);
             startActivityForResult(intent, 100);
         });
@@ -116,12 +117,15 @@ public class Fragment_Order extends Fragment {
         binding.btnRate.setOnClickListener(v -> {
             String comment = binding.edtRateComment.getText().toString();
             rateModel.setComment(comment);
+            closeRateActionSheet();
+            binding.flRate.setVisibility(View.GONE);
             rate();
         });
 
         binding.tvNotNow.setOnClickListener(v -> closeRateActionSheet());
         binding.swipeRefresh.setOnRefreshListener(this::getOrders);
         binding.btnBack.setOnClickListener(v -> activity.displayFragmentMain());
+        binding.imageCloseSheet.setOnClickListener(v -> closeRateActionSheet());
         getOrders();
     }
 
@@ -456,6 +460,7 @@ public class Fragment_Order extends Fragment {
                                     }
                                     pos = -1;
                                     orderModel = null;
+
                                 }
                             }
                         } else {

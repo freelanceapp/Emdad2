@@ -69,10 +69,15 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             String from_user_id =map.get("from_user_id");
 
             if (notification_type.equals("chat")){
+                Log.e("1","1");
                 ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
                 String current_class = activityManager.getRunningTasks(1).get(0).topActivity.getClassName();
                 if (current_class.equals("com.apps.emdad.activities_fragments.activity_chat.ChatActivity")){
+                    Log.e("2","2");
+                    Log.e("chat_id",getChatUserId()+"__");
                     if (from_user_id.equals(getChatUserId())){
+                        Log.e("3","3");
+
                         String id = String.valueOf(map.get("id"));
                         String room_id = map.get("room_id");
                         String type = String.valueOf(map.get("type"));
@@ -92,8 +97,12 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
                     }else {
                         manageNotification(map);
+                        Log.e("4","4");
+
                     }
                 }else {
+                    Log.e("5","5");
+
                     manageNotification(map);
                 }
 
@@ -146,7 +155,6 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     private void createNewNotificationVersion(Map<String, String> map) {
         String sound_Path = getRingtonePath();
         if (sound_Path.isEmpty()){
-            Log.e("ddd","ddd");
             Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             sound_Path = uri.toString();
         }
@@ -191,6 +199,15 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             builder.setContentIntent(pendingIntent);
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.image_avatar);
             builder.setLargeIcon(bitmap);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+
+                manager.createNotificationChannel(channel);
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+
+                EventBus.getDefault().post(new NotFireModel(true));
+
+            }
 
         }else if (notification_type.equals("order")){
             Intent intent = new Intent(this, HomeActivity.class);
@@ -207,8 +224,8 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
                 manager.createNotificationChannel(channel);
                 manager.notify(Tags.not_tag,Tags.not_id, builder.build());
-
                 EventBus.getDefault().post(new NotFireModel(true));
+
 
             }
 
@@ -275,6 +292,15 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             builder.setContentIntent(pendingIntent);
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.image_avatar);
             builder.setLargeIcon(bitmap);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+
+
+            }
+
 
         }else if (notification_type.equals("order")){
             Intent intent = new Intent(this, HomeActivity.class);
