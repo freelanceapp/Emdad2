@@ -183,6 +183,7 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginEnd="20dp"
+                                android:visibility="gone"
                                 >
                                 <TextView
                                     android:id="@+id/tv1"
@@ -246,6 +247,8 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginEnd="20dp"
+                                android:visibility="gone"
+
                                 />
 
                             <androidx.constraintlayout.widget.ConstraintLayout

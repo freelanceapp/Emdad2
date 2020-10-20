@@ -19,17 +19,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
+import com.apps.emdad.activities_fragments.activity_follow_order.FollowOrderActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.activities_fragments.activity_user_feedback.UserFeedbackActivity;
 import com.apps.emdad.databinding.FragmentNotificationBinding;
 import com.apps.emdad.databinding.FragmentProfileBinding;
 import com.apps.emdad.interfaces.Listeners;
+import com.apps.emdad.models.BalanceModel;
 import com.apps.emdad.models.NotificationDataModel;
 import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.UserModel;
@@ -56,6 +59,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
     private String lang;
     private UserModel userModel;
     private Preferences preferences;
+    private String currency;
 
     public static Fragment_Profile newInstance(){
         return new Fragment_Profile();
@@ -72,10 +76,13 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
     private void initView() {
         activity = (HomeActivity) getActivity();
-
         preferences = Preferences.getInstance();
         userModel =preferences.getUserData(activity);
-
+        currency = getString(R.string.sar);
+        if (userModel != null) {
+            currency = userModel.getUser().getCountry().getWord().getCurrency();
+        }
+        binding.setRate(0.0);
         Paper.init(activity);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
@@ -83,6 +90,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
         binding.setModel(userModel);
 
        updateUi(userModel);
+       getBalance();
 
     }
 
@@ -99,6 +107,59 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
             }
         }
+
+        getBalance();
+    }
+
+    public void getBalance(){
+        Api.getService(Tags.base_url).getUserBalance(userModel.getUser().getToken(), userModel.getUser().getId())
+                .enqueue(new Callback<BalanceModel>() {
+                    @Override
+                    public void onResponse(Call<BalanceModel> call, Response<BalanceModel> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                binding.tvBalance.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getUser_balance(),currency));
+                                binding.tvTotalRevenue.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getDelivery_fee(),currency));
+                                binding.tvOrderNum.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getOrders(),getString(R.string.order2)));
+                                binding.setRate(response.body().getMy_rate());
+                                if (response.body().getUser_balance()>=0){
+                                    binding.tvBalance.setTextColor(ContextCompat.getColor(activity,R.color.colorPrimary));
+                                }else {
+                                    binding.tvBalance.setTextColor(ContextCompat.getColor(activity,R.color.color_red));
+
+                                }
+                            }
+                        } else {
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<BalanceModel> call, Throwable t) {
+                        try {
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(activity, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
     }
 
     @Override

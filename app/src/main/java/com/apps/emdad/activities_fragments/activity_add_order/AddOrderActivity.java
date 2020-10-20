@@ -170,6 +170,7 @@ public class AddOrderActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             addOrderTextModel = null;
             addOrderTextModel = new AddOrderTextModel();
+            addOrderTextModel.setOrder_type("google_market");
 
             ChatBotModel chatBotModel = createInstance(ChatBotAdapter.empty);
             chatBotModelList.add(chatBotModel);
@@ -628,6 +629,7 @@ public class AddOrderActivity extends AppCompatActivity {
                 NearbyModel.Result result = (NearbyModel.Result) data.getSerializableExtra("data");
                 addOrderTextModel.setPlace_id(result.getPlace_id());
                 if (result.getCustomPlaceModel()!=null){
+
                     addOrderTextModel.setOrder_type("emdad_market");
                     addOrderTextModel.setMarket_id(result.getCustomPlaceModel().getId());
                 }else {
@@ -738,7 +740,7 @@ public class AddOrderActivity extends AppCompatActivity {
 
                 addOrderTextModel.setPlace_id("0");
                 addOrderTextModel.setMarket_id(0);
-                addOrderTextModel.setPlace_name("");
+                addOrderTextModel.setPlace_name(fromLocation.getAddress());
                 addOrderTextModel.setPlace_address(fromLocation.getAddress());
                 addOrderTextModel.setPlace_lat(fromLocation.getLat());
                 addOrderTextModel.setPlace_lng(fromLocation.getLng());
@@ -809,7 +811,8 @@ public class AddOrderActivity extends AppCompatActivity {
                 FavoriteLocationModel favoriteLocationModel = (FavoriteLocationModel) data.getSerializableExtra("data");
 
                 addOrderTextModel.setPlace_id("0");
-                addOrderTextModel.setPlace_name("");
+                addOrderTextModel.setPlace_name(favoriteLocationModel.getAddress());
+                addOrderTextModel.setOrder_type("google_market");
                 addOrderTextModel.setPlace_address(favoriteLocationModel.getAddress());
                 addOrderTextModel.setPlace_lat(favoriteLocationModel.getLat());
                 addOrderTextModel.setPlace_lng(favoriteLocationModel.getLng());

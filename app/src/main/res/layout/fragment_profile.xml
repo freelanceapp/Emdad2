@@ -14,6 +14,9 @@
             name="model"
             type="com.apps.emdad.models.UserModel" />
 
+        <variable
+            name="rate"
+            type="Double" />
         <import type="android.view.View"/>
 
 
@@ -79,7 +82,7 @@
                     android:layout_marginTop="5dp"
                     app:srb_borderColor="@color/gray3"
                     app:srb_fillColor="@color/rate_color"
-                    rate="@{model!=null?(Double.parseDouble(model.user.rate)):0}"
+                    rate="@{rate}"
                     />
 
                 <ImageView
@@ -234,6 +237,7 @@
                         android:layout_marginEnd="10dp"
                         android:text="@string/number_of_orders"/>
                     <TextView
+                        android:id="@+id/tvOrderNum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
@@ -342,16 +346,7 @@
                         android:clickable="false"
                         android:longClickable="false"
                         />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        android:text="0"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        />
+
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"

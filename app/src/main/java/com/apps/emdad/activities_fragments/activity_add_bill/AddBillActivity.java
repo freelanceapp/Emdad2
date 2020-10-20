@@ -42,6 +42,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -343,6 +344,11 @@ public class AddBillActivity extends AppCompatActivity {
                             finish();
                         } else {
                             dialog.dismiss();
+                            try {
+                                Log.e("error_bill",response.code()+"__"+response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             if (response.code() == 500) {
 
                                 Toast.makeText(AddBillActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
@@ -406,7 +412,11 @@ public class AddBillActivity extends AppCompatActivity {
                             finish();
                         } else {
                             dialog.dismiss();
-
+                            try {
+                                Log.e("error_bill",response.code()+"__"+response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             if (response.code() == 500) {
 
                                 Toast.makeText(AddBillActivity.this, "Server Error", Toast.LENGTH_SHORT).show();

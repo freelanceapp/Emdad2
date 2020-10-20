@@ -494,9 +494,12 @@ public class HomeActivity extends AppCompatActivity {
 
         if (fragment_profile.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_profile).commit();
+            fragment_profile.getBalance();
         } else {
             fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_profile, "fragment_profile").addToBackStack("fragment_profile").commit();
         }
+
+
 
 
     }

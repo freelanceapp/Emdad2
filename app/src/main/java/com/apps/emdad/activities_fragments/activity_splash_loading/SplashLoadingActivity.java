@@ -23,6 +23,8 @@ import com.apps.emdad.activities_fragments.activity_splash.SplashActivity;
 import com.apps.emdad.databinding.ActivitySplashLoadingBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.location_service.LocationService;
+import com.apps.emdad.models.UserModel;
+import com.apps.emdad.preferences.Preferences;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -45,6 +47,8 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
     private LocationCallback locationCallback;
     private final String gps_perm = Manifest.permission.ACCESS_FINE_LOCATION;
     private final int loc_req = 22;
+    private UserModel userModel;
+    private Preferences preferences;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -56,6 +60,8 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_loading);
+        preferences = Preferences.getInstance();
+        userModel = preferences.getUserData(this);
         CheckPermission();
     }
 
@@ -74,10 +80,13 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
         } else {
 
             initGoogleApiClient();
-            /*if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
-                Intent intent = new Intent(this, LocationService.class);
-                startService(intent);
-            }*/
+            if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
+               try {
+                   Intent intent = new Intent(this, LocationService.class);
+                   startService(intent);
+               }catch (Exception e){}
+
+            }
         }
     }
 
@@ -89,6 +98,12 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
         if (requestCode == loc_req) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initGoogleApiClient();
+                if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
+                    try {
+                        Intent intent = new Intent(this, LocationService.class);
+                        startService(intent);
+                    }catch (Exception e){}
+                }
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
@@ -177,7 +192,12 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
 
         if (requestCode == 1255 && resultCode == RESULT_OK) {
             startLocationUpdate();
-
+            if (userModel!=null&&userModel.getUser().getUser_type().equals("driver")){
+                try {
+                    Intent intent = new Intent(this, LocationService.class);
+                    startService(intent);
+                }catch (Exception e){}
+            }
         }
     }
 

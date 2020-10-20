@@ -25,7 +25,7 @@ import io.paperdb.Paper;
 public class SignUpDelegateActivity extends AppCompatActivity {
     private ActivitySignUpDelegateBinding binding;
     private String url="";
-
+    private String lang;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -48,11 +48,23 @@ public class SignUpDelegateActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        Paper.init(this);
+        lang = Paper.book().read("lang", "ar");
+        binding.setLang(lang);
+        binding.close.setOnClickListener(v -> {
+            finish();
+        });
+        binding.webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        binding.webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         binding.webView.getSettings().setAllowContentAccess(true);
         binding.webView.getSettings().setAllowFileAccess(true);
         binding.webView.getSettings().setBuiltInZoomControls(false);
         binding.webView.getSettings().setJavaScriptEnabled(true);
+        binding.webView.getSettings().setLoadWithOverviewMode(true);
+        binding.webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
         binding.webView.loadUrl(url);
+
         binding.webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {

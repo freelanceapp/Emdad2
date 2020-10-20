@@ -702,7 +702,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.llComingOffer.setVisibility(View.GONE);
                 binding.btnBill.setText(R.string.on_location);
                 binding.tvBillStatus.setText(R.string.click_on_reached_location);
-
+                binding.flMap.setVisibility(View.VISIBLE);
                 if (loadData){
                     updateUserUi();
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
@@ -727,7 +727,10 @@ public class ChatActivity extends AppCompatActivity {
                 binding.btnBill.setText(getString(R.string.delivered));
                 binding.tvBillStatus.setText(R.string.click_on_deliverd);
                 binding.tvEndOrder.setVisibility(View.VISIBLE);
+                binding.flMap.setVisibility(View.INVISIBLE);
+
                 rateModel = new RateModel();
+
                 if(loadData){
                     updateUserUi();
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
@@ -773,6 +776,8 @@ public class ChatActivity extends AppCompatActivity {
                 binding.msgContent.setVisibility(View.GONE);
                 binding.flCall.setVisibility(View.INVISIBLE);
                 binding.llBill.setVisibility(View.GONE);
+                binding.flMap.setVisibility(View.INVISIBLE);
+
                 if (loadData){
                     updateUserUi();
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
@@ -795,6 +800,8 @@ public class ChatActivity extends AppCompatActivity {
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 binding.flCall.setVisibility(View.INVISIBLE);
                 binding.llBill.setVisibility(View.GONE);
+                binding.flMap.setVisibility(View.INVISIBLE);
+
                 if (loadData){
                     updateUserUi();
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
@@ -816,6 +823,7 @@ public class ChatActivity extends AppCompatActivity {
                 binding.flCall.setVisibility(View.INVISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 binding.llBill.setVisibility(View.GONE);
+                binding.flMap.setVisibility(View.INVISIBLE);
 
                 if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
                     binding.tvMsgRight.setText(orderModel.getDetails());
@@ -838,6 +846,8 @@ public class ChatActivity extends AppCompatActivity {
                 binding.flCall.setVisibility(View.INVISIBLE);
                 binding.tvReadyDeliverOrder.setVisibility(View.GONE);
                 binding.llBill.setVisibility(View.GONE);
+                binding.flMap.setVisibility(View.INVISIBLE);
+
 
                 if (loadData){
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
@@ -1781,8 +1791,17 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendChatText(String message) {
 
+        String to_user_id="0";
+
+        if (userModel.getUser().getUser_type().equals("client") || (userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() == orderModel.getClient().getId())) {
+            to_user_id = String.valueOf(orderModel.getDriver().getId());
+        } else {
+            to_user_id = String.valueOf(orderModel.getClient().getId());
+        }
+
+
         Api.getService(Tags.base_url)
-                .sendChatMessage( userModel.getUser().getToken(),Integer.parseInt(orderModel.getRoom_id()),userModel.getUser().getId(),orderModel.getDriver().getId(),"message", message)
+                .sendChatMessage( userModel.getUser().getToken(),Integer.parseInt(orderModel.getRoom_id()),userModel.getUser().getId(),Integer.parseInt(to_user_id),"message", message)
                 .enqueue(new Callback<SingleMessageDataModel>() {
                     @Override
                     public void onResponse(Call<SingleMessageDataModel> call, Response<SingleMessageDataModel> response) {
@@ -1841,7 +1860,7 @@ public class ChatActivity extends AppCompatActivity {
                                     messageModelList.clear();
                                     messageModelList.addAll(response.body().getData());
                                     adapter.notifyDataSetChanged();
-                                    binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 10);
+                                    binding.recView.postDelayed(() -> binding.recView.smoothScrollToPosition(messageModelList.size() - 1), 200);
 
                                 }
                             }
@@ -2225,7 +2244,7 @@ public class ChatActivity extends AppCompatActivity {
             sendAttachment(uri.toString(),"", "image");
 
         } else if (requestCode == 100 && resultCode == RESULT_OK) {
-            binding.tvReadyDeliverOrder.setVisibility(View.VISIBLE);
+            binding.tvReadyDeliverOrder.setVisibility(View.GONE);
             getOrderById(null);
         }else if (requestCode==200&&resultCode==RESULT_OK&&data!=null){
             List<MessageModel> list = (List<MessageModel>) data.getSerializableExtra("data");
@@ -2296,10 +2315,7 @@ public class ChatActivity extends AppCompatActivity {
         }else if (binding.flRate.getVisibility()==View.VISIBLE){
             closeRateActionSheet();
         }else {
-            if (isDataChanged) {
-                setResult(RESULT_OK);
-            }
-
+            setResult(RESULT_OK);
             finish();
         }
 
@@ -2309,6 +2325,9 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
         preferences.create_chat_user_id(this,"");
     }
 }
