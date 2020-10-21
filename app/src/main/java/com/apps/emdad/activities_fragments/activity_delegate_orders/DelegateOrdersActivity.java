@@ -77,7 +77,7 @@ public class DelegateOrdersActivity extends AppCompatActivity {
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
         binding.setLang(lang);
-        binding.llback.setOnClickListener(v -> finish());
+        binding.llBack.setOnClickListener(v -> finish());
         binding.setModel(userModel);
 
         binding.swipeRefresh.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimary));

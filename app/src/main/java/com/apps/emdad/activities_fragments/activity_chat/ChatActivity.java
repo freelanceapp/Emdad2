@@ -227,6 +227,7 @@ public class ChatActivity extends AppCompatActivity {
                         Log.e("ddd","fff");
                         sendAttachment(audio_path, "","voice");
                     } catch (Exception e) {
+                        stopTimer();
                         Log.e("error1", e.getMessage() + "___");
                     }
 
@@ -683,7 +684,7 @@ public class ChatActivity extends AppCompatActivity {
                     updateUserUi();
                     if (orderModel.getRoom_id()!=null&&!orderModel.getRoom_id().isEmpty()){
                         getChatMessages(orderModel.getRoom_id());
-
+                        Log.e("888","888");
                     }
                 }
 
@@ -1917,7 +1918,7 @@ public class ChatActivity extends AppCompatActivity {
             deleteFile();
 
         }
-
+        getOrderById(null);
     }
     @Subscribe
     public void onOrderUpdated(NotFireModel notFireModel){
