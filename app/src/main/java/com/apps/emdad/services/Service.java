@@ -15,6 +15,7 @@ import com.apps.emdad.models.OffersDataModel;
 import com.apps.emdad.models.OrderModel;
 import com.apps.emdad.models.OrdersDataModel;
 import com.apps.emdad.models.PlaceDetailsModel;
+import com.apps.emdad.models.PlaceDirectionModel;
 import com.apps.emdad.models.PlaceGeocodeData;
 import com.apps.emdad.models.PlaceMapDetailsData;
 import com.apps.emdad.models.RangeOfferModel;
@@ -542,4 +543,10 @@ public interface Service {
                                       @Query("user_id") int user_id);
 
 
+    @GET("directions/json")
+    Call<PlaceDirectionModel> getDirection(@Query("origin") String origin,
+                                           @Query("destination") String destination,
+                                           @Query("transit_mode") String transit_mode,
+                                           @Query("key") String key
+    );
 }

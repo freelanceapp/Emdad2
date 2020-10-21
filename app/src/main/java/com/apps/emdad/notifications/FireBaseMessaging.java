@@ -56,10 +56,10 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         map = remoteMessage.getData();
 
-        for (String key:map.keySet())
+      /*  for (String key:map.keySet())
         {
             Log.e("key",key+"    value "+map.get(key));
-        }
+        }*/
 
         if (getSession().equals(Tags.session_login))
         {

@@ -3,6 +3,7 @@ package com.apps.emdad.activities_fragments.activity_follow_order;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import android.Manifest;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ import com.apps.emdad.language.Language;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.FeedbackDataModel;
 import com.apps.emdad.models.OrderModel;
+import com.apps.emdad.models.PlaceDirectionModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -43,10 +46,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
+import com.google.maps.android.PolyUtil;
 import com.google.maps.android.ui.IconGenerator;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,6 +61,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.paperdb.Paper;
 import retrofit2.Call;
@@ -72,6 +81,8 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
     private LatLng startPosition,endPosition = null;
     private float v;
     private Marker marker;
+    private List<LatLng> latLngList,latLngList2;
+    private int index = 0,next=0;
 
 
     @Override
@@ -96,6 +107,9 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void initView() {
+        latLngList = new ArrayList<>();
+        latLngList2 = new ArrayList<>();
+
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         Paper.init(this);
@@ -114,8 +128,6 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
     {
         if (ActivityCompat.checkSelfPermission(this,fineLocPerm) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{fineLocPerm}, loc_req);
-        } else {
-            mMap.setMyLocationEnabled(true);
         }
     }
 
@@ -135,11 +147,16 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
             mMap.setTrafficEnabled(false);
             mMap.setBuildingsEnabled(false);
             mMap.setIndoorEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            addMarker(Double.parseDouble(orderModel.getMarket_latitude()),Double.parseDouble(orderModel.getMarket_longitude()),1);
-            addMarker(Double.parseDouble(orderModel.getClient_latitude()),Double.parseDouble(orderModel.getClient_longitude()),2);
+            LatLng latLng1 = new LatLng(Double.parseDouble(orderModel.getMarket_latitude()),Double.parseDouble(orderModel.getMarket_longitude()));
+            LatLng latLng2 = new LatLng(Double.parseDouble(orderModel.getClient_latitude()),Double.parseDouble(orderModel.getClient_longitude()));
+
+            addMarker(latLng1.latitude,latLng1.longitude,1);
+            addMarker(latLng2.latitude,latLng2.longitude,2);
+
+            getDirection(latLng1,latLng2);
+
+
             checkPermission();
-            getDriverLocation();
         }
     }
 
@@ -175,20 +192,115 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
 
     }
 
-    private void addCarMarker(double lat ,double lng) {
+    private void addCarMarker() {
+
         View view = LayoutInflater.from(this).inflate(R.layout.car_pin,null);
         IconGenerator iconGenerator = new IconGenerator(this);
         iconGenerator.setContentPadding(2,2,2,2);
         iconGenerator.setBackground(null);
         iconGenerator.setContentView(view);
-        marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).position(new LatLng(lat,lng)));
+        Log.e("ddd",latLngList.get(0).latitude+"__"+latLngList.get(0).longitude);
+        if (marker==null){
+            marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon())).position(latLngList.get(0)));
+
+        }
         marker.setFlat(true);
         marker.setAnchor(.5f,.5f);
-        marker.setRotation(getBearing(startPosition,startPosition));
+
+        if (latLngList.size()>=2){
+            animateCar();
+
+        }
 
 
 
     }
+
+    private void animateCar() {
+        index = -1;
+        next = 1;
+        if (index < latLngList.size() - 1) {
+            index++;
+            next = index + 1;
+        }
+        if (index < latLngList.size() - 1) {
+            startPosition = latLngList.get(index);
+            endPosition = latLngList.get(next);
+        }
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
+        valueAnimator.setDuration(3000);
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.addUpdateListener(valueAnimator1 -> {
+            v = valueAnimator1.getAnimatedFraction();
+            double lng = v * endPosition.longitude + (1 - v)
+                    * startPosition.longitude;
+            double lat = v * endPosition.latitude + (1 - v)
+                    * startPosition.latitude;
+            LatLng newPos = new LatLng(lat, lng);
+            marker.setPosition(newPos);
+            marker.setAnchor(0.5f, 0.5f);
+            marker.setRotation(getBearing(startPosition, newPos));
+
+        });
+        valueAnimator.start();
+    }
+
+
+    private void getDirection(LatLng startPosition,LatLng endPosition) {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+        String origin = "", dest = "";
+        origin = startPosition.latitude + "," + startPosition.longitude;
+        dest = endPosition.latitude + "," + endPosition.longitude;
+        Log.e("origin",origin+"__"+dest);
+
+        Api.getService("https://maps.googleapis.com/maps/api/")
+                .getDirection(origin, dest, "rail", getString(R.string.map_api_key))
+                .enqueue(new Callback<PlaceDirectionModel>() {
+                    @Override
+                    public void onResponse(Call<PlaceDirectionModel> call, Response<PlaceDirectionModel> response) {
+                       dialog.dismiss();
+                        if (response.body() != null && response.body().getRoutes().size() > 0) {
+                            latLngList2.clear();
+                            latLngList2.addAll(PolyUtil.decode(response.body().getRoutes().get(0).getOverview_polyline().getPoints()));
+                            drawRoute(latLngList2);
+
+                        } else {
+                            dialog.dismiss();
+                            Toast.makeText(FollowOrderActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PlaceDirectionModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            Toast.makeText(FollowOrderActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                        }
+                    }
+                });
+
+    }
+
+    private void drawRoute(List<LatLng> latLngList) {
+        PolylineOptions options = new PolylineOptions();
+        options.geodesic(true);
+        options.color(ContextCompat.getColor(FollowOrderActivity.this, R.color.black));
+        options.width(8.0f);
+        options.startCap(new RoundCap());
+        options.endCap(new RoundCap());
+        options.jointType(JointType.ROUND);
+        options.addAll(latLngList);
+        mMap.addPolyline(options);
+        getDriverLocation();
+
+
+    }
+
+
 
     @SuppressLint("MissingPermission")
     @Override
@@ -197,13 +309,7 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
 
         if (requestCode == loc_req)
         {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                mMap.setMyLocationEnabled(true);
-            }else
-            {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
+
         }
     }
 
@@ -213,15 +319,19 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        Api.getService(Tags.base_url).getDriverLocation(userModel.getUser().getToken(), userModel.getUser().getId())
+        Api.getService(Tags.base_url).getDriverLocation(userModel.getUser().getToken(),orderModel.getDriver().getId())
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         dialog.dismiss();
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                addCarMarker(Double.parseDouble(userModel.getUser().getLatitude()),Double.parseDouble(userModel.getUser().getLatitude()));
-
+                                LatLng latLng = new LatLng(Double.parseDouble(response.body().getUser().getLatitude()),Double.parseDouble(response.body().getUser().getLongitude()));
+                                if (latLngList.size() >= 2) {
+                                    latLngList.remove(0);
+                                }
+                                latLngList.add(latLng);
+                                addCarMarker();
                             }
                         } else {
                             try {
@@ -259,32 +369,14 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDriverLocationChanged(FavoriteLocationModel favoriteLocationModel){
-        updateCarLocation(favoriteLocationModel.getLat(),favoriteLocationModel.getLng());
-    }
-    private void updateCarLocation(double latitude,double longitude){
-        endPosition = new LatLng(latitude,longitude);
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
-        valueAnimator.setDuration(3000);
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.addUpdateListener(valueAnimator1 -> {
-            v = valueAnimator1.getAnimatedFraction();
-            double lng = v * endPosition.longitude + (1 - v)
-                    * startPosition.longitude;
-            double lat = v * endPosition.latitude + (1 - v)
-                    * startPosition.latitude;
-            LatLng newPos = new LatLng(lat, lng);
-            marker.setPosition(newPos);
-            marker.setAnchor(0.5f, 0.5f);
-            marker.setRotation(getBearing(startPosition, newPos));
-            mMap.moveCamera(CameraUpdateFactory
-                    .newCameraPosition
-                            (new CameraPosition.Builder()
-                                    .target(newPos)
-                                    .zoom(15.5f)
-                                    .build()));
-        });
-        valueAnimator.start();
-        startPosition = endPosition;
+
+        LatLng latLng = new LatLng(favoriteLocationModel.getLat(),favoriteLocationModel.getLng());
+        Log.e("tttt",latLng.latitude+"__"+latLng.longitude);
+        if (latLngList.size() >= 2) {
+            latLngList.remove(0);
+        }
+        latLngList.add(latLng);
+        addCarMarker();
     }
 
     private float getBearing(LatLng begin, LatLng end) {

@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 >
                 <LinearLayout
-                    android:id="@+id/llback"
+                    android:id="@+id/llBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
@@ -94,7 +94,7 @@
                     android:text="@string/stop_alerts"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:visibility='@{model==null?View.INVISIBLE:(model.user.receive_notifications.equals("yes")?View.INVISIBLE:View.VISIBLE),default=gone}'
+                    android:visibility='@{model==null?View.INVISIBLE:(model.user.receive_notifications.equals("yes")?View.VISIBLE:View.INVISIBLE),default=gone}'
 
                     />
 

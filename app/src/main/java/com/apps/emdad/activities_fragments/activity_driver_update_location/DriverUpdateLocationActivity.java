@@ -57,6 +57,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
@@ -78,6 +79,7 @@ public class DriverUpdateLocationActivity extends AppCompatActivity implements O
     private OrderModel orderModel;
     private final String fineLocPerm = Manifest.permission.ACCESS_FINE_LOCATION;
     private final int loc_req = 1225;
+    private LatLng oldLatLng,newLatLng=null;
 
 
     @Override
@@ -153,13 +155,31 @@ public class DriverUpdateLocationActivity extends AppCompatActivity implements O
     }
 
     private void updateLocation(Location location) {
-        Api.getService(Tags.base_url).updateDriverLocation(userModel.getUser().getToken(), orderModel.getDriver().getId(), orderModel.getId(),location.getLatitude(),location.getLongitude())
+        if (oldLatLng==null){
+            oldLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+            sendLocation(oldLatLng);
+        }else {
+            newLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+            double distance = getDistance(oldLatLng,newLatLng);
+
+            if (distance>=2){
+                sendLocation(newLatLng);
+            }
+        }
+
+
+
+
+    }
+
+    private void sendLocation(LatLng latLng){
+        Api.getService(Tags.base_url).updateDriverLocation(userModel.getUser().getToken(), orderModel.getDriver().getId(), orderModel.getId(),latLng.latitude,latLng.longitude)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-
+                                oldLatLng = latLng;
                             }
                         } else {
                             try {
@@ -193,7 +213,6 @@ public class DriverUpdateLocationActivity extends AppCompatActivity implements O
                     }
                 });
     }
-
     private void addMarker(double lat ,double lng,int type) {
         View view = LayoutInflater.from(this).inflate(R.layout.map_add_offer_location_row,null);
         TextView tvTitle = view.findViewById(R.id.tvTitle);
@@ -243,7 +262,9 @@ public class DriverUpdateLocationActivity extends AppCompatActivity implements O
         }
     }
 
-
+    private double getDistance(LatLng latLng1, LatLng latLng2) {
+        return SphericalUtil.computeDistanceBetween(latLng1, latLng2);
+    }
 }
 
 
