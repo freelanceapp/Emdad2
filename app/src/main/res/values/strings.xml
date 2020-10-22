@@ -332,6 +332,7 @@
     <string name="something_you_like">Something you like more?</string>
     <string name="comments">Comments</string>
     <string name="change_location">Change Location</string>
+    <string name="no_courier">No Courier Available</string>
 
 
 </resources>

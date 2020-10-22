@@ -573,6 +573,8 @@ public class AddOrderActivity extends AppCompatActivity {
                                 if (response.code()==500)
                                 {
                                     Toast.makeText(AddOrderActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                }else if(response.code()==406){
+                                    Toast.makeText(AddOrderActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                                 } else
                                 {
                                     Toast.makeText(AddOrderActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
