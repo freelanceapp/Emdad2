@@ -371,7 +371,6 @@ public class FollowOrderActivity extends AppCompatActivity implements OnMapReady
     public void onDriverLocationChanged(FavoriteLocationModel favoriteLocationModel){
 
         LatLng latLng = new LatLng(favoriteLocationModel.getLat(),favoriteLocationModel.getLng());
-        Log.e("tttt",latLng.latitude+"__"+latLng.longitude);
         if (latLngList.size() >= 2) {
             latLngList.remove(0);
         }
