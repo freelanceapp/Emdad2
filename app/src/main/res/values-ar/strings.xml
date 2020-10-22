@@ -333,5 +333,6 @@
     <string name="something_you_like">وش اللى حبيت اكثر شئ؟</string>
     <string name="comments">التعليقات</string>
     <string name="change_location">تغيير موقعك</string>
+    <string name="no_courier">لا يوجد مناديب متاحين لهذاالفرع</string>
 
 </resources>

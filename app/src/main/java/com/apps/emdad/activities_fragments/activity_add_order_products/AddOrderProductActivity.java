@@ -33,6 +33,7 @@ import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_map_delivery_location.MapDeliveryLocationActivity;
+import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.adapters.AddOrderImagesAdapter;
 import com.apps.emdad.adapters.AddOrderSelectedProductAdapter;
@@ -255,6 +256,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
                             if (response.code()==500)
                             {
                                 Toast.makeText(AddOrderProductActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }else if(response.code()==406){
+                                Toast.makeText(AddOrderProductActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                             } else
                             {
                                 Toast.makeText(AddOrderProductActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
@@ -338,6 +341,8 @@ public class AddOrderProductActivity extends AppCompatActivity {
                             if (response.code()==500)
                             {
                                 Toast.makeText(AddOrderProductActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }else if(response.code()==406){
+                                Toast.makeText(AddOrderProductActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                             } else
                             {
                                 Toast.makeText(AddOrderProductActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();

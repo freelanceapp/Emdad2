@@ -479,6 +479,8 @@ public class ShopsActivity extends AppCompatActivity implements Listeners.BackLi
                             calculateDistance(response.body().getResults(), rate);
 
                         } else {
+                            skeletonScreen.hide();
+
                             binding.tvNoData.setVisibility(View.VISIBLE);
                             binding.setCount(0);
 

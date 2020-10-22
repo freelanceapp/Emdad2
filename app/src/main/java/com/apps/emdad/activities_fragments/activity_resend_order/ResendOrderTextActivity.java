@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_coupon.AddCouponActivity;
+import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_map_search.MapSearchActivity;
 import com.apps.emdad.adapters.AddOrderImagesAdapter;
@@ -207,6 +208,8 @@ public class ResendOrderTextActivity extends AppCompatActivity {
                             if (response.code()==500)
                             {
                                 Toast.makeText(ResendOrderTextActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }else if(response.code()==406){
+                                Toast.makeText(ResendOrderTextActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                             } else
                             {
                                 Toast.makeText(ResendOrderTextActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
@@ -281,6 +284,8 @@ public class ResendOrderTextActivity extends AppCompatActivity {
                             if (response.code()==500)
                             {
                                 Toast.makeText(ResendOrderTextActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                            }else if(response.code()==406){
+                                Toast.makeText(ResendOrderTextActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                             } else
                             {
                                 Toast.makeText(ResendOrderTextActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();

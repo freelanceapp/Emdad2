@@ -207,7 +207,7 @@
                                 android:layout_height="wrap_content"
                                 app:layout_constraintStart_toStartOf="@id/icon"
                                 app:layout_constraintTop_toBottomOf="@id/icon"
-                                android:background="@drawable/rounded_rose"
+                                android:background="@color/colorPrimary"
                                 android:paddingStart="5dp"
                                 android:paddingEnd="5dp"
                                 android:textSize="12sp"
