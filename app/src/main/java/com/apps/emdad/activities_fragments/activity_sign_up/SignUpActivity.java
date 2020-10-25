@@ -119,6 +119,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             String phone_code = intent.getStringExtra("phone_code");
             String phone = intent.getStringExtra("phone");
             String country_id = intent.getStringExtra("country_id");
+            Log.e("ccccccid",country_id+"__");
             fromSplash = intent.getBooleanExtra("from",true);
 
             signUpModel.setPhone_code(phone_code);
@@ -382,6 +383,11 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                             finish();
                         }else
                         {
+                            try {
+                                Log.e("code",response.code()+"__"+response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             if (response.code()==500)
                             {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
@@ -433,6 +439,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
+        Log.e("coun_id",signUpModel.getCountry_id()+"___");
         RequestBody name_part = Common.getRequestBodyText(signUpModel.getName());
         RequestBody phone_code_part = Common.getRequestBodyText(signUpModel.getPhone_code());
         RequestBody phone_part = Common.getRequestBodyText(signUpModel.getPhone());
@@ -467,6 +474,12 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
                         }else
                         {
+
+                            try {
+                                Log.e("code",response.code()+"__"+response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             if (response.code()==500)
                             {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
