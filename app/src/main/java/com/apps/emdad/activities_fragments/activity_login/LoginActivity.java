@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
     private AlertDialog dialog;
     private String lang;
     private String phone_code = "+966";
-    private String country_id="";
+    private String country_id="142";
     private boolean fromSplash = true;
 
     @Override
@@ -151,6 +151,15 @@ public class LoginActivity extends AppCompatActivity implements Listeners.LoginL
 
                             if (countryModelList.size()>0){
                                 binding.arrow.setVisibility(View.VISIBLE);
+                                if (countryModelList.size()>=1){
+                                    country_id = countryModelList.get(1).getId_country();
+                                    phone_code = "+"+countryModelList.get(1).getPhone_code();
+
+                                }else {
+                                    country_id = countryModelList.get(0).getId_country();
+                                    phone_code = "+"+countryModelList.get(0).getPhone_code();
+                                }
+                                binding.tvCode.setText(phone_code);
                             }else {
                                 binding.arrow.setVisibility(View.GONE);
 

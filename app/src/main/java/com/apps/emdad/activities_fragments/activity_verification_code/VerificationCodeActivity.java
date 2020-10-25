@@ -143,7 +143,13 @@ public class VerificationCodeActivity extends AppCompatActivity {
                         navigateToActivityConfirmSuccess();
                     }).addOnFailureListener(e -> {
                 if (e.getMessage() != null) {
-                    Common.CreateDialogAlert(this, e.getMessage());
+                    try {
+                        Common.CreateDialogAlert(this, e.getMessage());
+
+                    }catch (Exception ex)
+                    {
+
+                    }
                 } else {
                     Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                 }
