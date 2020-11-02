@@ -100,7 +100,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
         if (userModel!=null){
             if (userModel.getUser().getLogo() != null) {
-
+                Log.e("ddd",Tags.IMAGE_URL + userModel.getUser().getLogo());
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.image);
             } else {
                 Picasso.get().load(R.drawable.image_avatar).into(binding.image);

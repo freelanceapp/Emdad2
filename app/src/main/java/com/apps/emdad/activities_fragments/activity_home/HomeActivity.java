@@ -368,7 +368,7 @@ public class HomeActivity extends AppCompatActivity {
         if (fragment_main.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_main).commit();
         } else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_main, "fragment_main").addToBackStack("fragment_main").commit();
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_main, "fragment_main").commit();
         }
 
 
@@ -402,7 +402,7 @@ public class HomeActivity extends AppCompatActivity {
         if (fragment_notifications.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_notifications).commit();
         } else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_notifications, "fragment_notifications").addToBackStack("fragment_notifications").commit();
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_notifications, "fragment_notifications").commit();
         }
 
     }
@@ -430,7 +430,7 @@ public class HomeActivity extends AppCompatActivity {
         if (fragment_order.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_order).commit();
         } else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_order, "fragment_order").addToBackStack("fragment_order").commit();
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_order, "fragment_order").commit();
         }
 
     }
@@ -462,7 +462,7 @@ public class HomeActivity extends AppCompatActivity {
         if (fragment_driver_order.isAdded()) {
             fragmentManager.beginTransaction().show(fragment_driver_order).commit();
         } else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_driver_order, "fragment_driver_order").addToBackStack("fragment_driver_order").commit();
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_driver_order, "fragment_driver_order").commit();
         }
 
     }
@@ -496,7 +496,7 @@ public class HomeActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().show(fragment_profile).commit();
             fragment_profile.getBalance();
         } else {
-            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_profile, "fragment_profile").addToBackStack("fragment_profile").commit();
+            fragmentManager.beginTransaction().add(R.id.fragment_app, fragment_profile, "fragment_profile").commit();
         }
 
 
@@ -684,8 +684,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
-    private   void deleteCache() {
+    private void deleteCache() {
         try {
             File dir = getCacheDir();
             deleteDir(dir);

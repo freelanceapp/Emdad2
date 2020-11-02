@@ -169,12 +169,14 @@ public class Fragment_Main extends Fragment {
 
 
             }else {
+                Log.e("Ddd","fff");
                 Intent intent = new Intent(activity, ShopDetailsActivity.class);
                 intent.putExtra("data",placeModel);
                 startActivity(intent);
             }
 
         }else {
+            Log.e("place_id",placeModel.getPlace_id());
             Intent intent = new Intent(activity, ShopMapActivity.class);
             intent.putExtra("data",placeModel);
             startActivity(intent);

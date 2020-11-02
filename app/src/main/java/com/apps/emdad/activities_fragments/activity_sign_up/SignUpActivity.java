@@ -81,7 +81,6 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     private void initView() {
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
-
         signUpModel = new SignUpModel();
         binding.setModel(signUpModel);
         binding.setListener(this);
@@ -104,6 +103,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             }else {
                 female();
             }
+            Log.e("ddada",Tags.IMAGE_URL+userModel.getUser().getLogo());
             binding.tvYearOfBirth.setText(signUpModel.getYear());
             Picasso.get().load(Uri.parse(Tags.IMAGE_URL+userModel.getUser().getLogo())).placeholder(R.drawable.user_avatar).into(binding.image);
 
@@ -115,11 +115,10 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     private void getDataFromIntent() {
         Intent intent = getIntent();
-        if (intent != null) {
+        if (intent != null&&intent.hasExtra("phone_code")&&intent.hasExtra("phone")&&intent.hasExtra("country_id")) {
             String phone_code = intent.getStringExtra("phone_code");
             String phone = intent.getStringExtra("phone");
             String country_id = intent.getStringExtra("country_id");
-            Log.e("ccccccid",country_id+"__");
             fromSplash = intent.getBooleanExtra("from",true);
 
             signUpModel.setPhone_code(phone_code);
@@ -587,6 +586,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     }
     private void updateProfileWithImage() {
+
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
