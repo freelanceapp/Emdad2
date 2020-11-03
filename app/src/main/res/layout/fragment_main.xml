@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
+        android:background="@color/gray1"
         >
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/consSearch"

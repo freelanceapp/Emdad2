@@ -307,8 +307,8 @@
            android:textColor="@color/white"
            android:textSize="16sp"
            android:singleLine="true"
-           android:background="@color/yellow"
-           android:text="@string/no_courier_available_for_this_branch"
+           android:background="@color/colorPrimary"
+           android:text="@string/next"
            android:textAllCaps="false"
            android:textStyle="bold"
            />

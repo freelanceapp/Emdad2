@@ -4,16 +4,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.util.Log;
@@ -23,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
+import com.apps.emdad.BuildConfig;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order_text.AddOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_image.ImageActivity;
@@ -50,6 +55,9 @@ import com.ethanhua.skeleton.SkeletonScreen;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,10 +150,13 @@ public class ShopDetailsActivity extends AppCompatActivity {
         });
 
         binding.imageShare.setOnClickListener(v -> {
-            String url = Tags.base_url+placeModel.getPlace_id();
+            Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider",createFile());
+            String url = getString(R.string.can_order)+"\n"+Tags.base_url+"place/details/"+placeModel.getPlace_id();
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT,url);
+            intent.putExtra(Intent.EXTRA_STREAM,uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(intent,"Share"));
         });
 
@@ -337,6 +348,24 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
         return list;
     }
+
+    private File createFile(){
+        File file = null;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo_text);
+        file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),System.currentTimeMillis()+".png");
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,90,outputStream);
+            outputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
     private void getPlaceDataByGooglePlaceId(PlaceDetailsModel body, String place_id) {
         Api.getService(Tags.base_url).getCustomPlaceByGooglePlaceId(place_id).enqueue(new Callback<CustomPlaceDataModel>() {
             @Override

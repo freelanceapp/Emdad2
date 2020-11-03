@@ -37,6 +37,28 @@ public class NearbyModel implements Serializable {
         private List<PlaceDetailsModel.Reviews> reviews;
         private CustomPlaceModel customPlaceModel;
 
+
+        public Result() {
+        }
+
+        public Result(String id, String icon, String name, String place_id, double rating, String vicinity, List<Photo> photos, Geometry geometry, List<String> types, double distance, boolean isOpen, PlaceDetailsModel.Opening_Hours work_hours, List<PhotosModel> photosModels, List<PlaceDetailsModel.Reviews> reviews, CustomPlaceModel customPlaceModel) {
+            this.id = id;
+            this.icon = icon;
+            this.name = name;
+            this.place_id = place_id;
+            this.rating = rating;
+            this.vicinity = vicinity;
+            this.photos = photos;
+            this.geometry = geometry;
+            this.types = types;
+            this.distance = distance;
+            this.isOpen = isOpen;
+            this.work_hours = work_hours;
+            this.photosModels = photosModels;
+            this.reviews = reviews;
+            this.customPlaceModel = customPlaceModel;
+        }
+
         public String getId() {
             return id;
         }
@@ -126,6 +148,13 @@ public class NearbyModel implements Serializable {
 
     public static class Photo implements Serializable{
         private String photo_reference;
+
+        public Photo() {
+        }
+
+        public Photo(String photo_reference) {
+            this.photo_reference = photo_reference;
+        }
 
         public String getPhoto_reference() {
             return photo_reference;

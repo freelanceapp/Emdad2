@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-
     <application
         android:name=".share.App"
         android:allowBackup="true"
@@ -27,8 +26,32 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
-        <activity android:name=".activities_fragments.activity_follow_order.FollowOrderActivity"></activity>
-        <activity android:name=".activities_fragments.activity_driver_update_location.DriverUpdateLocationActivity" />
+        <activity android:name=".activities_fragments.activity_splash_loading2.SplashLoading2Activity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            >
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="tawsel-emdad.creativeshare.sa"
+                    android:scheme="http"
+                    android:pathPrefix="/place/details/"
+                    >
+                </data>
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".activities_fragments.activity_follow_order.FollowOrderActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
+            android:name=".activities_fragments.activity_driver_update_location.DriverUpdateLocationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activities_fragments.activity_resend_order.ResendOrderTextActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -197,6 +220,17 @@
             android:name=".activities_fragments.activity_chat.ServiceUploadAttachment"
             android:enabled="true"
             android:stopWithTask="false" />
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_path" />
+        </provider>
     </application>
 
 </manifest>

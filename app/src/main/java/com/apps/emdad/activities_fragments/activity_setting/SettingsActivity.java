@@ -106,6 +106,8 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
 
         if (userModel!=null){
             getUserData();
+
+
             if (userModel.getUser().getUser_type().equals("driver")){
                 binding.llBeDriver.setVisibility(View.GONE);
                 binding.viewBeDriver.setVisibility(View.GONE);
@@ -114,6 +116,8 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
                 binding.viewBeDriver.setVisibility(View.VISIBLE
                 );
             }
+
+
         }
         getSetting();
 

@@ -2,13 +2,19 @@ package com.apps.emdad.activities_fragments.activity_sign_up_delegate;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -18,6 +24,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -31,37 +38,47 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.databinding.ActivitySignUpDelegateBinding;
+import com.apps.emdad.databinding.DialogSelectImage2Binding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.tags.Tags;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import io.paperdb.Paper;
 
 public class SignUpDelegateActivity extends AppCompatActivity {
     private ActivitySignUpDelegateBinding binding;
-    private String url="";
+    private String url = "";
     private String lang;
-    private static final int INPUT_FILE_REQUEST_CODE = 1;
-    private static final int FILECHOOSER_RESULTCODE = 1;
+    private static final int IMG_REQ = 1;
+    private static final int CAMERA_REQ = 2;
     private ValueCallback<Uri> mUploadMessage;
     private Uri mCapturedImageURI = null;
     private ValueCallback<Uri[]> mFilePathCallback;
+    private final String cameraPermission = Manifest.permission.CAMERA;
+    private final String write_permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    private final String read_permission = Manifest.permission.READ_EXTERNAL_STORAGE;
     private String mCameraPhotoPath;
+    private File photo = null;
+    private AlertDialog dialog;
+    private boolean isUpdated = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
-        super.attachBaseContext(Language.updateResources(newBase,Paper.book().read("lang","ar")));
+        super.attachBaseContext(Language.updateResources(newBase, Paper.book().read("lang", "ar")));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_sign_up_delegate);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_delegate);
         getDataFromIntent();
         initView();
     }
@@ -77,8 +94,13 @@ public class SignUpDelegateActivity extends AppCompatActivity {
         lang = Paper.book().read("lang", "ar");
         binding.setLang(lang);
         binding.close.setOnClickListener(v -> {
+            if (isUpdated){
+                setResult(RESULT_OK);
+
+            }
             finish();
         });
+        createDialogAlert();
         binding.webView.getSettings().setAllowFileAccessFromFileURLs(true);
         binding.webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         binding.webView.getSettings().setAllowContentAccess(true);
@@ -91,7 +113,7 @@ public class SignUpDelegateActivity extends AppCompatActivity {
 
         binding.webView.loadUrl(url);
 
-        binding.webView.setWebViewClient(new WebViewClient(){
+        binding.webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return super.shouldOverrideUrlLoading(view, request);
@@ -105,11 +127,12 @@ public class SignUpDelegateActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (url.equals(Tags.sign_up_driver_success)){
-                    setResult(RESULT_OK);
-                    finish();
-                }else if(url.equals(Tags.sign_up_driver_failed)) {
-
+                if (url.equals(Tags.sign_up_driver_success)) {
+                    isUpdated = true;
+                    /*setResult(RESULT_OK);
+                    finish();*/
+                } else if (url.equals(Tags.sign_up_driver_failed)) {
+                    isUpdated = false;
                 }
 
             }
@@ -124,7 +147,6 @@ public class SignUpDelegateActivity extends AppCompatActivity {
 
         });
 
-
         binding.webView.setWebChromeClient(new WebChromeClient() {
 
 
@@ -135,7 +157,9 @@ public class SignUpDelegateActivity extends AppCompatActivity {
                     mFilePathCallback.onReceiveValue(null);
                 }
                 mFilePathCallback = filePath;
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Log.e("111", "111");
+                dialog.show();
+                /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     // Create the File where the photo should go
                     File photoFile = null;
@@ -170,12 +194,16 @@ public class SignUpDelegateActivity extends AppCompatActivity {
                 chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
                 chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-                startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+                startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);*/
                 return true;
             }
+
             // openFileChooser for Android 3.0+
             public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
+                Log.e("222", "2222");
                 mUploadMessage = uploadMsg;
+
+                /*
                 // Create AndroidExampleFolder at sdcard
                 // Create AndroidExampleFolder at sdcard
                 File imageStorageDir = new File(
@@ -205,28 +233,139 @@ public class SignUpDelegateActivity extends AppCompatActivity {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS
                         , new Parcelable[] { captureIntent });
                 // On select image call onActivityResult method of activity
-                startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
+                startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);*/
             }
+
             // openFileChooser for Android < 3.0
             public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+                Log.e("3333","3333");
                 openFileChooser(uploadMsg, "");
             }
+
             //openFileChooser for other Android versions
             public void openFileChooser(ValueCallback<Uri> uploadMsg,
                                         String acceptType,
                                         String capture) {
+                Log.e("4444","4444");
                 openFileChooser(uploadMsg, acceptType);
+
             }
 
         });
 
     }
 
+    public void createDialogAlert() {
+        dialog = new AlertDialog.Builder(this)
+                .create();
+
+        DialogSelectImage2Binding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_select_image2, null, false);
+        binding.llCamera.setOnClickListener(v -> {
+            dialog.dismiss();
+            checkCameraPermission();
+
+        });
+        binding.llGallery.setOnClickListener(v -> {
+            dialog.dismiss();
+            checkReadPermission();
+        });
+
+        dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_congratulation_animation;
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setView(binding.getRoot());
+    }
+
+    private void openCamera(){
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQ);
+    }
+
+    private void openGallery(){
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        } else {
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        }
+
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType("image/*");
+        startActivityForResult(intent, IMG_REQ);
+
+    }
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, cameraPermission) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, write_permission) != PackageManager.PERMISSION_GRANTED
+        ) {
+            String [] permissions = {cameraPermission,write_permission};
+            ActivityCompat.requestPermissions(this,permissions,CAMERA_REQ);
+        } else {
+            openCamera();
+        }
+
+    }
+
+    private void checkReadPermission() {
+        if (ContextCompat.checkSelfPermission(this, cameraPermission) != PackageManager.PERMISSION_GRANTED
+        ) {
+            String [] permissions = {read_permission};
+            ActivityCompat.requestPermissions(this,permissions,IMG_REQ);
+        } else {
+            openGallery();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode==IMG_REQ&&grantResults.length>0){
+            openGallery();
+        }else if (requestCode==CAMERA_REQ&&grantResults.length>0){
+            if (grantResults[0]==PackageManager.PERMISSION_GRANTED&&grantResults[1]==PackageManager.PERMISSION_GRANTED){
+                openCamera();
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Uri selectedImage = null;
+
+        Log.e("req",requestCode+"__");
+
+        if (requestCode == IMG_REQ&&resultCode==RESULT_OK&&data!=null) {
+            selectedImage = data.getData();
+            mFilePathCallback.onReceiveValue(new Uri[]{selectedImage});
+            mFilePathCallback = null;
+
+        } else if (requestCode == CAMERA_REQ&&resultCode==RESULT_OK&&data!=null) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            selectedImage = getUriFromBitmap(bitmap);
+            mFilePathCallback.onReceiveValue(new Uri[]{selectedImage});
+            mFilePathCallback = null;
+
+
+
+
+            /*if (mCapturedImageURI == null) {
+                return;
+            }
+            getContentResolver().notifyChange(mCapturedImageURI, null);
+            ContentResolver cr = getContentResolver();
+            try {
+                selectedImage = Uri.parse(MediaStore.Images.Media.insertImage(cr, photo.getAbsolutePath(), null, null));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }*/
+        }
+
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (requestCode != IMG_REQ || mFilePathCallback == null) {
                 super.onActivityResult(requestCode, resultCode, data);
                 return;
             }
@@ -268,8 +407,14 @@ public class SignUpDelegateActivity extends AppCompatActivity {
                 mUploadMessage.onReceiveValue(result);
                 mUploadMessage = null;
             }
-        }
+        }*/
         return;
+    }
+
+    private Uri getUriFromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        return Uri.parse(MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "", ""));
     }
 
     private File createImageFile() throws IOException {
@@ -286,4 +431,12 @@ public class SignUpDelegateActivity extends AppCompatActivity {
         return imageFile;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isUpdated){
+            setResult(RESULT_OK);
+
+        }
+        finish();
+    }
 }

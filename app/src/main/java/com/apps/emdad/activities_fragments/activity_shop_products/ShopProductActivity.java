@@ -3,8 +3,11 @@ package com.apps.emdad.activities_fragments.activity_shop_products;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
@@ -19,10 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.apps.emdad.BuildConfig;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
 import com.apps.emdad.activities_fragments.activity_add_order_products.AddOrderProductActivity;
@@ -53,6 +58,9 @@ import com.apps.emdad.tags.Tags;
 import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -195,11 +203,14 @@ public class ShopProductActivity extends AppCompatActivity {
         });
 
         binding.imageShare.setOnClickListener(v -> {
-            String url = Tags.base_url + placeModel.getShop_id();
+            Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider",createFile());
+            String url = getString(R.string.can_order)+"\n"+Tags.base_url+"place/details/"+placeModel.getShop_id();
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, url);
-            startActivity(Intent.createChooser(intent, "Share"));
+            intent.putExtra(Intent.EXTRA_TEXT,url);
+            intent.putExtra(Intent.EXTRA_STREAM,uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(intent,"Share"));
         });
 
 
@@ -473,6 +484,7 @@ public class ShopProductActivity extends AppCompatActivity {
                 });
     }
 
+
     private List<HourModel> getHours(PlaceDetailsModel placeDetailsModel) {
         List<HourModel> list = new ArrayList<>();
 
@@ -524,6 +536,23 @@ public class ShopProductActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setView(binding.getRoot());
         dialog.show();
+    }
+
+    private File createFile(){
+        File file = null;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo_text);
+        file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),System.currentTimeMillis()+".png");
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,90,outputStream);
+            outputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
     public void setSelectedDepartmentPosition(int adapterPosition) {
