@@ -1855,7 +1855,7 @@ public class ChatActivity extends AppCompatActivity {
         preferences.createUpdateAppSetting(this,defaultSettings);
 
         Api.getService(Tags.base_url)
-                .getChatMessages(userModel.getUser().getToken(),room_id, 1, "on", 40)
+                .getChatMessages(userModel.getUser().getToken(),room_id,userModel.getUser().getId(),userModel.getUser().getUser_type(),1, "on", 40)
                 .enqueue(new Callback<MessageDataModel>() {
                     @Override
                     public void onResponse(Call<MessageDataModel> call, Response<MessageDataModel> response) {

@@ -424,6 +424,8 @@ public interface Service {
     @GET("api/get-room-msg")
     Call<MessageDataModel> getChatMessages(@Header("Authorization") String user_token,
                                            @Query(value = "room_id") String room_id,
+                                           @Query(value = "user_id") int user_id,
+                                           @Query(value = "user_type") String user_type,
                                            @Query(value = "page") int page,
                                            @Query(value = "pagination") String pagination,
                                            @Query(value = "limit_per_page") int limit_per_page
