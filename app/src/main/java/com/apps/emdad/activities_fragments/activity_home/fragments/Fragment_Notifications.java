@@ -272,10 +272,27 @@ public class Fragment_Notifications extends Fragment {
     }
 
     public void setItemData(NotificationDataModel.NotificationModel model) {
-        if (model.getAction().equals("resend_offer")){
+        Intent intent =new Intent(activity, ChatActivity.class);
+        intent.putExtra("order_id",Integer.parseInt(model.getOrder_id()));
+        startActivity(intent);
+
+        /*if (model.getAction().equals("resend_offer")){
+
+        }else {
             Intent intent =new Intent(activity, ChatActivity.class);
             intent.putExtra("order_id",Integer.parseInt(model.getOrder_id()));
             startActivity(intent);
+        }*/
+    }
+
+    public void deleteNotification(NotificationDataModel.NotificationModel model2, int adapterPosition) {
+        notificationModelList.remove(adapterPosition);
+        adapter.notifyItemRemoved(adapterPosition);
+        if (notificationModelList.size()>0){
+            binding.llNoData.setVisibility(View.GONE);
+        }else {
+            binding.llNoData.setVisibility(View.VISIBLE);
+
         }
     }
 }

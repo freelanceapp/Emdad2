@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -117,13 +118,22 @@ public class DelegateOrdersActivity extends AppCompatActivity {
             }
         });
 
-        binding.swipeRefresh.setOnRefreshListener(this::getOrders);
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            if (userModel.getUser().getReceive_notifications().equals("yes")){
+                getOrders();
+            }else {
+                binding.swipeRefresh.setRefreshing(false);
+            }
+        });
 
 
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        getOrders();
+        if (userModel.getUser().getReceive_notifications().equals("yes")){
+            getOrders();
+
+        }
     }
 
 

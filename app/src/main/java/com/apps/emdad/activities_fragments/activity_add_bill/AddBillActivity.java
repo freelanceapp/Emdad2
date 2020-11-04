@@ -158,7 +158,8 @@ public class AddBillActivity extends AppCompatActivity {
                 String message= "قام المرسول " +orderModel.getDriver().getName()+" بإصدار فاتورة"+"\n"+"تكلفة المشتريات :"+product_cost+" "+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"تكلفة التوصيل :"+delivery_cost+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"قيمة الخصم :"+discountValue+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"مجموع تكلفة التوصيل :"+delivery_cost_after_discount+userModel.getUser().getCountry().getWord().getCurrency()+"\n"+"المجموع الكلي:"+total_cost2+userModel.getUser().getCountry().getWord().getCurrency();
 
                 if (uri==null){
-                    AddBillWithoutImage(message,product_cost);
+                    Common.CreateDialogAlert(this,getString(R.string.ch_bill));
+                    //AddBillWithoutImage(message,product_cost);
 
                 }else {
                     AddBillWithImage(uri.toString(),message,product_cost);

@@ -14,10 +14,47 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:text="@string/notifications"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center_vertical"
+                        />
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        />
+                    <TextView
+                        android:id="@+id/tvClearAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/transparent"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorPrimary"
+                        android:text="@string/clear_all"
+                        android:layout_gravity="center_vertical"
+                        />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         <LinearLayout

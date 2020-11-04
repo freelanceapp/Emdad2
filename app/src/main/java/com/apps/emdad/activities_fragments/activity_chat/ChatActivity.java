@@ -874,7 +874,14 @@ public class ChatActivity extends AppCompatActivity {
             Picasso.get().load(Uri.parse(Tags.IMAGE_URL + orderModel.getDriver().getLogo())).placeholder(R.drawable.user_avatar).fit().into(binding.userImage);
             binding.tvName.setText(orderModel.getDriver().getName());
             binding.rateBar.setRating(Float.parseFloat(orderModel.getDriver().getRate()));
-            binding.flCall.setVisibility(View.VISIBLE);
+
+            if (orderModel.getOrder_status().equals("accept_driver")||orderModel.getOrder_status().equals("bill_attach")||orderModel.getOrder_status().equals("order_collected")||orderModel.getOrder_status().equals("reach_to_client")){
+                binding.flCall.setVisibility(View.VISIBLE);
+
+            }else {
+                binding.flCall.setVisibility(View.GONE);
+
+            }
             binding.llBill.setVisibility(View.GONE);
             double offer_value = 0.0;
             if (orderModel.getOrder_offer() != null) {

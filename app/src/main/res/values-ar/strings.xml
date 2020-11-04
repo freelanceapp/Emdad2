@@ -303,7 +303,7 @@
     <string name="total_with_tax">المجموع (يشمل الضريبة)</string>
     <string name="attachment">ملحق</string>
     <string name="picking_order">متوجة للستلام</string>
-    <string name="received">تم الستلام</string>
+    <string name="received">تم الإستلام</string>
     <string name="click_on_receive">اضغط على تم الاستلام بمجرد استلام الطلب من المتجر</string>
     <string name="on_location">في الموقع</string>
     <string name="click_on_reached_location">إضغط على وصلت للموقع بمجرد وصولك لموقع العميل</string>
@@ -335,5 +335,7 @@
     <string name="change_location">تغيير موقعك</string>
     <string name="no_courier">لا يوجد مناديب متاحين لهذاالفرع</string>
     <string name="can_order">تستطيع طلب طلبك من خلال تطبيق إمداد</string>
+    <string name="ch_bill">إختر صورة الفاتورة</string>
+    <string name="delete">مسح</string>
 
 </resources>

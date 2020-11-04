@@ -69,6 +69,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             });
 
+            myHolder.binding.tvDelete.setOnClickListener(v -> {
+                NotificationDataModel.NotificationModel model2 = list.get(myHolder.getAdapterPosition());
+                fragment_notifications.deleteNotification(model2,myHolder.getAdapterPosition());
+            });
+
         }else if (holder instanceof LoadMoreHolder){
             LoadMoreHolder loadMoreHolder = (LoadMoreHolder) holder;
             loadMoreHolder.binding.prgBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(context,R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
