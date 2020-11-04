@@ -87,7 +87,14 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         binding.tvYearOfBirth.setOnClickListener(v -> {
             createDialogAlert();
         });
+        binding.icon.setOnClickListener(v -> {
+            if (uri!=null){
+                uri = null;
+                binding.icon.setImageResource(R.drawable.plus);
+                binding.image.setImageResource(R.drawable.user_avatar);
+            }
 
+        });
 
         if (userModel!=null){
             signUpModel.setCountry_id(userModel.getUser().getCountry().getId_country());
@@ -103,7 +110,6 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             }else {
                 female();
             }
-            Log.e("ddada",Tags.IMAGE_URL+userModel.getUser().getLogo());
             binding.tvYearOfBirth.setText(signUpModel.getYear());
             Picasso.get().load(Uri.parse(Tags.IMAGE_URL+userModel.getUser().getLogo())).placeholder(R.drawable.user_avatar).into(binding.image);
 
@@ -273,6 +279,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             uri = data.getData();
             File file = new File(Common.getImagePath(this, uri));
             Picasso.get().load(file).fit().into(binding.image);
+            binding.icon.setImageResource(R.drawable.cancel3);
 
 
         } else if (requestCode == CAMERA_REQ && resultCode == Activity.RESULT_OK && data != null) {
@@ -280,6 +287,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             uri = getUriFromBitmap(bitmap);
             if (uri != null) {
+                binding.icon.setImageResource(R.drawable.cancel3);
+
                 String path = Common.getImagePath(this, uri);
 
                 if (path != null) {
@@ -438,7 +447,6 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
-        Log.e("coun_id",signUpModel.getCountry_id()+"___");
         RequestBody name_part = Common.getRequestBodyText(signUpModel.getName());
         RequestBody phone_code_part = Common.getRequestBodyText(signUpModel.getPhone_code());
         RequestBody phone_part = Common.getRequestBodyText(signUpModel.getPhone());
