@@ -73,7 +73,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardAr"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     app:contentPadding="8dp"
                     app:cardBackgroundColor="@color/white"
                     app:cardElevation="5dp"
@@ -83,7 +83,7 @@
                     <TextView
                         android:id="@+id/tvAr"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="عربي"
                         android:gravity="center"
                         android:textColor="@color/color2"
@@ -95,7 +95,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardEn"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     app:contentPadding="8dp"
                     app:cardBackgroundColor="@color/white"
                     app:cardElevation="0dp"
@@ -105,7 +105,7 @@
                     <TextView
                         android:id="@+id/tvEn"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="English"
                         android:gravity="center"
                         android:textColor="@color/colorPrimary"

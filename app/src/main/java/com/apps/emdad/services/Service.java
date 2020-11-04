@@ -424,6 +424,8 @@ public interface Service {
     @GET("api/get-room-msg")
     Call<MessageDataModel> getChatMessages(@Header("Authorization") String user_token,
                                            @Query(value = "room_id") String room_id,
+                                           @Query(value = "user_id") int user_id,
+                                           @Query(value = "user_type") String user_type,
                                            @Query(value = "page") int page,
                                            @Query(value = "pagination") String pagination,
                                            @Query(value = "limit_per_page") int limit_per_page
@@ -532,9 +534,6 @@ public interface Service {
                                             @Field("longitude") double longitude
 
 
-
-
-
     );
 
 
@@ -548,5 +547,18 @@ public interface Service {
                                            @Query("destination") String destination,
                                            @Query("transit_mode") String transit_mode,
                                            @Query("key") String key
+    );
+
+    @FormUrlEncoded
+    @POST("api/delete-notification")
+    Call<ResponseBody> deleteNotification(@Header("Authorization") String user_token,
+                                          @Field("notification_id") int notification_id
+    );
+
+
+    @FormUrlEncoded
+    @POST("api/delete-user-notification")
+    Call<ResponseBody> deleteAllNotification(@Header("Authorization") String user_token,
+                                          @Field("user_id") int user_id
     );
 }

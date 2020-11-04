@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
     private UserModel userModel;
     private Preferences preferences;
     public double user_lat =0.0,user_lng=0.0;
+    private boolean isFromNotification = false;
 
     @Override
     protected void attachBaseContext(Context newBase)
@@ -111,7 +112,12 @@ public class HomeActivity extends AppCompatActivity {
         getDataFromIntent();
         initView();
         if (savedInstanceState==null){
-            displayFragmentMain();
+            if (isFromNotification){
+                displayFragmentNotification();
+            }else {
+                displayFragmentMain();
+
+            }
         }
 
     }
@@ -120,7 +126,7 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         user_lat = intent.getDoubleExtra("lat",0.0);
         user_lng = intent.getDoubleExtra("lng",0.0);
-
+        isFromNotification = intent.getBooleanExtra("notification",false);
     }
     private void initView()
     {

@@ -334,6 +334,8 @@
     <string name="change_location">Change Location</string>
     <string name="no_courier">No Courier Available</string>
     <string name="can_order">You can order any order from stores through Emdad Application</string>
+    <string name="ch_bill">Choose Bill image</string>
+    <string name="delete">Delete</string>
 
 
 </resources>

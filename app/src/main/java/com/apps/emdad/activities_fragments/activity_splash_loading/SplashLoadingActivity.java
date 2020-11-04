@@ -49,6 +49,7 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
     private final int loc_req = 22;
     private UserModel userModel;
     private Preferences preferences;
+    private boolean isFromNotification = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -60,9 +61,15 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_loading);
+        getDataFromIntent();
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         CheckPermission();
+    }
+
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        isFromNotification = intent.getBooleanExtra("notification",false);
     }
 
     private void initGoogleApiClient() {
@@ -176,6 +183,7 @@ public class SplashLoadingActivity extends AppCompatActivity implements GoogleAp
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra("lat",location.getLatitude());
         intent.putExtra("lng",location.getLongitude());
+        intent.putExtra("notification",isFromNotification);
         startActivity(intent);
         finish();
         if (googleApiClient != null) {

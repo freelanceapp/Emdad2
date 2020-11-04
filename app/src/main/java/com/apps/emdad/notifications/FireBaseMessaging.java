@@ -25,6 +25,7 @@ import androidx.core.app.NotificationCompat;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.models.FavoriteLocationModel;
 import com.apps.emdad.models.MessageModel;
 import com.apps.emdad.models.NotFireModel;
@@ -56,10 +57,6 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         map = remoteMessage.getData();
 
-      /*  for (String key:map.keySet())
-        {
-            Log.e("key",key+"    value "+map.get(key));
-        }*/
 
         if (getSession().equals(Tags.session_login))
         {
@@ -73,10 +70,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
                 ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
                 String current_class = activityManager.getRunningTasks(1).get(0).topActivity.getClassName();
                 if (current_class.equals("com.apps.emdad.activities_fragments.activity_chat.ChatActivity")){
-                    Log.e("2","2");
-                    Log.e("chat_id",getChatUserId()+"__");
                     if (from_user_id.equals(getChatUserId())){
-                        Log.e("3","3");
 
                         String id = String.valueOf(map.get("id"));
                         String room_id = map.get("room_id");
@@ -97,11 +91,9 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
                     }else {
                         manageNotification(map);
-                        Log.e("4","4");
 
                     }
                 }else {
-                    Log.e("5","5");
 
                     manageNotification(map);
                 }
@@ -210,7 +202,8 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             }
 
         }else if (notification_type.equals("order")){
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            intent.putExtra("notification",true);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
             taskStackBuilder.addNextIntent(intent);
@@ -230,7 +223,8 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             }
 
         }else if (notification_type.equals("offer")){
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            intent.putExtra("notification",true);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
             taskStackBuilder.addNextIntent(intent);
@@ -303,7 +297,8 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
 
         }else if (notification_type.equals("order")){
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            intent.putExtra("notification",true);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
             taskStackBuilder.addNextIntent(intent);
@@ -320,7 +315,8 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
             }
         }else if (notification_type.equals("offer")){
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            intent.putExtra("notification",true);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
             taskStackBuilder.addNextIntent(intent);

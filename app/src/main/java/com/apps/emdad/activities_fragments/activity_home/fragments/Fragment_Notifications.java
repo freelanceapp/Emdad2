@@ -1,5 +1,6 @@
 package com.apps.emdad.activities_fragments.activity_home.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_add_order.AddOrderActivity;
 import com.apps.emdad.activities_fragments.activity_chat.ChatActivity;
+import com.apps.emdad.activities_fragments.activity_driver_update_location.DriverUpdateLocationActivity;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_old_orders.OldOrdersActivity;
 import com.apps.emdad.adapters.NotificationAdapter;
@@ -31,6 +33,7 @@ import com.apps.emdad.models.UnReadCountModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
+import com.apps.emdad.share.Common;
 import com.apps.emdad.tags.Tags;
 
 import java.io.IOException;
@@ -91,7 +94,9 @@ public class Fragment_Notifications extends Fragment {
             }
         });
 
-
+        binding.tvClearAll.setOnClickListener(v -> {
+            deleteAllNotification();
+        });
         binding.swipeRefresh.setOnRefreshListener(this::getNotifications);
         getNotifications();
     }
@@ -272,10 +277,129 @@ public class Fragment_Notifications extends Fragment {
     }
 
     public void setItemData(NotificationDataModel.NotificationModel model) {
-        if (model.getAction().equals("resend_offer")){
+        Intent intent =new Intent(activity, ChatActivity.class);
+        intent.putExtra("order_id",Integer.parseInt(model.getOrder_id()));
+        startActivity(intent);
+
+        /*if (model.getAction().equals("resend_offer")){
+
+        }else {
             Intent intent =new Intent(activity, ChatActivity.class);
             intent.putExtra("order_id",Integer.parseInt(model.getOrder_id()));
             startActivity(intent);
-        }
+        }*/
     }
+
+    public void deleteNotification(NotificationDataModel.NotificationModel model, int adapterPosition) {
+        ProgressDialog dialog = Common.createProgressDialog(activity,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).deleteNotification(userModel.getUser().getToken(),model.getId())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                notificationModelList.remove(adapterPosition);
+                                adapter.notifyItemRemoved(adapterPosition);
+                                if (notificationModelList.size()>0){
+                                    binding.llNoData.setVisibility(View.GONE);
+                                }else {
+                                    binding.llNoData.setVisibility(View.VISIBLE);
+
+                                }
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(activity, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+
+    }
+
+    public void deleteAllNotification() {
+        ProgressDialog dialog = Common.createProgressDialog(activity,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).deleteAllNotification(userModel.getUser().getToken(),userModel.getUser().getId())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                notificationModelList.clear();
+                                adapter.notifyDataSetChanged();
+                                binding.llNoData.setVisibility(View.VISIBLE);
+
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(activity, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(activity, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+
+    }
+
 }
