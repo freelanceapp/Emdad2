@@ -532,9 +532,6 @@ public interface Service {
                                             @Field("longitude") double longitude
 
 
-
-
-
     );
 
 
@@ -548,5 +545,18 @@ public interface Service {
                                            @Query("destination") String destination,
                                            @Query("transit_mode") String transit_mode,
                                            @Query("key") String key
+    );
+
+    @FormUrlEncoded
+    @POST("api/delete-notification")
+    Call<ResponseBody> deleteNotification(@Header("Authorization") String user_token,
+                                          @Field("notification_id") int notification_id
+    );
+
+
+    @FormUrlEncoded
+    @POST("api/delete-user-notification")
+    Call<ResponseBody> deleteAllNotification(@Header("Authorization") String user_token,
+                                          @Field("user_id") int user_id
     );
 }
