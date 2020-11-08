@@ -337,5 +337,6 @@
     <string name="can_order">تستطيع طلب طلبك من خلال تطبيق إمداد</string>
     <string name="ch_bill">إختر صورة الفاتورة</string>
     <string name="delete">مسح</string>
+    <string name="accept_terms">لا يمكنك التسجيل دون الموافقة على الشروط والأحكام</string>
 
 </resources>

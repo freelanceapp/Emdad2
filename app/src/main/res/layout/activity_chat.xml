@@ -161,6 +161,8 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:layout_gravity="center_vertical"
+                                android:visibility="invisible"
+
                                 >
                                 <de.hdodenhof.circleimageview.CircleImageView
                                     android:layout_width="match_parent"
@@ -176,7 +178,6 @@
                                     android:src="@drawable/ic_exclamation_mark"
                                     android:padding="10dp"
                                     android:tint="@color/colorPrimary"
-                                    android:rotation='@{lang.equals("ar")?180:0}'
                                     android:layout_gravity="center"
                                     android:clickable="false"
                                     android:longClickable="false"
@@ -215,9 +216,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
-                            android:lines="1"
                             android:textColor="@color/black"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toTopOf="@id/rateBar"
                             app:layout_constraintEnd_toStartOf="@id/llCall"
@@ -247,18 +247,20 @@
                         <TextView
                             android:id="@+id/tvOfferValue"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="0dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:textColor="@color/colorPrimary"
                             android:textSize="10sp"
-                            app:layout_constraintBottom_toBottomOf="@id/rateBar"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/llCall"
                             app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toEndOf="@id/rateBar"
                             app:layout_constraintTop_toTopOf="@id/rateBar"
                             app:layout_constraintWidth_default="wrap"
-                            tools:ignore="SmallSp" />
+                            tools:ignore="SmallSp"
+                            android:text=""
+                            />
 
                         <LinearLayout
                             android:id="@+id/llCall"

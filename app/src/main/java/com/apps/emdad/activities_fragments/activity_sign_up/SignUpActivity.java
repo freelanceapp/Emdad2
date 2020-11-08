@@ -24,11 +24,14 @@ import android.widget.Toast;
 
 import com.apps.emdad.R;
 import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
+import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
+import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
 import com.apps.emdad.activities_fragments.activity_splash_loading.SplashLoadingActivity;
 import com.apps.emdad.databinding.ActivitySignUpBinding;
 import com.apps.emdad.databinding.DialogYearBinding;
 import com.apps.emdad.interfaces.Listeners;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.SettingModel;
 import com.apps.emdad.models.SignUpModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
@@ -62,6 +65,9 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     private Preferences preferences;
     private boolean fromSplash =true;
     private UserModel userModel;
+    private SettingModel settingModel;
+    private String lang="ar";
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -79,6 +85,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     }
 
     private void initView() {
+        Paper.init(this);
+        lang = Paper.book().read("lang","ar");
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         signUpModel = new SignUpModel();
@@ -94,6 +102,23 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                 binding.image.setImageResource(R.drawable.user_avatar);
             }
 
+        });
+
+        binding.checkbox.setOnClickListener(v -> {
+            if (binding.checkbox.isChecked()){
+                signUpModel.setAcceptTerms(true);
+                if (settingModel!=null){
+                    navigateToTermsActivity();
+                }else {
+                    getSetting();
+                }
+            }else {
+                signUpModel.setAcceptTerms(false);
+
+            }
+
+
+            binding.setModel(signUpModel);
         });
 
         if (userModel!=null){
@@ -663,10 +688,70 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     }
 
-    private void navigateToHomeActivity()
-    {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-        finish();
+
+    private void getSetting(){
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).getSetting(lang)
+                .enqueue(new Callback<SettingModel>() {
+                    @Override
+                    public void onResponse(Call<SettingModel> call, Response<SettingModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                settingModel = response.body();
+                                navigateToTermsActivity();
+
+                            }
+                        } else {
+
+                            dialog.dismiss();
+
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SettingModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
     }
+
+    private void navigateToTermsActivity() {
+        if (settingModel!=null){
+            Intent intent = new Intent(this, SignUpDelegateActivity.class);
+            String url = Tags.base_url+settingModel.getSettings().getTerms_and_conditions();
+            intent.putExtra("url",url);
+            startActivity(intent);
+        }else {
+            Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

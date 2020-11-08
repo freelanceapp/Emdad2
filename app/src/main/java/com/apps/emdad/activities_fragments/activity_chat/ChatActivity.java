@@ -134,6 +134,7 @@ public class ChatActivity extends AppCompatActivity {
     private RateReasonAdapter rateReasonAdapter;
     private RateModel rateModel;
     private SettingModel settingModel;
+    private boolean isFromFireBase = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -765,6 +766,11 @@ public class ChatActivity extends AppCompatActivity {
                         getChatMessages(orderModel.getRoom_id());
 
                     }
+                }
+
+                if (isFromFireBase){
+                    setResult(RESULT_OK);
+                    finish();
                 }
                 break;
             case "client_end_and_rate":
@@ -1482,13 +1488,13 @@ public class ChatActivity extends AppCompatActivity {
         binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
-        List<RateReason> rateReasonList = new ArrayList<>();
+        /*List<RateReason> rateReasonList = new ArrayList<>();
         rateReasonList.add(new RateReason(1,"يعاكس",false));
         rateReasonList.add(new RateReason(2,"غير مهزب",false));
         rateReasonList.add(new RateReason(3,"مدخن",false));
         rateReasonList.add(new RateReason(4,"متأخر",false));
         rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
-        rateReasonAdapter.addData(rateReasonList);
+        rateReasonAdapter.addData(rateReasonList);*/
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
         rateModel.setRate(1);
@@ -1507,13 +1513,13 @@ public class ChatActivity extends AppCompatActivity {
         binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
-        List<RateReason> rateReasonList = new ArrayList<>();
+        /*List<RateReason> rateReasonList = new ArrayList<>();
         rateReasonList.add(new RateReason(1,"يعاكس",false));
         rateReasonList.add(new RateReason(2,"غير مهزب",false));
         rateReasonList.add(new RateReason(3,"مدخن",false));
         rateReasonList.add(new RateReason(4,"متأخر",false));
         rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
-        rateReasonAdapter.addData(rateReasonList);
+        rateReasonAdapter.addData(rateReasonList);*/
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
         rateModel.setRate(2);
@@ -1530,13 +1536,13 @@ public class ChatActivity extends AppCompatActivity {
         binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.black));
         binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
-        List<RateReason> rateReasonList = new ArrayList<>();
+       /* List<RateReason> rateReasonList = new ArrayList<>();
         rateReasonList.add(new RateReason(1,"يعاكس",false));
         rateReasonList.add(new RateReason(2,"غير مهزب",false));
         rateReasonList.add(new RateReason(3,"مدخن",false));
         rateReasonList.add(new RateReason(4,"متأخر",false));
         rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
-        rateReasonAdapter.addData(rateReasonList);
+        rateReasonAdapter.addData(rateReasonList);*/
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
         rateModel.setRate(3);
@@ -1554,10 +1560,10 @@ public class ChatActivity extends AppCompatActivity {
         binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.black));
         binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.gray8));
-        List<RateReason> rateReasonList = new ArrayList<>();
+       /* List<RateReason> rateReasonList = new ArrayList<>();
         rateReasonList.add(new RateReason(6,"يضايق",false));
         rateReasonList.add(new RateReason(4,"متأخر",false));
-        rateReasonAdapter.addData(rateReasonList);
+        rateReasonAdapter.addData(rateReasonList);*/
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
         rateModel.setRate(4);
@@ -1575,12 +1581,12 @@ public class ChatActivity extends AppCompatActivity {
         binding.tv3.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv4.setTextColor(ContextCompat.getColor(this,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(this,R.color.black));
-        List<RateReason> rateReasonList = new ArrayList<>();
+       /* List<RateReason> rateReasonList = new ArrayList<>();
         rateReasonList.add(new RateReason(7,"خدمة سريعة",false));
         rateReasonList.add(new RateReason(8,"محترم",false));
         rateReasonList.add(new RateReason(9,"إحترافي",false));
         rateReasonList.add(new RateReason(10,"متجاوب",false));
-        rateReasonAdapter.addData(rateReasonList);
+        rateReasonAdapter.addData(rateReasonList);*/
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
         rateModel.setRate(5);
@@ -1929,6 +1935,7 @@ public class ChatActivity extends AppCompatActivity {
     }
     @Subscribe
     public void onOrderUpdated(NotFireModel notFireModel){
+        isFromFireBase = true;
         getOrderById(null);
     }
     private void deleteFile() {
