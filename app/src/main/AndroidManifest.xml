@@ -13,9 +13,11 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"
+    <uses-permission
+        android:name="android.permission.CHANGE_CONFIGURATION"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+
     <application
         android:name=".share.App"
         android:allowBackup="true"
@@ -28,23 +30,22 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
-        <activity android:name=".activities_fragments.activity_splash_loading2.SplashLoading2Activity"
+        <activity android:name=".activities_fragments.activity_map_show_location.MapShowLocationActivity"></activity>
+        <activity
+            android:name=".activities_fragments.activity_splash_loading2.SplashLoading2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            >
-            <intent-filter >
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <data
                     android:host="tawsel-emdad.creativeshare.sa"
-                    android:scheme="http"
                     android:pathPrefix="/place/details/"
-                    >
-                </data>
+                    android:scheme="http"></data>
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities_fragments.activity_follow_order.FollowOrderActivity"
@@ -222,7 +223,6 @@
             android:name=".activities_fragments.activity_chat.ServiceUploadAttachment"
             android:enabled="true"
             android:stopWithTask="false" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import com.apps.emdad.R;
@@ -50,6 +51,7 @@ import java.util.List;
 import io.paperdb.Paper;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,10 +65,10 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     private Uri uri = null;
     private SignUpModel signUpModel;
     private Preferences preferences;
-    private boolean fromSplash =true;
+    private boolean fromSplash = true;
     private UserModel userModel;
     private SettingModel settingModel;
-    private String lang="ar";
+    private String lang = "ar";
 
 
     @Override
@@ -86,7 +88,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     private void initView() {
         Paper.init(this);
-        lang = Paper.book().read("lang","ar");
+        lang = Paper.book().read("lang", "ar");
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         signUpModel = new SignUpModel();
@@ -96,23 +98,29 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             createDialogAlert();
         });
         binding.icon.setOnClickListener(v -> {
-            if (uri!=null){
-                uri = null;
-                binding.icon.setImageResource(R.drawable.plus);
-                binding.image.setImageResource(R.drawable.user_avatar);
+
+            if (userModel != null) {
+                deleteImage();
+            } else {
+                if (uri != null) {
+                    uri = null;
+                    binding.icon.setImageResource(R.drawable.plus);
+                    binding.image.setImageResource(R.drawable.user_avatar);
+                }
             }
+
 
         });
 
         binding.checkbox.setOnClickListener(v -> {
-            if (binding.checkbox.isChecked()){
+            if (binding.checkbox.isChecked()) {
                 signUpModel.setAcceptTerms(true);
-                if (settingModel!=null){
+                if (settingModel != null) {
                     navigateToTermsActivity();
-                }else {
+                } else {
                     getSetting();
                 }
-            }else {
+            } else {
                 signUpModel.setAcceptTerms(false);
 
             }
@@ -121,7 +129,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             binding.setModel(signUpModel);
         });
 
-        if (userModel!=null){
+        if (userModel != null) {
             signUpModel.setCountry_id(userModel.getUser().getCountry().getId_country());
             signUpModel.setYear(userModel.getUser().getDate_of_birth());
             signUpModel.setGender(userModel.getUser().getGender());
@@ -130,13 +138,18 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
             signUpModel.setPhone_code(userModel.getUser().getPhone_code());
             signUpModel.setPhone(userModel.getUser().getPhone());
             binding.setModel(signUpModel);
-            if (userModel.getUser().getGender().equals("male")){
+            if (userModel.getUser().getGender().equals("male")) {
                 male();
-            }else {
+            } else {
                 female();
             }
+            if (userModel.getUser().getLogo() != null && !userModel.getUser().getLogo().equals("0") && !userModel.getUser().getLogo().isEmpty()) {
+                binding.icon.setImageResource(R.drawable.cancel3);
+            } else {
+                binding.icon.setImageResource(R.drawable.plus);
+            }
             binding.tvYearOfBirth.setText(signUpModel.getYear());
-            Picasso.get().load(Uri.parse(Tags.IMAGE_URL+userModel.getUser().getLogo())).placeholder(R.drawable.user_avatar).into(binding.image);
+            Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.user_avatar).into(binding.image);
 
             binding.btnSignUp.setText(R.string.update);
 
@@ -144,13 +157,64 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     }
 
+    private void deleteImage() {
+        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        Api.getService(Tags.base_url).deleteUserImage(userModel.getUser().getToken(),userModel.getUser().getId())
+                .enqueue(new Callback<UserModel>() {
+                    @Override
+                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                        dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                preferences.create_update_userdata(SignUpActivity.this, response.body());
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        } else {
+                            dialog.dismiss();
+                            try {
+                                Log.e("error_code", response.code() + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserModel> call, Throwable t) {
+                        try {
+                            dialog.dismiss();
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage() + "__");
+
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+    }
+
     private void getDataFromIntent() {
         Intent intent = getIntent();
-        if (intent != null&&intent.hasExtra("phone_code")&&intent.hasExtra("phone")&&intent.hasExtra("country_id")) {
+        if (intent != null && intent.hasExtra("phone_code") && intent.hasExtra("phone") && intent.hasExtra("country_id")) {
             String phone_code = intent.getStringExtra("phone_code");
             String phone = intent.getStringExtra("phone");
             String country_id = intent.getStringExtra("country_id");
-            fromSplash = intent.getBooleanExtra("from",true);
+            fromSplash = intent.getBooleanExtra("from", true);
 
             signUpModel.setPhone_code(phone_code);
             signUpModel.setPhone(phone);
@@ -178,21 +242,20 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         if (signUpModel.isDataValid(this)) {
             Common.CloseKeyBoard(this, binding.edtName);
 
-            if (userModel==null){
+            if (userModel == null) {
                 signUp();
 
-            }else {
-                if (uri==null){
+            } else {
+                if (uri == null) {
                     updateProfileWithoutImage();
 
-                }else {
+                } else {
                     updateProfileWithImage();
                 }
             }
         }
 
     }
-
 
 
     @Override
@@ -393,19 +456,18 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     }
 
     private void signUpWithoutImage() {
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
         Api.getService(Tags.base_url)
-                .signUpWithoutImage(signUpModel.getName(),signUpModel.getEmail(),signUpModel.getPhone_code(),signUpModel.getPhone(),signUpModel.getGender(),signUpModel.getYear(),signUpModel.getCountry_id(),"android")
+                .signUpWithoutImage(signUpModel.getName(), signUpModel.getEmail(), signUpModel.getPhone_code(), signUpModel.getPhone(), signUpModel.getGender(), signUpModel.getYear(), signUpModel.getCountry_id(), "android")
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         dialog.dismiss();
-                        if (response.isSuccessful()&&response.body()!=null)
-                        {
-                            preferences.create_update_userdata(SignUpActivity.this,response.body());
-                            if (fromSplash){
+                        if (response.isSuccessful() && response.body() != null) {
+                            preferences.create_update_userdata(SignUpActivity.this, response.body());
+                            if (fromSplash) {
 
                                 Intent intent = new Intent(SignUpActivity.this, SplashLoadingActivity.class);
                                 startActivity(intent);
@@ -414,32 +476,26 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
                             }
                             finish();
-                        }else
-                        {
+                        } else {
                             try {
-                                Log.e("code",response.code()+"__"+response.errorBody().string());
+                                Log.e("code", response.code() + "__" + response.errorBody().string());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            if (response.code()==500)
-                            {
+                            if (response.code() == 500) {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==409)
-                            {
+                            } else if (response.code() == 409) {
                                 Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==406)
-                            {
+                            } else if (response.code() == 406) {
                                 Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
 
 
-                            }
-                            else
-                            {
-                                Toast.makeText(SignUpActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
 
                             try {
-                                Log.e("error",response.errorBody().string());
+                                Log.e("error", response.errorBody().string());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -459,9 +515,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                                     Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }catch (Exception e)
-                        {
-                            Log.e("Error",e.getMessage()+"__");
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
                         }
                     }
                 });
@@ -469,7 +524,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
     private void signUpWithImage() {
 
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
         RequestBody name_part = Common.getRequestBodyText(signUpModel.getName());
@@ -481,20 +536,19 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         RequestBody country_id_part = Common.getRequestBodyText(signUpModel.getCountry_id());
         RequestBody software_part = Common.getRequestBodyText("android");
 
-        MultipartBody.Part image = Common.getMultiPart(this,uri,"logo");
+        MultipartBody.Part image = Common.getMultiPart(this, uri, "logo");
 
 
         Api.getService(Tags.base_url)
-                .signUpWithImage(name_part,email_part,phone_code_part,phone_part,gender_part,year_part,country_id_part,software_part,image)
+                .signUpWithImage(name_part, email_part, phone_code_part, phone_part, gender_part, year_part, country_id_part, software_part, image)
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         dialog.dismiss();
-                        if (response.isSuccessful()&&response.body()!=null)
-                        {
-                            preferences.create_update_userdata(SignUpActivity.this,response.body());
+                        if (response.isSuccessful() && response.body() != null) {
+                            preferences.create_update_userdata(SignUpActivity.this, response.body());
 
-                            if (fromSplash){
+                            if (fromSplash) {
 
                                 Intent intent = new Intent(SignUpActivity.this, SplashLoadingActivity.class);
                                 startActivity(intent);
@@ -504,28 +558,23 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                             }
                             finish();
 
-                        }else
-                        {
+                        } else {
 
                             try {
-                                Log.e("code",response.code()+"__"+response.errorBody().string());
+                                Log.e("code", response.code() + "__" + response.errorBody().string());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            if (response.code()==500)
-                            {
+                            if (response.code() == 500) {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==409)
-                            {
+                            } else if (response.code() == 409) {
                                 Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==406)
-                            {
+                            } else if (response.code() == 406) {
                                 Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
 
 
-                            }else
-                            {
-                                Toast.makeText(SignUpActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -543,9 +592,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                                     Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }catch (Exception e)
-                        {
-                            Log.e("Error",e.getMessage()+"__");
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
                         }
                     }
                 });
@@ -553,44 +601,36 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     }
 
 
-    private void updateProfileWithoutImage()
-    {
+    private void updateProfileWithoutImage() {
 
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
         Api.getService(Tags.base_url)
-                .updateProfileWithoutImage(userModel.getUser().getToken(),userModel.getUser().getId(),signUpModel.getName(),signUpModel.getEmail(),signUpModel.getPhone(),signUpModel.getPhone_code(),signUpModel.getGender(),signUpModel.getYear())
+                .updateProfileWithoutImage(userModel.getUser().getToken(), userModel.getUser().getId(), signUpModel.getName(), signUpModel.getEmail(), signUpModel.getPhone(), signUpModel.getPhone_code(), signUpModel.getGender(), signUpModel.getYear())
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         dialog.dismiss();
-                        if (response.isSuccessful()&&response.body()!=null)
-                        {
-                            preferences.create_update_userdata(SignUpActivity.this,response.body());
+                        if (response.isSuccessful() && response.body() != null) {
+                            preferences.create_update_userdata(SignUpActivity.this, response.body());
                             setResult(RESULT_OK);
                             finish();
-                        }else
-                        {
-                            if (response.code()==500)
-                            {
+                        } else {
+                            if (response.code() == 500) {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==409)
-                            {
+                            } else if (response.code() == 409) {
                                 Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==406)
-                            {
+                            } else if (response.code() == 406) {
                                 Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
 
 
-                            }
-                            else
-                            {
-                                Toast.makeText(SignUpActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
 
                             try {
-                                Log.e("error",response.errorBody().string());
+                                Log.e("error", response.errorBody().string());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -610,17 +650,17 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                                     Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }catch (Exception e)
-                        {
-                            Log.e("Error",e.getMessage()+"__");
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
                         }
                     }
                 });
 
     }
+
     private void updateProfileWithImage() {
 
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.show();
         RequestBody user_id = Common.getRequestBodyText(String.valueOf(userModel.getUser().getId()));
@@ -631,37 +671,31 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         RequestBody gender_part = Common.getRequestBodyText(signUpModel.getGender());
         RequestBody year_part = Common.getRequestBodyText(signUpModel.getYear());
 
-        MultipartBody.Part image = Common.getMultiPart(this,uri,"logo");
+        MultipartBody.Part image = Common.getMultiPart(this, uri, "logo");
 
 
         Api.getService(Tags.base_url)
-                .updateProfileWithImage(userModel.getUser().getToken(),user_id,name_part,email_part,phone_part,phone_code_part,gender_part,year_part,image)
+                .updateProfileWithImage(userModel.getUser().getToken(), user_id, name_part, email_part, phone_part, phone_code_part, gender_part, year_part, image)
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         dialog.dismiss();
-                        if (response.isSuccessful()&&response.body()!=null)
-                        {
-                            preferences.create_update_userdata(SignUpActivity.this,response.body());
+                        if (response.isSuccessful() && response.body() != null) {
+                            preferences.create_update_userdata(SignUpActivity.this, response.body());
                             setResult(RESULT_OK);
                             finish();
 
-                        }else
-                        {
-                            if (response.code()==500)
-                            {
+                        } else {
+                            if (response.code() == 500) {
                                 Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==409)
-                            {
+                            } else if (response.code() == 409) {
                                 Toast.makeText(SignUpActivity.this, R.string.phone_exist, Toast.LENGTH_SHORT).show();
-                            }else if (response.code()==406)
-                            {
+                            } else if (response.code() == 406) {
                                 Toast.makeText(SignUpActivity.this, R.string.email_exist, Toast.LENGTH_SHORT).show();
 
 
-                            }else
-                            {
-                                Toast.makeText(SignUpActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -679,9 +713,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
                                     Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }catch (Exception e)
-                        {
-                            Log.e("Error",e.getMessage()+"__");
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage() + "__");
                         }
                     }
                 });
@@ -689,8 +722,8 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     }
 
 
-    private void getSetting(){
-        ProgressDialog dialog = Common.createProgressDialog(this,getString(R.string.wait));
+    private void getSetting() {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
@@ -744,12 +777,12 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
     }
 
     private void navigateToTermsActivity() {
-        if (settingModel!=null){
+        if (settingModel != null) {
             Intent intent = new Intent(this, SignUpDelegateActivity.class);
-            String url = Tags.base_url+settingModel.getSettings().getTerms_and_conditions();
-            intent.putExtra("url",url);
+            String url = Tags.base_url + settingModel.getSettings().getTerms_and_conditions();
+            intent.putExtra("url", url);
             startActivity(intent);
-        }else {
+        } else {
             Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
         }
     }

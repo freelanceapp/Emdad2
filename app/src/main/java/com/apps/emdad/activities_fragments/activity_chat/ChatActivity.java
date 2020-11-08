@@ -43,6 +43,7 @@ import com.apps.emdad.activities_fragments.activity_add_bill.AddBillActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
 import com.apps.emdad.activities_fragments.activity_driver_update_location.DriverUpdateLocationActivity;
 import com.apps.emdad.activities_fragments.activity_follow_order.FollowOrderActivity;
+import com.apps.emdad.activities_fragments.activity_map_show_location.MapShowLocationActivity;
 import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
 import com.apps.emdad.activities_fragments.activity_sign_up_delegate.SignUpDelegateActivity;
@@ -2344,5 +2345,26 @@ public class ChatActivity extends AppCompatActivity {
             EventBus.getDefault().unregister(this);
         }
         preferences.create_chat_user_id(this,"");
+    }
+
+    public void setLocationItem(MessageModel model) {
+        String address ="";
+        double lat = 0.0;
+        double lng = 0.0;
+        if (model.getType().equals("from_location")){
+            address = orderModel.getClient_address();
+            lat = Double.parseDouble(orderModel.getClient_latitude());
+            lng = Double.parseDouble(orderModel.getClient_longitude());
+        }else {
+            address = orderModel.getMarket_address();
+            lat = Double.parseDouble(orderModel.getMarket_latitude());
+            lng = Double.parseDouble(orderModel.getMarket_longitude());
+        }
+
+        Intent intent = new Intent(this, MapShowLocationActivity.class);
+        intent.putExtra("address",address);
+        intent.putExtra("lat",lat);
+        intent.putExtra("lng",lng);
+        startActivity(intent);
     }
 }
