@@ -336,6 +336,7 @@
     <string name="can_order">You can order any order from stores through Emdad Application</string>
     <string name="ch_bill">Choose Bill image</string>
     <string name="delete">Delete</string>
+    <string name="accept_terms">Accept terms and conditions</string>
 
 
 </resources>

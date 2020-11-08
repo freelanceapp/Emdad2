@@ -22,6 +22,7 @@ public class SignUpModel extends BaseObservable {
     private String phone_code;
     private String phone;
     private String country_id;
+    private boolean isAcceptTerms;
     
     public ObservableField<String> error_name = new ObservableField<>();
     public ObservableField<String> error_email = new ObservableField<>();
@@ -33,7 +34,8 @@ public class SignUpModel extends BaseObservable {
                 !email.trim().isEmpty()&&
                 !year.trim().isEmpty()&&
                 !gender.trim().isEmpty()&&
-                Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
+                Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()&&
+                isAcceptTerms
         ){
             error_name.set(null);
             error_email.set(null);
@@ -72,6 +74,10 @@ public class SignUpModel extends BaseObservable {
                 {
                     Toast.makeText(context, R.string.ch_gender, Toast.LENGTH_SHORT).show();
                 }
+
+                if (isAcceptTerms){
+                    Toast.makeText(context, R.string.accept_terms, Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
     }
@@ -81,6 +87,7 @@ public class SignUpModel extends BaseObservable {
         setYear("");
         setGender("");
         setImage(null);
+        isAcceptTerms = false;
     }
 
 
@@ -153,6 +160,14 @@ public class SignUpModel extends BaseObservable {
 
     public void setCountry_id(String country_id) {
         this.country_id = country_id;
+    }
+
+    public boolean isAcceptTerms() {
+        return isAcceptTerms;
+    }
+
+    public void setAcceptTerms(boolean acceptTerms) {
+        isAcceptTerms = acceptTerms;
     }
 }
 

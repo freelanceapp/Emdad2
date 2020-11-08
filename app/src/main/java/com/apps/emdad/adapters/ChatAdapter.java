@@ -234,7 +234,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             LocationLeftHolder locationLeftHolder = (LocationLeftHolder) holder;
             locationLeftHolder.binding.setModel(model);
             locationLeftHolder.binding.tvMessageDate.setText(getTime(Long.parseLong(model.getDate())*1000));
+            locationLeftHolder.itemView.setOnClickListener(v -> {
+                MessageModel model2 = list.get(locationLeftHolder.getAdapterPosition());
+                activity.setLocationItem(model2);
 
+            });
 
 
 
@@ -243,6 +247,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             locationRightHolder.binding.setModel(model);
             locationRightHolder.binding.tvMessageDate.setText(getTime(Long.parseLong(model.getDate())*1000));
 
+            locationRightHolder.itemView.setOnClickListener(v -> {
+                MessageModel model2 = list.get(locationRightHolder.getAdapterPosition());
+                activity.setLocationItem(model2);
+
+            });
 
 
 
@@ -333,9 +342,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.binding = binding;
         }
     }
-
-
-
 
     public static class SoundRightHolder extends RecyclerView.ViewHolder {
 
@@ -507,7 +513,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }else {
                     return sound_left;
                 }
-            }else if (messageModel.getType().equals("location")){
+            }else if (messageModel.getType().equals("from_location")||messageModel.getType().equals("to_location")){
 
                 if (Integer.parseInt(messageModel.getFrom_user_id())==current_user_id){
 

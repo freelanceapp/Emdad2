@@ -559,6 +559,12 @@ public interface Service {
     @FormUrlEncoded
     @POST("api/delete-user-notification")
     Call<ResponseBody> deleteAllNotification(@Header("Authorization") String user_token,
-                                          @Field("user_id") int user_id
+                                             @Field("user_id") int user_id
+    );
+
+    @FormUrlEncoded
+    @POST("api/delete-user-logo")
+    Call<UserModel> deleteUserImage(@Header("Authorization") String user_token,
+                                       @Field("user_id") int user_id
     );
 }
