@@ -113,7 +113,6 @@ public class Fragment_Notifications extends Fragment {
                         binding.progBar.setVisibility(View.GONE);
                         binding.swipeRefresh.setRefreshing(false);
                         if (response.isSuccessful()) {
-                            Log.e("ddd",response.body().getData().size()+"__");
                             if (response.body() != null) {
                                 notificationModelList.clear();
 
@@ -121,8 +120,10 @@ public class Fragment_Notifications extends Fragment {
                                     binding.llNoData.setVisibility(View.GONE);
                                     notificationModelList.addAll(response.body().getData());
                                     current_page = response.body().getCurrent_page();
+                                    binding.tvClearAll.setVisibility(View.VISIBLE);
                                 } else {
                                     binding.llNoData.setVisibility(View.VISIBLE);
+                                    binding.tvClearAll.setVisibility(View.GONE);
 
                                 }
 
@@ -363,6 +364,8 @@ public class Fragment_Notifications extends Fragment {
                                 notificationModelList.clear();
                                 adapter.notifyDataSetChanged();
                                 binding.llNoData.setVisibility(View.VISIBLE);
+                                binding.tvClearAll.setVisibility(View.GONE);
+
 
                             }
                         } else {

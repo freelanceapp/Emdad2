@@ -75,7 +75,7 @@ public class SignUpModel extends BaseObservable {
                     Toast.makeText(context, R.string.ch_gender, Toast.LENGTH_SHORT).show();
                 }
 
-                if (isAcceptTerms){
+                if (!isAcceptTerms){
                     Toast.makeText(context, R.string.accept_terms, Toast.LENGTH_SHORT).show();
                 }
                 return false;

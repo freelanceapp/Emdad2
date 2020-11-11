@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="@color/gray10"
 
             >
             <com.google.android.material.appbar.AppBarLayout
@@ -144,6 +145,7 @@
             android:background="@color/trans_black2"
             android:visibility="gone"
             android:clickable="true"
+            android:focusable="true"
             android:longClickable="true"
             >
             <LinearLayout

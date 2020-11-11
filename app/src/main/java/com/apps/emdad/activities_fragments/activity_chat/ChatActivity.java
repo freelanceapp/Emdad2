@@ -53,6 +53,7 @@ import com.apps.emdad.adapters.OffersAdapter;
 import com.apps.emdad.adapters.RateReasonAdapter;
 import com.apps.emdad.databinding.ActivityChatBinding;
 import com.apps.emdad.language.Language;
+import com.apps.emdad.models.BalanceModel;
 import com.apps.emdad.models.ChatActionModel;
 import com.apps.emdad.models.DefaultSettings;
 import com.apps.emdad.models.FromToLocationModel;
@@ -742,9 +743,12 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
 
-                if ((userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() != orderModel.getClient().getId())) {
+                /*if ((userModel.getUser().getUser_type().equals("driver") && userModel.getUser().getId() != orderModel.getClient().getId())) {
                     binding.flCall.setVisibility(View.VISIBLE);
-                }
+                }*/
+
+                binding.flCall.setVisibility(View.VISIBLE);
+
 
 
                 break;
@@ -882,13 +886,15 @@ public class ChatActivity extends AppCompatActivity {
             binding.tvName.setText(orderModel.getDriver().getName());
             binding.rateBar.setRating(Float.parseFloat(orderModel.getDriver().getRate()));
 
-            if (orderModel.getOrder_status().equals("accept_driver")||orderModel.getOrder_status().equals("bill_attach")||orderModel.getOrder_status().equals("order_collected")||orderModel.getOrder_status().equals("reach_to_client")){
-                binding.flCall.setVisibility(View.VISIBLE);
+            /*if (orderModel.getOrder_status().equals("accept_driver")||orderModel.getOrder_status().equals("bill_attach")||orderModel.getOrder_status().equals("order_collected")||orderModel.getOrder_status().equals("reach_to_client")){
 
             }else {
                 binding.flCall.setVisibility(View.GONE);
 
-            }
+            }*/
+
+            binding.flCall.setVisibility(View.VISIBLE);
+
             binding.llBill.setVisibility(View.GONE);
             double offer_value = 0.0;
             if (orderModel.getOrder_offer() != null) {
@@ -916,11 +922,13 @@ public class ChatActivity extends AppCompatActivity {
             binding.tvName.setText(name);
             binding.rateBar.setRating(Float.parseFloat(orderModel.getClient().getRate()));
             binding.llBill.setVisibility(View.VISIBLE);
-            if (orderModel.getOrder_status().equals("reach_to_client")){
+            binding.flCall.setVisibility(View.VISIBLE);
+
+            /*if (orderModel.getOrder_status().equals("reach_to_client")){
                 binding.flCall.setVisibility(View.VISIBLE);
             }else {
                 binding.flCall.setVisibility(View.INVISIBLE);
-            }
+            }*/
             double offer_value = 0.0;
             if (orderModel.getDriver_last_offer() != null) {
                 offer_value = Double.parseDouble(orderModel.getDriver_last_offer().getOffer_value());
@@ -1860,9 +1868,10 @@ public class ChatActivity extends AppCompatActivity {
     {
         defaultSettings.setRoom_id(Integer.parseInt(room_id));
         preferences.createUpdateAppSetting(this,defaultSettings);
+        Log.e("user_type",userModel.getUser().getUser_type());
 
         Api.getService(Tags.base_url)
-                .getChatMessages(userModel.getUser().getToken(),room_id,userModel.getUser().getId(),userModel.getUser().getUser_type(),1, "on", 40)
+                .getChatMessages(userModel.getUser().getToken(),room_id,userModel.getUser().getId(),order_id,userModel.getUser().getUser_type(),1, "on", 40)
                 .enqueue(new Callback<MessageDataModel>() {
                     @Override
                     public void onResponse(Call<MessageDataModel> call, Response<MessageDataModel> response) {
@@ -2115,7 +2124,7 @@ public class ChatActivity extends AppCompatActivity {
         if (isFolderCreate) {
             startTimer();
             binding.recordTime.setVisibility(View.VISIBLE);
-            createVibration();
+           // createVibration();
             audio_path = file.getAbsolutePath() + "/" + audio_name;
             recorder = new MediaRecorder();
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);

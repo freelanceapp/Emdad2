@@ -30,7 +30,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
-        <activity android:name=".activities_fragments.activity_map_show_location.MapShowLocationActivity"></activity>
+        <activity android:name=".activities_fragments.activity_map_show_location.MapShowLocationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            />
         <activity
             android:name=".activities_fragments.activity_splash_loading2.SplashLoading2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -44,7 +47,10 @@
                 <data
                     android:host="tawsel-emdad.creativeshare.sa"
                     android:pathPrefix="/place/details/"
-                    android:scheme="http"></data>
+                    android:scheme="http"
+                    >
+
+                </data>
             </intent-filter>
         </activity>
         <activity

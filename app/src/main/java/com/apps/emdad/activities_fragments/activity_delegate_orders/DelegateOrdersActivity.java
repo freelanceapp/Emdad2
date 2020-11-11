@@ -120,6 +120,7 @@ public class DelegateOrdersActivity extends AppCompatActivity {
 
         binding.swipeRefresh.setOnRefreshListener(() -> {
             if (userModel.getUser().getReceive_notifications().equals("yes")){
+                binding.llAlertOrder.setVisibility(View.GONE);
                 getOrders();
             }else {
                 binding.swipeRefresh.setRefreshing(false);
@@ -131,9 +132,15 @@ public class DelegateOrdersActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
         }
         if (userModel.getUser().getReceive_notifications().equals("yes")){
+            binding.llAlertOrder.setVisibility(View.GONE);
             getOrders();
 
+        }else {
+            binding.llAlertOrder.setVisibility(View.VISIBLE);
+
         }
+
+
     }
 
 
@@ -157,6 +164,7 @@ public class DelegateOrdersActivity extends AppCompatActivity {
 
 
                                 if (response.body().getData().size() > 0) {
+
                                     binding.llNoOrder.setVisibility(View.GONE);
                                     updateDataDistance(response.body().getData(),false);
                                     current_page = response.body().getCurrent_page();
@@ -300,7 +308,8 @@ public class DelegateOrdersActivity extends AppCompatActivity {
 
     }
 
-    private void updateReceiveNotification(String state) {
+    private void updateReceiveNotification(String state)
+    {
         Api.getService(Tags.base_url)
                 .updateReceiveNotification(userModel.getUser().getToken(),userModel.getUser().getId(),state)
                 .enqueue(new Callback<UserModel>() {
@@ -308,6 +317,19 @@ public class DelegateOrdersActivity extends AppCompatActivity {
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         if (response.isSuccessful()) {
 
+                            if (response.body().getUser().getReceive_notifications().equals("no")){
+                                orderModelList.clear();
+                                adapter.notifyDataSetChanged();
+                                binding.recView.setVisibility(View.GONE);
+                                binding.llAlertOrder.setVisibility(View.VISIBLE);
+                                binding.llNoOrder.setVisibility(View.GONE);
+                            }else {
+                                binding.recView.setVisibility(View.VISIBLE);
+                                binding.llAlertOrder.setVisibility(View.GONE);
+                                binding.llNoOrder.setVisibility(View.GONE);
+                                getOrders();
+
+                            }
                             userModel = response.body();
                             binding.setModel(userModel);
                             preferences.create_update_userdata(DelegateOrdersActivity.this,userModel);

@@ -140,8 +140,7 @@
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:visibility='@{model==null?View.INVISIBLE:(model.user.receive_notifications.equals("yes")?View.INVISIBLE:View.VISIBLE),default=visible}'
-
+                android:visibility="gone"
                 >
                 <TextView
                     android:layout_width="wrap_content"

@@ -32,6 +32,7 @@ import com.apps.emdad.activities_fragments.activity_user_feedback.UserFeedbackAc
 import com.apps.emdad.databinding.FragmentNotificationBinding;
 import com.apps.emdad.databinding.FragmentProfileBinding;
 import com.apps.emdad.interfaces.Listeners;
+import com.apps.emdad.location_service.LocationService;
 import com.apps.emdad.models.BalanceModel;
 import com.apps.emdad.models.NotificationDataModel;
 import com.apps.emdad.models.SettingModel;
@@ -100,13 +101,21 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
 
         if (userModel!=null){
             if (userModel.getUser().getLogo() != null) {
-                Log.e("ddd",Tags.IMAGE_URL + userModel.getUser().getLogo());
                 Picasso.get().load(Uri.parse(Tags.IMAGE_URL + userModel.getUser().getLogo())).placeholder(R.drawable.image_avatar).into(binding.image);
             } else {
                 Picasso.get().load(R.drawable.image_avatar).into(binding.image);
 
             }
+
+            if (userModel.getUser().getUser_type().equals("driver")){
+                try {
+                    Intent intent = new Intent(activity, LocationService.class);
+                    activity.startService(intent);
+                }catch (Exception e){}
+            }
         }
+
+
 
         getBalance();
     }

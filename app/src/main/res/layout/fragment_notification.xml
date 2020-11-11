@@ -47,6 +47,7 @@
                         android:textColor="@color/colorPrimary"
                         android:text="@string/clear_all"
                         android:layout_gravity="center_vertical"
+                        android:visibility="invisible"
                         />
                 </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
