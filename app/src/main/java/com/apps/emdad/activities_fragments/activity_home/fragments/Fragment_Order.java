@@ -265,6 +265,7 @@ public class Fragment_Order extends Fragment {
     }
 
     public void setItemData(OrderModel orderModel1) {
+        binding.flRate.setVisibility(View.GONE);
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra("order_id", orderModel1.getId());
         startActivityForResult(intent, 100);

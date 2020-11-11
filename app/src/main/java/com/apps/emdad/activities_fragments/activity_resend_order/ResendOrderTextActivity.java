@@ -162,7 +162,13 @@ public class ResendOrderTextActivity extends AppCompatActivity {
 
         addOrderTextModel.setOrder_type(orderModel.getOrder_type());
         addOrderTextModel.setUser_id(userModel.getUser().getId());
-        addOrderTextModel.setMarket_id(Integer.parseInt(orderModel.getMarket_id()));
+        if (orderModel.getMarket_id()!=null){
+            addOrderTextModel.setMarket_id(Integer.parseInt(orderModel.getMarket_id()));
+
+        }else {
+            addOrderTextModel.setMarket_id(0);
+
+        }
         addOrderTextModel.setPlace_id(orderModel.getGoogle_palce_id());
         addOrderTextModel.setPlace_name(orderModel.getMarket_name());
         addOrderTextModel.setPlace_address(orderModel.getMarket_address());

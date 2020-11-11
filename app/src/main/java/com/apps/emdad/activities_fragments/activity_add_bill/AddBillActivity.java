@@ -266,18 +266,32 @@ public class AddBillActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == READ_REQ && resultCode == Activity.RESULT_OK && data != null) {
+            dialog.dismiss();
 
             Uri uri = data.getData();
-            cropImage(uri);
+            if (uri!=null){
+                this.uri = uri;
+                binding.llImage.setVisibility(View.GONE);
+                binding.icon.setVisibility(View.VISIBLE);
+                binding.image.setVisibility(View.VISIBLE);
+                Picasso.get().load(uri).into(binding.image);
+            }
+            //cropImage(uri);
 
 
         }
         else if (requestCode == CAMERA_REQ && resultCode == Activity.RESULT_OK && data != null) {
+            dialog.dismiss();
 
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             Uri uri = getUriFromBitmap(bitmap);
             if (uri != null) {
-                cropImage(uri);
+                this.uri = uri;
+                binding.llImage.setVisibility(View.GONE);
+                binding.icon.setVisibility(View.VISIBLE);
+                binding.image.setVisibility(View.VISIBLE);
+                Picasso.get().load(uri).into(binding.image);
+                //cropImage(uri);
 
             }
 

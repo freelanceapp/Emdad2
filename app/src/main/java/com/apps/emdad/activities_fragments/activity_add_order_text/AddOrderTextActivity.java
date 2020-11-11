@@ -213,6 +213,7 @@ public class AddOrderTextActivity extends AppCompatActivity {
                             Intent intent =new Intent(AddOrderTextActivity.this, ChatActivity.class);
                             intent.putExtra("order_id",response.body().getOrder().getId());
                             startActivity(intent);
+                            finish();
                         }else
                         {
                             if (response.code()==500)
@@ -295,6 +296,7 @@ public class AddOrderTextActivity extends AppCompatActivity {
                             Intent intent =new Intent(AddOrderTextActivity.this, ChatActivity.class);
                             intent.putExtra("order_id",response.body().getOrder().getId());
                             startActivity(intent);
+                            finish();
                         }else
                         {
                             if (response.code()==500)

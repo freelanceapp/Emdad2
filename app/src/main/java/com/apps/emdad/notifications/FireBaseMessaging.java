@@ -57,6 +57,9 @@ public class FireBaseMessaging extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         map = remoteMessage.getData();
 
+        for (String key :map.keySet()){
+            Log.e("Key=",key+"_value="+map.get(key));
+        }
 
         if (getSession().equals(Tags.session_login))
         {
@@ -64,6 +67,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             String my_id = String.valueOf(getUserData().getUser().getId());
             String notification_type =map.get("noti_type");
             String from_user_id =map.get("from_user_id");
+            Log.e("not",notification_type+"__");
 
             if (notification_type.equals("chat")){
                 Log.e("1","1");
