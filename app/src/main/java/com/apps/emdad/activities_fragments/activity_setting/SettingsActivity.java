@@ -339,7 +339,7 @@ public class SettingsActivity extends AppCompatActivity implements Listeners.Set
         if (userModel!=null){
             if (userModel.getUser().getRegister_link()!=null&&!userModel.getUser().getRegister_link().isEmpty()){
                 Intent intent = new Intent(this, SignUpDelegateActivity.class);
-                String url = Tags.base_url+userModel.getUser().getRegister_link();
+                String url = Tags.base_url+userModel.getUser().getRegister_link()+"&lang="+lang;
                 intent.putExtra("url",url);
                 startActivityForResult(intent,300);
             }else {
