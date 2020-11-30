@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Emdad</string>
-    <string name="map_api_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
-    <string name="search_key">AIzaSyAeyMUJgKAhnNXbILHONb1um72CNzELFRY</string>
+    <string name="map_api_key">AIzaSyDPraQRuDWeIUxsjaCt_Q-l-MFe2snY2ds</string>
+    <string name="search_key">AIzaSyDPraQRuDWeIUxsjaCt_Q-l-MFe2snY2ds</string>
     <string name="field_req">Field required</string>
     <string name="login">Login</string>
     <string name="code">Code</string>
@@ -10,7 +10,7 @@
     <string name="upload_profile_photo">Upload Profile Photo</string>
     <string name="email">Email</string>
     <string name="accept">Accept</string>
-    <string name="terms_and_conditions">Terms And Conditions</string>
+    <string name="terms_and_conditions">Do you agree to the terms and conditions?</string>
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="confirm">Confirm</string>
     <string name="share_app">Share App</string>
@@ -337,6 +337,8 @@
     <string name="ch_bill">Choose Bill image</string>
     <string name="delete">Delete</string>
     <string name="accept_terms">Accept terms and conditions</string>
+    <string name="read_terms_and_conditions">Read terms and conditions</string>
+    <string name="gotohome">Return to the home page</string>
 
 
 </resources>

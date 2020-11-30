@@ -212,6 +212,17 @@
                     android:text="@string/terms_and_conditions"
 
                     />
+                <TextView
+                    android:id="@+id/tvTerms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/read_terms_and_conditions"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    />
                 <Button
                     android:id="@+id/btnSignUp"
                     android:layout_width="match_parent"

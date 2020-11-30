@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -25,7 +26,9 @@ import androidx.databinding.DataBindingUtil;
 
 
 import com.apps.emdad.R;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.databinding.DialogAlertBinding;
+import com.apps.emdad.databinding.DialogAlertOrderBinding;
 
 import java.io.File;
 
@@ -50,7 +53,24 @@ public class Common {
         dialog.setView(binding.getRoot());
         dialog.show();
     }
+    public static void CreateDialogAlertOrder(Context context,String msg) {
+        final AlertDialog dialog = new AlertDialog.Builder(context)
+                .create();
 
+        DialogAlertOrderBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_alert_order, null, false);
+
+        binding.tvMsg.setText(msg);
+        binding.btnCancel.setOnClickListener(v -> {
+            Intent intent=new Intent(context, HomeActivity.class);
+            context.startActivity(intent);
+                }
+        );
+
+        dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_congratulation_animation;
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setView(binding.getRoot());
+        dialog.show();
+    }
     public static void CloseKeyBoard(Context context, View view) {
         if (context != null && view != null) {
             InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">إمداد</string>
-    <string name="map_api_key">AIzaSyA6QI378BHt9eqBbiJKtqWHTSAZxcSwN3Q</string>
-    <string name="search_key">AIzaSyAeyMUJgKAhnNXbILHONb1um72CNzELFRY</string>
+    <string name="map_api_key">AIzaSyDPraQRuDWeIUxsjaCt_Q-l-MFe2snY2ds</string>
+    <string name="search_key">AIzaSyDPraQRuDWeIUxsjaCt_Q-l-MFe2snY2ds</string>
 
     <string name="field_req">الحقل مطلوب</string>
     <string name="login">تسجيل دخول</string>
@@ -11,7 +11,7 @@
     <string name="upload_profile_photo">رفع صورة</string>
     <string name="email">البريد الالكتروني</string>
     <string name="accept">الموافقة</string>
-    <string name="terms_and_conditions">الشروط والاحكام</string>
+    <string name="terms_and_conditions">هل انت موافق على الشروط والاحكام ؟</string>
     <string name="enter_verification_code">ادخل كود التحقق</string>
     <string name="confirm">تأكيد</string>
     <string name="share_app">مشاركة</string>
@@ -302,7 +302,7 @@
     <string name="delivery_cost_vat">تكلفة التوصيل + ضريبة</string>
     <string name="total_with_tax">المجموع (يشمل الضريبة)</string>
     <string name="attachment">ملحق</string>
-    <string name="picking_order">متوجة للستلام</string>
+    <string name="picking_order">متوجة للإستلام</string>
     <string name="received">تم الإستلام</string>
     <string name="click_on_receive">اضغط على تم الاستلام بمجرد استلام الطلب من المتجر</string>
     <string name="on_location">في الموقع</string>
@@ -338,5 +338,7 @@
     <string name="ch_bill">إختر صورة الفاتورة</string>
     <string name="delete">مسح</string>
     <string name="accept_terms">لا يمكنك التسجيل دون الموافقة على الشروط والأحكام</string>
+    <string name="read_terms_and_conditions">قراءة الشروط والاحكام </string>
+    <string name="gotohome">العودة للصفحة الرئيسية</string>
 
 </resources>

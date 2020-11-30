@@ -220,7 +220,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
                             {
                                 Toast.makeText(AddOrderTextActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                             }else if(response.code()==406){
-                                Toast.makeText(AddOrderTextActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
+
+                               Common.CreateDialogAlertOrder(AddOrderTextActivity.this,getString(R.string.no_courier));
+                         //       Toast.makeText(AddOrderTextActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                             } else
                             {
                                 Toast.makeText(AddOrderTextActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();
@@ -303,7 +305,9 @@ public class AddOrderTextActivity extends AppCompatActivity {
                             {
                                 Toast.makeText(AddOrderTextActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                             }else if(response.code()==406){
-                                Toast.makeText(AddOrderTextActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
+                                Common.CreateDialogAlertOrder(AddOrderTextActivity.this,getString(R.string.no_courier));
+
+                                // Toast.makeText(AddOrderTextActivity.this, R.string.no_courier, Toast.LENGTH_SHORT).show();
                             } else
                             {
                                 Toast.makeText(AddOrderTextActivity.this,getString(R.string.failed), Toast.LENGTH_SHORT).show();

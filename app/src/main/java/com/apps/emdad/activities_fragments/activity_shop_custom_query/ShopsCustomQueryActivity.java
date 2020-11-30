@@ -3,6 +3,7 @@ package com.apps.emdad.activities_fragments.activity_shop_custom_query;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,9 +22,12 @@ import com.apps.emdad.activities_fragments.activity_shop_details.ShopDetailsActi
 import com.apps.emdad.activities_fragments.activity_shop_map.ShopMapActivity;
 import com.apps.emdad.activities_fragments.activity_shop_products.ShopProductActivity;
 import com.apps.emdad.adapters.CustomShopsAdapter;
+import com.apps.emdad.adapters.MainAdapter;
 import com.apps.emdad.adapters.NearbyAdapter3;
+import com.apps.emdad.adapters.SliderAdapter;
 import com.apps.emdad.databinding.ActivityShopsCustomQueryBinding;
 import com.apps.emdad.databinding.ActivityShopsQueryBinding;
+import com.apps.emdad.databinding.MainSliderRowBinding;
 import com.apps.emdad.language.Language;
 import com.apps.emdad.models.CategoryModel;
 import com.apps.emdad.models.CustomPlaceDataModel;
@@ -31,6 +35,7 @@ import com.apps.emdad.models.CustomPlaceDataModel2;
 import com.apps.emdad.models.CustomPlaceModel;
 import com.apps.emdad.models.CustomShopDataModel;
 import com.apps.emdad.models.NearbyModel;
+import com.apps.emdad.models.SliderModel;
 import com.apps.emdad.models.UserModel;
 import com.apps.emdad.preferences.Preferences;
 import com.apps.emdad.remote.Api;
@@ -44,6 +49,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.paperdb.Paper;
 import retrofit2.Call;
@@ -64,7 +71,10 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
     private CategoryModel categoryModel;
     private Preferences preferences;
     private UserModel userModel;
-
+    private List<SliderModel.Data> sliderList;
+    private SliderAdapter sliderAdapter;
+    private Timer timer;
+    private int current_pages = 0, NUM_PAGES;
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -81,6 +91,7 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
 
     private void initView() {
         preferences = Preferences.getInstance();
+        sliderList = new ArrayList<>();
         userModel = preferences.getUserData(this);
         Paper.init(this);
         lang = Paper.book().read("lang","ar");
@@ -134,8 +145,78 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
         binding.close.setOnClickListener(v -> super.onBackPressed());
         binding.swipeRefresh.setOnRefreshListener(() -> getShops(categoryModel.getId()));
         getShops(categoryModel.getId());
-    }
+        addSliderImages();
+        change_slide_image();
 
+    }
+    private void change_slide_image() {
+        final Handler handler = new Handler();
+        final Runnable Update = new Runnable() {
+            public void run() {
+                if (current_pages == NUM_PAGES) {
+                    current_pages = 0;
+                }
+                binding.pager.setCurrentItem(current_pages++, true);
+            }
+        };
+        Timer swipeTimer = new Timer();
+        swipeTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(Update);
+            }
+        }, 3000, 3000);
+    }
+    private void addSliderImages() {
+
+        Api.getService(Tags.base_url)
+                .getMarketSlider("market")
+                .enqueue(new Callback<SliderModel>() {
+                    @Override
+                    public void onResponse(Call<SliderModel> call, Response<SliderModel> response) {
+                        binding.progBar.setVisibility(View.GONE);
+
+                        if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                            if (response.body().getData().size() > 0) {
+                                NUM_PAGES = response.body().getData().size();
+                                Log.e("nnnnn",NUM_PAGES+"");
+                                Log.e("nnnnn",response.body().getData().get(0).getImage()+"");
+
+                                sliderAdapter = new SliderAdapter(response.body().getData(),ShopsCustomQueryActivity.this);
+                                binding.pager.setAdapter(sliderAdapter);
+
+                            } else {
+
+                                binding.pager.setVisibility(View.GONE);
+                            }
+                        } else if (response.code() == 404) {
+                            binding.pager.setVisibility(View.GONE);
+                        } else {
+                            binding.pager.setVisibility(View.GONE);
+                            try {
+                                Log.e("Error_code", response.code() + "_" + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<SliderModel> call, Throwable t) {
+                        try {
+                            Log.e("Error", t.getMessage());
+                            binding.progBar.setVisibility(View.GONE);
+
+                            Toast.makeText(ShopsCustomQueryActivity.this, getString(R.string.something), Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
     private void getDataFromIntent() {
         Intent intent = getIntent();
         user_lat = intent.getDoubleExtra("lat",0.0);
@@ -393,6 +474,5 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
 
         return false;
     }
-
 
 }

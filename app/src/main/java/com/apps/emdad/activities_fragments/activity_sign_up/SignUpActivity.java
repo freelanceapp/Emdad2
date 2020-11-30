@@ -115,11 +115,7 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
         binding.checkbox.setOnClickListener(v -> {
             if (binding.checkbox.isChecked()) {
                 signUpModel.setAcceptTerms(true);
-                if (settingModel != null) {
-                    navigateToTermsActivity();
-                } else {
-                    getSetting();
-                }
+
             } else {
                 signUpModel.setAcceptTerms(false);
 
@@ -127,6 +123,15 @@ public class SignUpActivity extends AppCompatActivity implements Listeners.SignU
 
 
             binding.setModel(signUpModel);
+        });
+        binding.tvTerms.setOnClickListener(v -> {
+
+                if (settingModel != null) {
+                    navigateToTermsActivity();
+                } else {
+                    getSetting();
+                }
+
         });
 
         if (userModel != null) {

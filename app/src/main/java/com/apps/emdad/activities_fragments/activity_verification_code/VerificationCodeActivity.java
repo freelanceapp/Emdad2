@@ -135,9 +135,8 @@ public class VerificationCodeActivity extends AppCompatActivity {
 
 
     private void checkValidCode(String code) {
-        navigateToActivityConfirmSuccess();
 
-       /* if (verificationId != null) {
+        if (verificationId != null) {
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
             mAuth.signInWithCredential(credential)
                     .addOnSuccessListener(authResult -> {
@@ -155,7 +154,7 @@ public class VerificationCodeActivity extends AppCompatActivity {
                     Toast.makeText(this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
                 }
             });
-        }*/
+        }
 
     }
 

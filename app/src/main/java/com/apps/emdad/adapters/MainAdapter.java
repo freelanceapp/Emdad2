@@ -218,7 +218,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private void addSliderImages(MainSliderRowBinding binding) {
-       ////////////////////////////////
 
         Api.getService(Tags.base_url)
                 .getSlider()

@@ -43,6 +43,7 @@ import com.apps.emdad.activities_fragments.activity_add_bill.AddBillActivity;
 import com.apps.emdad.activities_fragments.activity_delegate_add_offer.DelegateAddOfferActivity;
 import com.apps.emdad.activities_fragments.activity_driver_update_location.DriverUpdateLocationActivity;
 import com.apps.emdad.activities_fragments.activity_follow_order.FollowOrderActivity;
+import com.apps.emdad.activities_fragments.activity_home.HomeActivity;
 import com.apps.emdad.activities_fragments.activity_map_show_location.MapShowLocationActivity;
 import com.apps.emdad.activities_fragments.activity_resend_order.ResendOrderTextActivity;
 import com.apps.emdad.activities_fragments.activity_setting.SettingsActivity;
@@ -1203,6 +1204,8 @@ public class ChatActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 setResult(RESULT_OK);
+                                Intent intent=new Intent(ChatActivity.this, HomeActivity.class);
+                                startActivity(intent);
                                 finish();
                             }
                         } else {
