@@ -25,7 +25,9 @@ public class NotificationDataModel implements Serializable {
         private String order_id;
         private String offer_id;
         private String title;
+        private String title_en;
         private String message;
+        private String message_en;
         private String action;
         private UserModel.User from_user;
         private UserModel.User to_user;
@@ -74,6 +76,14 @@ public class NotificationDataModel implements Serializable {
 
         public String getNotification_date() {
             return notification_date;
+        }
+
+        public String getTitle_en() {
+            return title_en;
+        }
+
+        public String getMessage_en() {
+            return message_en;
         }
     }
 }

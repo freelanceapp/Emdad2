@@ -339,6 +339,28 @@
     <string name="accept_terms">Accept terms and conditions</string>
     <string name="read_terms_and_conditions">Read terms and conditions</string>
     <string name="gotohome">Return to the home page</string>
+    <string name="shop_location_remote">Shop location is remote</string>
+    <string name="I_do_not_wish_deliver_order">I do not wish to deliver the order</string>
+    <string name="the_request_dosnot_answer">The request is late and the delegate does not answer</string>
+    <string name="delegate_requested_communication_outside_application">The delegate requested communication outside the application</string>
+    <string name="delegate_isnot_serious">The delegate is not serious</string>
+    <string name="delegate_requet_cancel">The delegate request cancellation</string>
+    <string name="delegate_refuse_online_payment">The delegate did not accept online payment</string>
+    <string name="change_delegate">Change the delegate</string>
+    <string name="no_need_order">I no longer need the order</string>
+    <string name="another_reason">Another reason</string>
+    <string name="delv_is_high">The delivery price is high</string>
+    <string name="flirt">Flirt</string>
+    <string name="rude">Rude</string>
+    <string name="smoked">Smoked</string>
+    <string name="late">Late</string>
+    <string name="not_adhering">Not adhering to health instructions</string>
+    <string name="get_angry">Get angry</string>
+    <string name="fast_service">Fast Service</string>
+    <string name="respectable">Respectable</string>
+    <string name="professional">Professional</string>
+    <string name="responsive">Responsive</string>
+
 
 
 </resources>

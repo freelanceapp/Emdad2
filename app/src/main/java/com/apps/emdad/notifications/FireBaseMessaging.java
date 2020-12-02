@@ -41,6 +41,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.util.Map;
 
+import io.paperdb.Paper;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -149,14 +150,27 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     @SuppressLint("NewApi")
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void createNewNotificationVersion(Map<String, String> map) {
+        Paper.init(this);
+        String lang = Paper.book().read("lang","ar");
         String sound_Path = getRingtonePath();
         if (sound_Path.isEmpty()){
             Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             sound_Path = uri.toString();
         }
 
-        String title =map.get("title");
-        String body = map.get("message");
+        String title ="";
+        String body ="";
+        if (lang.equals("ar")){
+            title = map.get("title");
+            body = map.get("message");
+        }else {
+            title = map.get("title_en");
+            body = map.get("message_en");
+
+        }
+
+
+
         String notification_type =map.get("noti_type");
         String order_id =map.get("order_id");
 
@@ -257,15 +271,26 @@ public class FireBaseMessaging extends FirebaseMessagingService {
     }
 
     private void createOldNotificationVersion(Map<String, String> map) {
-
+        Paper.init(this);
+        String lang = Paper.book().read("lang","ar");
 
         String sound_Path = getRingtonePath();
         if (sound_Path.isEmpty()){
             Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             sound_Path = uri.toString();
         }
-        String title =map.get("title");
-        String body = map.get("message");
+        String title ="";
+        String body ="";
+        if (lang.equals("ar")){
+            title = map.get("title");
+            body = map.get("message");
+        }else {
+            title = map.get("title_en");
+            body = map.get("message_en");
+
+        }
+
+
         String notification_type =map.get("noti_type");
         String order_id =map.get("order_id");
 

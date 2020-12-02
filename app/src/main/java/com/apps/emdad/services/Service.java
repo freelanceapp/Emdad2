@@ -146,7 +146,7 @@ public interface Service {
     Call<SliderModel> getSlider();
 
     @GET("api/slider")
-    Call<SliderModel> getMarketSlider( @Query("market") String market);
+    Call<SliderModel> getMarketSlider( @Query("type") String type);
 
     @GET("api/get-profile")
     Call<UserModel> getUserById(@Header("Authorization") String user_token,

@@ -101,51 +101,51 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 String reason = feedbackModel.getReason();
                 switch (reason){
                     case "1":
-                        myHolder.binding.tvReason.setText("يعاكس");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.flirt));
                         myHolder.binding.tvStatus.setText(R.string.someting_dont_like);
                         break;
                     case "2":
-                        myHolder.binding.tvReason.setText("غير مهذب");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.rude));
                         myHolder.binding.tvStatus.setText(R.string.someting_dont_like);
                         break;
                     case "3":
-                        myHolder.binding.tvReason.setText("مدخن");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.smoked));
                         myHolder.binding.tvStatus.setText(R.string.someting_dont_like);
 
                         break;
                     case "4":
-                        myHolder.binding.tvReason.setText("متأخر");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.late));
                         myHolder.binding.tvStatus.setText(R.string.someting_dont_like);
 
                         break;
                     case "5":
-                        myHolder.binding.tvReason.setText("غير ملتزم بالتعليمات الصحية");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.not_adhering));
                         myHolder.binding.tvStatus.setText(R.string.someting_dont_like);
 
                         break;
                     case "6":
-                        myHolder.binding.tvReason.setText("يضايق");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.get_angry));
                         myHolder.binding.tvStatus.setText(R.string.someting_dont_like);
 
                         break;
                     case "7":
-                        myHolder.binding.tvReason.setText("خدمة سريعة");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.fast_service));
                         myHolder.binding.tvStatus.setText(R.string.something_you_like);
 
 
                         break;
                     case "8":
-                        myHolder.binding.tvReason.setText("محترم");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.respectable));
                         myHolder.binding.tvStatus.setText(R.string.something_you_like);
 
                         break;
                     case "9":
-                        myHolder.binding.tvReason.setText("إحترافي");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.professional));
                         myHolder.binding.tvStatus.setText(R.string.something_you_like);
 
                         break;
                     case "10":
-                        myHolder.binding.tvReason.setText("متجاوب");
+                        myHolder.binding.tvReason.setText(context.getString(R.string.responsive));
                         myHolder.binding.tvStatus.setText(R.string.something_you_like);
 
                         break;

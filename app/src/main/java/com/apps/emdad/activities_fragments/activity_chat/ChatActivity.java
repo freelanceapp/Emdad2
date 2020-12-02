@@ -260,7 +260,7 @@ public class ChatActivity extends AppCompatActivity {
                         changeDriver(chatActionModel);
                         break;
                     case 3:
-                        if (chatActionModel.getAction().equals("سعر التوصيل مرتفع")) {
+                        if (chatActionModel.getAction().equals(getString(R.string.delv_is_high))) {
                             if (offersModel != null) {
 
                                 if (Double.parseDouble(offersModel.getOffer_value()) > Double.parseDouble(offersModel.getMin_offer())) {
@@ -276,7 +276,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             }
 
-                        } else if (chatActionModel.getAction().equals("لم اعد احتاج الطلب") || chatActionModel.getAction().equals("سبب آخر")) {
+                        } else if (chatActionModel.getAction().equals(getString(R.string.no_need_order)) || chatActionModel.getAction().equals(getString(R.string.another_reason))) {
                             deleteOrder(chatActionModel);
 
                         } else {
@@ -1014,9 +1014,9 @@ public class ChatActivity extends AppCompatActivity {
         reasonType = 1;
         binding.tvActionType.setText(R.string.withdraw_order);
         actionReasonList.clear();
-        ChatActionModel chatActionModel1 = new ChatActionModel("موقع المتجر بعيد");
+        ChatActionModel chatActionModel1 = new ChatActionModel(getString(R.string.shop_location_remote));
         actionReasonList.add(chatActionModel1);
-        ChatActionModel chatActionModel2 = new ChatActionModel("لا أرغب في توصيل الطلب");
+        ChatActionModel chatActionModel2 = new ChatActionModel(getString(R.string.I_do_not_wish_deliver_order));
         actionReasonList.add(chatActionModel2);
         chatActionAdapter.notifyDataSetChanged();
         openSheet();
@@ -1025,7 +1025,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void changeDriverActions() {
         reasonType = 2;
-        binding.tvActionType.setText(R.string.change_driver);
+        /*binding.tvActionType.setText(R.string.change_driver);
         actionReasonList.clear();
         ChatActionModel chatActionModel1 = new ChatActionModel("المندوب غير مناسب");
         actionReasonList.add(chatActionModel1);
@@ -1035,7 +1035,7 @@ public class ChatActivity extends AppCompatActivity {
         actionReasonList.add(chatActionModel3);
         ChatActionModel chatActionModel4 = new ChatActionModel("سبب آخر");
         actionReasonList.add(chatActionModel4);
-        chatActionAdapter.notifyDataSetChanged();
+        chatActionAdapter.notifyDataSetChanged();*/
         openSheet();
     }
 
@@ -1046,21 +1046,21 @@ public class ChatActivity extends AppCompatActivity {
         reasonType = 3;
         binding.tvActionType.setText(R.string.delete_order);
         actionReasonList.clear();
-        ChatActionModel chatActionModel1 = new ChatActionModel("الطلب متأخر والمندوب لا يجيب");
+        ChatActionModel chatActionModel1 = new ChatActionModel(getString(R.string.the_request_dosnot_answer));
         actionReasonList.add(chatActionModel1);
-        ChatActionModel chatActionModel2 = new ChatActionModel("المندوب طلب التواصل خارج التطبيق");
+        ChatActionModel chatActionModel2 = new ChatActionModel(getString(R.string.delegate_requested_communication_outside_application));
         actionReasonList.add(chatActionModel2);
-        ChatActionModel chatActionModel3 = new ChatActionModel("المندوب غير جاد");
+        ChatActionModel chatActionModel3 = new ChatActionModel(getString(R.string.delegate_isnot_serious));
         actionReasonList.add(chatActionModel3);
-        ChatActionModel chatActionModel4 = new ChatActionModel("المندوب طلب الإلغاء");
+        ChatActionModel chatActionModel4 = new ChatActionModel(getString(R.string.delegate_requet_cancel));
         actionReasonList.add(chatActionModel4);
-        ChatActionModel chatActionModel5 = new ChatActionModel("المندوب لم يقبل الدفع الالكتروني");
+        ChatActionModel chatActionModel5 = new ChatActionModel(getString(R.string.delegate_refuse_online_payment));
         actionReasonList.add(chatActionModel5);
-        ChatActionModel chatActionModel6 = new ChatActionModel("تغيير المندوب");
+        ChatActionModel chatActionModel6 = new ChatActionModel(getString(R.string.change_delegate));
         actionReasonList.add(chatActionModel6);
-        ChatActionModel chatActionModel7 = new ChatActionModel("لم اعد احتاج الطلب");
+        ChatActionModel chatActionModel7 = new ChatActionModel(getString(R.string.no_need_order));
         actionReasonList.add(chatActionModel7);
-        ChatActionModel chatActionModel8 = new ChatActionModel("سبب آخر");
+        ChatActionModel chatActionModel8 = new ChatActionModel(getString(R.string.another_reason));
         actionReasonList.add(chatActionModel8);
         chatActionAdapter.notifyDataSetChanged();
 
@@ -1072,11 +1072,11 @@ public class ChatActivity extends AppCompatActivity {
         reasonType = 3;
         binding.tvActionType.setText(R.string.delete_order);
         actionReasonList.clear();
-        ChatActionModel chatActionModel1 = new ChatActionModel("سعر التوصيل مرتفع");
+        ChatActionModel chatActionModel1 = new ChatActionModel(getString(R.string.delv_is_high));
         actionReasonList.add(chatActionModel1);
-        ChatActionModel chatActionModel2 = new ChatActionModel("لم اعد احتاج الطلب");
+        ChatActionModel chatActionModel2 = new ChatActionModel(getString(R.string.no_need_order));
         actionReasonList.add(chatActionModel2);
-        ChatActionModel chatActionModel3 = new ChatActionModel("سبب آخر");
+        ChatActionModel chatActionModel3 = new ChatActionModel(getString(R.string.another_reason));
         actionReasonList.add(chatActionModel3);
         chatActionAdapter.notifyDataSetChanged();
         openSheet();
@@ -2146,20 +2146,6 @@ public class ChatActivity extends AppCompatActivity {
         }
 
 
-    }
-
-    private void createVibration() {
-        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (vibrator != null) {
-                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-
-            }
-        } else {
-            if (vibrator != null) {
-                vibrator.vibrate(new long[]{200, 200}, 0);
-            }
-        }
     }
 
     private void checkCameraPermission() {

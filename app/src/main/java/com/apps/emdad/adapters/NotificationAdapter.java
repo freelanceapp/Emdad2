@@ -24,6 +24,8 @@ import com.apps.emdad.share.Time_Ago;
 import java.util.List;
 import java.util.Locale;
 
+import io.paperdb.Paper;
+
 public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int DATA = 1;
     private final int LOAD = 2;
@@ -31,6 +33,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Context context;
     private LayoutInflater inflater;
     private Fragment_Notifications fragment_notifications;
+    private String lang;
 
 
     public NotificationAdapter(List<NotificationDataModel.NotificationModel> list, Context context, Fragment_Notifications fragment_notifications) {
@@ -38,6 +41,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.fragment_notifications = fragment_notifications;
+        Paper.init(context);
+        lang = Paper.book().read("lang","ar");
     }
 
 
@@ -62,6 +67,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             MyHolder myHolder = (MyHolder) holder;
             NotificationDataModel.NotificationModel model = list.get(position);
             myHolder.binding.setModel(model);
+            myHolder.binding.setLang(lang);
             myHolder.binding.tvDate.setText(Time_Ago.getTimeAgo(Long.parseLong(model.getNotification_date())*1000,context));
             myHolder.itemView.setOnClickListener(v -> {
                 NotificationDataModel.NotificationModel model2 = list.get(myHolder.getAdapterPosition());

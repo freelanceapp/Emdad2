@@ -340,5 +340,26 @@
     <string name="accept_terms">لا يمكنك التسجيل دون الموافقة على الشروط والأحكام</string>
     <string name="read_terms_and_conditions">قراءة الشروط والاحكام </string>
     <string name="gotohome">العودة للصفحة الرئيسية</string>
+    <string name="shop_location_remote">موقع المتجر بعيد</string>
+    <string name="I_do_not_wish_deliver_order">لا أرغب في توصيل الطلب</string>
+    <string name="the_request_dosnot_answer">الطلب متأخر والمندوب لا يجيب</string>
+    <string name="delegate_requested_communication_outside_application">المندوب طلب التواصل خارج التطبيق</string>
+    <string name="delegate_isnot_serious">المندوب غير جاد</string>
+    <string name="delegate_requet_cancel">المندوب طلب الإلغاء</string>
+    <string name="delegate_refuse_online_payment">المندوب لايقبل الدفع الالكتروني</string>
+    <string name="change_delegate">تغيير المندوب</string>
+    <string name="no_need_order">لم اعد احتاج الطلب</string>
+    <string name="another_reason">سبب آخر</string>
+    <string name="delv_is_high">سعر التوصيل مرتفع</string>
+    <string name="flirt">يغازل</string>
+    <string name="rude">غير مهذب</string>
+    <string name="smoked">مدخن</string>
+    <string name="late">متأخر</string>
+    <string name="not_adhering">غير ملتزم بالتعليمات الصحية</string>
+    <string name="get_angry">يضايق</string>
+    <string name="fast_service">خدمة سريعة</string>
+    <string name="respectable">محترم</string>
+    <string name="professional">إحترافي</string>
+    <string name="responsive">متجاوب</string>
 
 </resources>

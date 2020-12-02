@@ -287,11 +287,11 @@ public class Fragment_Order extends Fragment {
         binding.tv4.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         List<RateReason> rateReasonList = new ArrayList<>();
-        rateReasonList.add(new RateReason(1,"يعاكس",false));
-        rateReasonList.add(new RateReason(2,"غير مهزب",false));
-        rateReasonList.add(new RateReason(3,"مدخن",false));
-        rateReasonList.add(new RateReason(4,"متأخر",false));
-        rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
+        rateReasonList.add(new RateReason(1,getString(R.string.flirt),false));
+        rateReasonList.add(new RateReason(2,getString(R.string.rude),false));
+        rateReasonList.add(new RateReason(3,getString(R.string.smoked),false));
+        rateReasonList.add(new RateReason(4,getString(R.string.late),false));
+        rateReasonList.add(new RateReason(5,getString(R.string.not_adhering),false));
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
@@ -315,11 +315,11 @@ public class Fragment_Order extends Fragment {
         binding.tv4.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         List<RateReason> rateReasonList = new ArrayList<>();
-        rateReasonList.add(new RateReason(1,"يعاكس",false));
-        rateReasonList.add(new RateReason(2,"غير مهزب",false));
-        rateReasonList.add(new RateReason(3,"مدخن",false));
-        rateReasonList.add(new RateReason(4,"متأخر",false));
-        rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
+        rateReasonList.add(new RateReason(1,getString(R.string.flirt),false));
+        rateReasonList.add(new RateReason(2,getString(R.string.rude),false));
+        rateReasonList.add(new RateReason(3,getString(R.string.smoked),false));
+        rateReasonList.add(new RateReason(4,getString(R.string.late),false));
+        rateReasonList.add(new RateReason(5,getString(R.string.not_adhering),false));
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
@@ -342,11 +342,11 @@ public class Fragment_Order extends Fragment {
         binding.tv4.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         List<RateReason> rateReasonList = new ArrayList<>();
-        rateReasonList.add(new RateReason(1,"يعاكس",false));
-        rateReasonList.add(new RateReason(2,"غير مهزب",false));
-        rateReasonList.add(new RateReason(3,"مدخن",false));
-        rateReasonList.add(new RateReason(4,"متأخر",false));
-        rateReasonList.add(new RateReason(5,"غير ملتزم بالتعليمات الصحية",false));
+        rateReasonList.add(new RateReason(1,getString(R.string.flirt),false));
+        rateReasonList.add(new RateReason(2,getString(R.string.rude),false));
+        rateReasonList.add(new RateReason(3,getString(R.string.smoked),false));
+        rateReasonList.add(new RateReason(4,getString(R.string.late),false));
+        rateReasonList.add(new RateReason(5,getString(R.string.not_adhering),false));
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
@@ -370,8 +370,8 @@ public class Fragment_Order extends Fragment {
         binding.tv4.setTextColor(ContextCompat.getColor(activity,R.color.black));
         binding.tv5.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         List<RateReason> rateReasonList = new ArrayList<>();
-        rateReasonList.add(new RateReason(6,"يضايق",false));
-        rateReasonList.add(new RateReason(4,"متأخر",false));
+        rateReasonList.add(new RateReason(6,getString(R.string.get_angry),false));
+        rateReasonList.add(new RateReason(4,getString(R.string.late),false));
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
@@ -395,10 +395,10 @@ public class Fragment_Order extends Fragment {
         binding.tv4.setTextColor(ContextCompat.getColor(activity,R.color.gray8));
         binding.tv5.setTextColor(ContextCompat.getColor(activity,R.color.black));
         List<RateReason> rateReasonList = new ArrayList<>();
-        rateReasonList.add(new RateReason(7,"خدمة سريعة",false));
-        rateReasonList.add(new RateReason(8,"محترم",false));
-        rateReasonList.add(new RateReason(9,"إحترافي",false));
-        rateReasonList.add(new RateReason(10,"متجاوب",false));
+        rateReasonList.add(new RateReason(7,getString(R.string.fast_service),false));
+        rateReasonList.add(new RateReason(8,getString(R.string.respectable),false));
+        rateReasonList.add(new RateReason(9,getString(R.string.professional),false));
+        rateReasonList.add(new RateReason(10,getString(R.string.responsive),false));
         rateReasonAdapter.addData(rateReasonList);
         binding.btnRate.setBackgroundResource(R.drawable.small_rounded_primary);
         binding.btnRate.setText(getString(R.string.send));
@@ -551,7 +551,6 @@ public class Fragment_Order extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            Log.e("fff","fff");
             getOrders();
         }
     }

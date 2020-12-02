@@ -74,7 +74,8 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
     private List<SliderModel.Data> sliderList;
     private SliderAdapter sliderAdapter;
     private Timer timer;
-    private int current_pages = 0, NUM_PAGES;
+    private MyTimerTask task;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -146,28 +147,30 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
         binding.swipeRefresh.setOnRefreshListener(() -> getShops(categoryModel.getId()));
         getShops(categoryModel.getId());
         addSliderImages();
-        change_slide_image();
 
     }
-    private void change_slide_image() {
-        final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
-            public void run() {
-                if (current_pages == NUM_PAGES) {
-                    current_pages = 0;
-                }
-                binding.pager.setCurrentItem(current_pages++, true);
+    private void updateSliderData(List<SliderModel.Data> sliderList)
+    {
+        this.sliderList.clear();
+        this.sliderList.addAll(sliderList);
+        if (this.sliderList.size()>0){
+            binding.flNoSlider.setVisibility(View.VISIBLE);
+            sliderAdapter = new SliderAdapter(sliderList,this);
+            binding.pager.setAdapter(sliderAdapter);
+            if (this.sliderList.size()>1){
+                timer = new Timer();
+                task = new MyTimerTask();
+                timer.scheduleAtFixedRate(task,3000,3000);
+
+
             }
-        };
-        Timer swipeTimer = new Timer();
-        swipeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(Update);
-            }
-        }, 3000, 3000);
+        }else {
+            binding.flNoSlider.setVisibility(View.GONE);
+
+        }
     }
-    private void addSliderImages() {
+    private void addSliderImages()
+    {
 
         Api.getService(Tags.base_url)
                 .getMarketSlider("market")
@@ -178,13 +181,7 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
 
                         if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                             if (response.body().getData().size() > 0) {
-                                NUM_PAGES = response.body().getData().size();
-                                Log.e("nnnnn",NUM_PAGES+"");
-                                Log.e("nnnnn",response.body().getData().get(0).getImage()+"");
-
-                                sliderAdapter = new SliderAdapter(response.body().getData(),ShopsCustomQueryActivity.this);
-                                binding.pager.setAdapter(sliderAdapter);
-
+                                updateSliderData(response.body().getData());
                             } else {
 
                                 binding.pager.setVisibility(View.GONE);
@@ -217,14 +214,14 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
                 });
 
     }
-    private void getDataFromIntent() {
+    private void getDataFromIntent()
+    {
         Intent intent = getIntent();
         user_lat = intent.getDoubleExtra("lat",0.0);
         user_lng = intent.getDoubleExtra("lng",0.0);
         categoryModel = (CategoryModel) intent.getSerializableExtra("data");
 
     }
-
 
     private void getShops(String department_id) {
         resultList.clear();
@@ -475,4 +472,27 @@ public class ShopsCustomQueryActivity extends AppCompatActivity {
         return false;
     }
 
+    private  class MyTimerTask extends TimerTask{
+        @Override
+        public void run() {
+            if (binding.pager.getCurrentItem()<sliderList.size()-1){
+                binding.pager.setCurrentItem(binding.pager.getCurrentItem()+1);
+            }else {
+                binding.pager.setCurrentItem(0,false);
+
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (timer!=null){
+            timer.purge();
+            timer.cancel();
+        }
+        if (task!=null){
+            task.cancel();
+        }
+    }
 }
