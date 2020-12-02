@@ -215,7 +215,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
                 manager.createNotificationChannel(channel);
                 manager.notify(Tags.not_tag,Tags.not_id, builder.build());
 
-                EventBus.getDefault().post(new NotFireModel(true));
+                EventBus.getDefault().post(new NotFireModel(true,"chat"));
 
             }
 
@@ -235,7 +235,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
 
                 manager.createNotificationChannel(channel);
                 manager.notify(Tags.not_tag,Tags.not_id, builder.build());
-                EventBus.getDefault().post(new NotFireModel(true));
+                EventBus.getDefault().post(new NotFireModel(true,"order"));
 
 
             }
@@ -258,9 +258,30 @@ public class FireBaseMessaging extends FirebaseMessagingService {
                 manager.createNotificationChannel(channel);
                 manager.notify(Tags.not_tag,Tags.not_id, builder.build());
 
-                EventBus.getDefault().post(new NotFireModel(true));
+                EventBus.getDefault().post(new NotFireModel(true,"offer"));
 
             }
+        }else if (notification_type.equals("order_other")){
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            intent.putExtra("notification",true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+            builder.setLargeIcon(bitmap);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+
+                manager.createNotificationChannel(channel);
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+                EventBus.getDefault().post(new NotFireModel(true,"order_other"));
+
+
+            }
+
         }
 
 
@@ -340,7 +361,7 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             if (manager != null) {
                 manager.notify(Tags.not_tag,Tags.not_id, builder.build());
-                EventBus.getDefault().post(new NotFireModel(true));
+                EventBus.getDefault().post(new NotFireModel(true,"order"));
 
             }
         }else if (notification_type.equals("offer")){
@@ -358,9 +379,29 @@ public class FireBaseMessaging extends FirebaseMessagingService {
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             if (manager != null) {
                 manager.notify(Tags.not_tag,Tags.not_id, builder.build());
-                EventBus.getDefault().post(new NotFireModel(true));
+                EventBus.getDefault().post(new NotFireModel(true,"offer"));
 
             }
+        }else if (notification_type.equals("order_other")){
+            Intent intent = new Intent(this, SplashLoadingActivity.class);
+            intent.putExtra("notification",true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addNextIntent(intent);
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+            builder.setLargeIcon(bitmap);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+
+                manager.notify(Tags.not_tag,Tags.not_id, builder.build());
+                EventBus.getDefault().post(new NotFireModel(true,"order_other"));
+
+
+            }
+
         }
 
 

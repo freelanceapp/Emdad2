@@ -1949,7 +1949,12 @@ public class ChatActivity extends AppCompatActivity {
     @Subscribe
     public void onOrderUpdated(NotFireModel notFireModel){
         isFromFireBase = true;
-        getOrderById(null);
+        if (notFireModel.getType().equals("order_other")){
+            finish();
+        }else {
+            getOrderById(null);
+
+        }
     }
     private void deleteFile() {
         try {
