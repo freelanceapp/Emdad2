@@ -129,7 +129,7 @@ public class Fragment_Profile extends Fragment implements Listeners.ProfileActio
                             if (response.body() != null) {
                                 binding.tvBalance.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getUser_balance(),currency));
                                 binding.tvTotalRevenue.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getDelivery_fee(),currency));
-                                binding.tvOrderNum.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getOrders(),getString(R.string.order2)));
+                                binding.tvOrderNum.setText(String.format(Locale.ENGLISH,"%s %s",response.body().getOrders(),activity.getString(R.string.order2)));
                                 binding.setRate(response.body().getMy_rate());
                                 if (response.body().getUser_balance()>=0){
                                     binding.tvBalance.setTextColor(ContextCompat.getColor(activity,R.color.colorPrimary));

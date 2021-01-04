@@ -185,8 +185,7 @@ public class Fragment_Main extends Fragment {
 
     }
 
-    private List<HourModel> getHours(NearbyModel.Result placeModel)
-    {
+    private List<HourModel> getHours(NearbyModel.Result placeModel) {
         List<HourModel> list = new ArrayList<>();
 
         if (placeModel!=null&&placeModel.getWork_hours()!=null&&placeModel.getWork_hours().getWeekday_text()!=null){
