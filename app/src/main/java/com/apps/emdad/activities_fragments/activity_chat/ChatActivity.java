@@ -2245,6 +2245,8 @@ public class ChatActivity extends AppCompatActivity {
                 Toast.makeText(this, "Access voice denied", Toast.LENGTH_SHORT).show();
             }
         }
+
+
     }
 
     @Override
