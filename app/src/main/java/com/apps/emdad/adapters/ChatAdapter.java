@@ -47,8 +47,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int sound_right = 8;
     private final int location_left = 9;
     private final int location_right = 10;
-
-    private final int load = 9;
+    private final int load = 11;
     private LayoutInflater inflater;
     private List<MessageModel> list;
     private Context context;
@@ -58,9 +57,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int selected_pos = -1;
     private Handler handler;
     private Runnable runnable;
-
-
-
 
 
     public ChatAdapter(List<MessageModel> list, Context context, int current_user_id) {

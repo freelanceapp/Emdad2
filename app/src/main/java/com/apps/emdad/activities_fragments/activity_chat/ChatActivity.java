@@ -2242,7 +2242,7 @@ public class ChatActivity extends AppCompatActivity {
         } else if (requestCode == MIC_REQ) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             } else {
-                Toast.makeText(this, "Access camera denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Access voice denied", Toast.LENGTH_SHORT).show();
             }
         }
     }

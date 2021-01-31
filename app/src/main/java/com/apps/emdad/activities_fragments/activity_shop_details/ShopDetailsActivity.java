@@ -351,7 +351,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
     private File createFile(){
         File file = null;
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo_white);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo_white_text);
         file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),System.currentTimeMillis()+".png");
         try {
             FileOutputStream outputStream = new FileOutputStream(file);
